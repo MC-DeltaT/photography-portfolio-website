@@ -5,7 +5,6 @@ import shutil
 from .photo_info import PhotoInfo, read_photo_info
 from .resource.common import get_resources_path
 from .resource.photo import find_photos, get_photo_resource_path
-from .url import get_photo_page_url
 
 
 logger = logging.getLogger(__name__)
@@ -65,7 +64,8 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
 
     photo_infos = [read_photo_info(r) for r in photo_resource_records]
 
-    for photo in photo_infos:
-        build_photo_permalink(build_dir, photo, dry_run=dry_run)
+    # TODO
+    # for photo in photo_infos:
+    #     build_photo_permalink(build_dir, photo, dry_run=dry_run)
 
     ... # TODO

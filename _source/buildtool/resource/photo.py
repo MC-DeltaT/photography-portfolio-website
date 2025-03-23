@@ -1,13 +1,12 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
-import datetime as dt
-from decimal import Decimal
 from pathlib import Path
 import logging
 
 import pydantic
 
 from ..genre import PhotoGenre
+from ..types import Aperture, CaptureDateStr, FocalLength, ISO, ShutterSpeed
 
 
 logger = logging.getLogger(__name__)
@@ -83,8 +82,7 @@ def find_photos(root: Path) -> list[PhotoResourceRecord]:
 class PhotoMetadataFile(pydantic.BaseModel, frozen=True):
     """Model class for the photo metadata JSON file."""
 
-    # TODO: we should be using a format which allows unknown day or month
-    date: dt.date | None = None
+    capture_date: CaptureDateStr | None = None
     """Local time when the photo was taken. If None, infer from the image file."""
 
     title: str | None = pydantic.Field(default=None, min_length=1)
@@ -105,16 +103,16 @@ class PhotoMetadataFile(pydantic.BaseModel, frozen=True):
     lens_model: str | None = pydantic.Field(default=None, min_length=1)
     """Lens model name. If None, infer from the image file."""
 
-    focal_length: int | None = pydantic.Field(default=None, gt=0)
-    """Lens focal length in millimetres. If None, infer from the image file."""
+    focal_length: FocalLength | None = pydantic.Field(default=None, gt=0)
+    """Lens focal length. If None, infer from the image file."""
 
-    aperture: Decimal | None = pydantic.Field(default=None, gt=0)
+    aperture: Aperture | None = pydantic.Field(default=None, gt=0)
     """Aperture. If None, infer from the image file."""
 
-    shutter_speed: float | None = None # TODO: type?
+    shutter_speed: ShutterSpeed | None = None
     """Shutter speed. If None, infer from the image file."""
 
-    iso: int | None = pydantic.Field(default=None, gt=0)
+    iso: ISO | None = pydantic.Field(default=None, gt=0)
     """ISO. If None, infer from the image file."""
 
     genre: tuple[PhotoGenre, ...] = pydantic.Field(min_length=1)

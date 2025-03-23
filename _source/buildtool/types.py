@@ -1,10 +1,13 @@
 from dataclasses import dataclass
 import datetime as dt
+from decimal import Decimal
+from typing import Annotated, NewType
+
+import pydantic
 
 
-# TODO
 @dataclass(frozen=True)
-class FuzzyDate:
+class PartialDate:
     year: int | None
     month: int | None
     day: int | None
@@ -48,3 +51,14 @@ class FuzzyDate:
             assert 1 <= self.day <= 31
             s += str(self.day).zfill(2)
         return s
+
+
+PartialDateStr = Annotated[str, pydantic.AfterValidator(PartialDate.from_str)]
+
+
+CaptureDateStr = PartialDateStr
+CaptureDate = PartialDate
+FocalLength = NewType('FocalLength', int)   # In millimetres
+Aperture = NewType('Aperture', Decimal)
+ShutterSpeed = NewType('ShutterSpeed', float)    # TODO?
+ISO = NewType('ISO', int)
