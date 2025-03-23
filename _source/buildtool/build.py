@@ -5,6 +5,7 @@ import shutil
 from .photo_info import PhotoInfo, read_photo_info
 from .resource.common import get_resources_path
 from .resource.photo import find_photos, get_photo_resource_path
+from .url import get_photo_asset_url
 
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ class BuildDirectory:
 
 
 def build_photo_asset(build_dir: BuildDirectory, photo_info: PhotoInfo, *, dry_run: bool) -> None:
-    url = get_photo_assert_url(photo_info.date, photo_info.name)
+    url = get_photo_asset_url(photo_info.unique_id)
     dest_path = build_dir.prepare_file(url)
     source_path = photo_info.source_path
     logger.info(f'Copying photo: "{source_path}" -> "{dest_path}"')
@@ -65,7 +66,7 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
     photo_infos = [read_photo_info(r) for r in photo_resource_records]
 
     # TODO
-    # for photo in photo_infos:
-    #     build_photo_permalink(build_dir, photo, dry_run=dry_run)
+    for photo in photo_infos:
+        build_photo_asset(build_dir, photo, dry_run=dry_run)
 
     ... # TODO

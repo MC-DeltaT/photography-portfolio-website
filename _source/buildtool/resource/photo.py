@@ -6,7 +6,7 @@ import logging
 import pydantic
 
 from ..genre import PhotoGenre
-from ..types import Aperture, CaptureDateStr, FocalLength, ISO, ShutterSpeed
+from ..types import Aperture, FocalLength, ISO, PartialDateStr, ShutterSpeed
 
 
 logger = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ def find_photos(root: Path) -> list[PhotoResourceRecord]:
 class PhotoMetadataFile(pydantic.BaseModel, frozen=True):
     """Model class for the photo metadata JSON file."""
 
-    capture_date: CaptureDateStr | None = None
+    date: PartialDateStr | None = None
     """Local time when the photo was taken. If None, infer from the image file."""
 
     title: str | None = pydantic.Field(default=None, min_length=1)

@@ -3,14 +3,15 @@ from pathlib import Path
 
 from .genre import PhotoGenre
 from .resource.photo import PhotoResourceRecord, PhotoMetadataFile
-from .types import ISO, Aperture, CaptureDate, FocalLength, ShutterSpeed
+from .types import ISO, Aperture, FocalLength, PartialDate, PartialDateStr, PhotoUniqueId, ShutterSpeed
 
 
 @dataclass(frozen=True)
 class PhotoInfo:
     source_path: Path
-    name: str   # date+name must be unique together
-    capture_date: CaptureDate
+    unique_id: PhotoUniqueId
+    name: str
+    date: PartialDate
     title: str | None
     description: str | None
     location: str | None
@@ -24,17 +25,21 @@ class PhotoInfo:
     genre: tuple[PhotoGenre, ...]
 
 
+def create_photo_unique_id(name: str, date: PartialDate) -> PhotoUniqueId:
+    return PhotoUniqueId(f'{date}-{name}')
+
+
 def get_photo_name(source_path: Path) -> str:
     return source_path.name.split('.')[0]
 
 
-def resolve_photo_capture_date(metadata_capture_date: CaptureDate | None) -> CaptureDate:
+def resolve_photo_date(metadata_date: PartialDateStr | None) -> PartialDate:
     # TODO: look at exif data
-    # TODO: how does capture_date get parsed from json by pydantic?
-    print(type(metadata_capture_date), metadata_capture_date)
-    if metadata_capture_date is None:
+    # TODO: how does date get parsed from json by pydantic?
+    print(type(metadata_date), metadata_date)
+    if metadata_date is None:
         raise NotImplementedError()
-    return metadata_capture_date
+    return PartialDate.from_str(metadata_date)
 
 
 def resolve_photo_camera_model(metadata_camera_model: str | None) -> str | None:
@@ -72,10 +77,14 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
 
     metadata = PhotoMetadataFile.from_file(resource.metadata_file_path)
 
+    name = get_photo_name(resource.image_file_path)
+    date = resolve_photo_date(metadata.date)
+
     return PhotoInfo(
         source_path=resource.image_file_path,
-        name=get_photo_name(resource.image_file_path),
-        capture_date=resolve_photo_date(metadata.capture_date),
+        unique_id=create_photo_unique_id(name, date),
+        name=name,
+        date=date,
         title=metadata.title,
         description=metadata.description,
         location=metadata.location,

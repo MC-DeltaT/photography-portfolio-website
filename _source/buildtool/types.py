@@ -53,11 +53,15 @@ class PartialDate:
         return s
 
 
-PartialDateStr = Annotated[str, pydantic.AfterValidator(PartialDate.from_str)]
+def validate_partial_date_str(s: str) -> str:
+    _ = PartialDate.from_str(s)
+    return s
 
 
-CaptureDateStr = PartialDateStr
-CaptureDate = PartialDate
+PartialDateStr = Annotated[str, pydantic.BeforeValidator(validate_partial_date_str)]
+
+
+PhotoUniqueId = NewType('PhotoUniqueId', str)
 FocalLength = NewType('FocalLength', int)   # In millimetres
 Aperture = NewType('Aperture', Decimal)
 ShutterSpeed = NewType('ShutterSpeed', float)    # TODO?
