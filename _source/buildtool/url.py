@@ -14,7 +14,15 @@ class URLPath(PurePosixPath):
         return Path(*self.parts[1:])
 
 
-PHOTO_PAGE_URL = URLPath('/photo')
+INDEX_PAGE_URL = URLPath('/index.html')
+
+ABOUT_PAGE_URL = URLPath('/about.html')
+
+GALLERY_URL = URLPath('/gallery')
+GALLERY_BY_STYLE_PAGE_URL = GALLERY_URL / 'style'
+GALLERY_BY_DATE_PAGE_URL = GALLERY_URL / 'date'
+
+PHOTO_PAGE_URL = GALLERY_URL / 'photo'
 
 
 def get_single_photo_page_url(unique_id: PhotoUniqueId) -> URLPath:

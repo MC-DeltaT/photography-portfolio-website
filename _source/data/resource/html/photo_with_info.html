@@ -1,19 +1,21 @@
+{# Fragment containing a photo accompanied by all its information #}
+
 <figure>
-    <img class="photo_image" src="{{ image_url }}"/>
+    <img class="photo_image" src="{{ photo.image_url }}"/>
     <figcaption>
-    {% if photo_title %}
-        <p class="photo_title">"{{ photo_title }}"</p>
+    {% if photo.title %}
+        <p class="photo_title">"{{ photo.title }}"</p>
     {% endif %}
-    {% if photo_location %}
-        <p class="photo_location">{{ photo_location }}</p>
+    {% if photo.location %}
+        <p class="photo_location">{{ photo.location }}</p>
     {% endif %}
-    {% if photo_description %}
-        <p class="photo_description">{{ photo_description }}</p>
+    {% if photo.description %}
+        <p class="photo_description">{{ photo.description }}</p>
     {% endif %}
-    {% if photo_settings %}
-        <p class="photo_settings">{{ photo_settings|join(', ') }}</p>
+    {% if photo.settings %}
+        <p class="photo_settings">{{ photo.settings|join(', ') }}</p>
     {% endif %}
         {# TODO: these can be links to that genre's page #}
-        <p class="photo_genre">{{ photo_genre|map(attribute='value')|map('capitalize')|join(' | ') }}</p>
+        <p class="photo_genre">{{ photo.genre|map(attribute='value')|map('capitalize')|join(' | ') }}</p>
     </figcaption>
 </figure>

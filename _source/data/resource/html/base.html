@@ -4,9 +4,18 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="{{ urls.main_stylesheet }}">
         {% block head %}{% endblock%}
-        <title>{% block title required %}{% endblock %}</title>
+        <title>Reece Jones Photography - {% block title required %}{% endblock %}</title>
     </head>
     <body>
+        <header>
+            <h1><a href="/">Reece Jones Photography</a></h1>
+        </header>
+
         {% block content required %}{% endblock %}
+
+        <footer>
+            <p>Reece Jones Photography</p>
+            <p>© Reece Jones {{ copyright_date }}</p>
+        </footer>
     </body>
 </html>

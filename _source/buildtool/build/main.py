@@ -7,9 +7,9 @@ from ..photo_info import PhotoInfo, read_photo_info
 from ..resource.common import get_resources_path
 from ..resource.photo import find_photos, get_photo_resources_path
 from .asset.css import build_css
-from .asset.photo import build_photo_assets
+from .asset import build_assets
 from .common import BuildContext, BuildDirectory
-from .html import build_single_photo_pages
+from .html import build_html
 
 
 logger = logging.getLogger(__name__)
@@ -21,9 +21,6 @@ def verify_photo_unique_ids(photo_infos: Sequence[PhotoInfo]) -> None:
     if duplicated:
         # Unlikely to occur so it's fine to force the user to fix it manually.
         raise RuntimeError(f'Duplicate photo unique IDs: {duplicated}')
-
-
-# TODO: can probably automate building of things based on file structure
 
 
 def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
@@ -45,7 +42,5 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
     build_context = BuildContext(build_dir, data_path, resources_path, dry_run, photos)
 
     build_css(build_context)
-    build_photo_assets(build_context)
-    build_single_photo_pages(build_context)
-
-    ... # TODO
+    build_assets(build_context)
+    build_html(build_context)
