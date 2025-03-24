@@ -6,8 +6,9 @@ import shutil
 
 from .photo_info import PhotoInfo, read_photo_info
 from .resource.common import get_resources_path
+from .resource.css import get_css_resource_path
 from .resource.photo import find_photos, get_photo_resource_path
-from .url import get_photo_asset_url
+from .url import CSS_ASSETS_URL, get_photo_asset_url
 
 
 logger = logging.getLogger(__name__)
@@ -46,6 +47,27 @@ class BuildDirectory:
         return abs_dir_path / file_path.name
 
 
+def verify_photo_unique_ids(photo_infos: Sequence[PhotoInfo]) -> None:
+    id_counts = Counter(p.unique_id for p in photo_infos)
+    duplicated = [i for i, count in id_counts.items() if count > 1]
+    if duplicated:
+        # Unlikely to occur so it's fine to force the user to fix it manually.
+        raise RuntimeError(f'Duplicate photo unique IDs: {duplicated}')
+
+
+# TODO: can probably automate building of things based on file structure
+
+
+def build_css(build_dir: BuildDirectory, data_path: Path, *, dry_run: bool) -> None:
+    source_path = get_css_resource_path(data_path)
+    url = CSS_ASSETS_URL
+    logger.info(f'Creating CSS assets URL: {url}')
+    dest_path = build_dir.prepare_directory(url.fs_path)
+    logger.debug(f'Copying CSS files: "{source_path}" -> "{dest_path}"')
+    if not dry_run:
+        shutil.copytree(source_path, dest_path, dirs_exist_ok=True)
+
+
 def build_photo_asset(build_dir: BuildDirectory, photo_info: PhotoInfo, *, dry_run: bool) -> None:
     url = get_photo_asset_url(photo_info.unique_id, photo_info.file_extension)
     logger.info(f'Creating photo asset URL: {url}')
@@ -56,14 +78,6 @@ def build_photo_asset(build_dir: BuildDirectory, photo_info: PhotoInfo, *, dry_r
         raise RuntimeError(f'Photo file already exists in output (possibly duplicate name): "{dest_path}"')
     if not dry_run:
         shutil.copy(source_path, dest_path)
-
-
-def verify_photo_unique_ids(photo_infos: Sequence[PhotoInfo]) -> None:
-    id_counts = Counter(p.unique_id for p in photo_infos)
-    duplicated = [i for i, count in id_counts.items() if count > 1]
-    if duplicated:
-        # Unlikely to occur so it's fine to force the user to fix it manually.
-        raise RuntimeError(f'Duplicate photo unique IDs: {duplicated}')
 
 
 def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
@@ -78,12 +92,12 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
     photo_resources_path = get_photo_resource_path(resources_path)
 
     photo_resource_records = find_photos(photo_resources_path)
-
     photo_infos = [read_photo_info(r) for r in photo_resource_records]
     # Sort by ID for stability and debuggability.
     photo_infos = sorted(photo_infos, key=lambda p: p.unique_id)
-
     verify_photo_unique_ids(photo_infos)
+
+    build_css(build_dir, data_path, dry_run=dry_run)
 
     # TODO
     for photo in photo_infos:

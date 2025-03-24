@@ -23,9 +23,12 @@ def get_single_photo_page_url(unique_id: PhotoUniqueId) -> URLPath:
 
 ASSETS_URL = URLPath('/assets')
 
-PHOTO_ASSET_URL = ASSETS_URL / 'photo'
+PHOTO_ASSETS_URL = ASSETS_URL / 'photo'
 
 
 def get_photo_asset_url(unique_id: PhotoUniqueId, file_extension: str) -> URLPath:
     name_part = str(unique_id) + file_extension
-    return PHOTO_ASSET_URL / name_part
+    return PHOTO_ASSETS_URL / name_part
+
+
+CSS_ASSETS_URL = ASSETS_URL / 'css'
