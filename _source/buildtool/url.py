@@ -18,7 +18,8 @@ PHOTO_PAGE_URL = URLPath('/photo')
 
 
 def get_single_photo_page_url(unique_id: PhotoUniqueId) -> URLPath:
-    return PHOTO_PAGE_URL / unique_id
+    # TODO: remove .html, it's just for testing
+    return PHOTO_PAGE_URL / f'{unique_id}.html'
 
 
 ASSETS_URL = URLPath('/assets')
@@ -32,3 +33,7 @@ def get_photo_asset_url(unique_id: PhotoUniqueId, file_extension: str) -> URLPat
 
 
 CSS_ASSETS_URL = ASSETS_URL / 'css'
+
+
+def get_css_asset_url(filename: str) -> URLPath:
+    return CSS_ASSETS_URL / filename

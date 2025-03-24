@@ -15,9 +15,9 @@ def build_photo_asset(build_dir: BuildDirectory, photo_info: PhotoInfo, *, dry_r
     dest_path = build_dir.prepare_file(url.fs_path)
     source_path = photo_info.source_path
     logger.debug(f'Copying photo: "{source_path}" -> "{dest_path}"')
-    if dest_path.exists():
-        raise RuntimeError(f'Photo file already exists in output (possibly duplicate name): "{dest_path}"')
     if not dry_run:
+        if dest_path.exists():
+            raise RuntimeError(f'Photo file already exists in output (possibly duplicate name): "{dest_path}"')
         shutil.copy(source_path, dest_path)
 
 
