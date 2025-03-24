@@ -1,0 +1,17 @@
+<figure>
+    <img class="photo_image" src="{{ image_url }}"/>
+    <figcaption>
+    {% if photo_title %}
+        <p class="photo_title">"{{ photo_title }}"</p>
+    {% endif %}
+    {% if photo_location %}
+        <p class="photo_location">{{ photo_location }}</p>
+    {% endif %}
+    {% if photo_description %}
+        <p class="photo_description">{{ photo_description }}</p>
+    {% endif %}
+        <p class="photo_settings">{{ photo_settings|join(', ') }}</p>
+        {# TODO: these can be links to that genre's page #}
+        <p class="photo_genre">{{ photo_genre|map(attribute='value')|map('capitalize')|join(' | ') }}</p>
+    </figcaption>
+</figure>
