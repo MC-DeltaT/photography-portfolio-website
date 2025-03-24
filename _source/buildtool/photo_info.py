@@ -10,6 +10,7 @@ from .types import ISO, Aperture, FocalLength, PartialDate, PartialDateStr, Phot
 class PhotoInfo:
     source_path: Path
     unique_id: PhotoUniqueId
+    file_extension: str     # Includes the .
     name: str
     date: PartialDate
     title: str | None
@@ -26,7 +27,14 @@ class PhotoInfo:
 
 
 def create_photo_unique_id(name: str, date: PartialDate) -> PhotoUniqueId:
-    return PhotoUniqueId(f'{date}-{name}')
+    date_str = str(date)
+    if date_str:
+        s = f'{date}-{name}'
+    else:
+        # Totally unknown date.
+        # TODO: should we use some placeholder for the date?
+        s = name
+    return PhotoUniqueId(s)
 
 
 def get_photo_name(source_path: Path) -> str:
@@ -36,8 +44,8 @@ def get_photo_name(source_path: Path) -> str:
 def resolve_photo_date(metadata_date: PartialDateStr | None) -> PartialDate:
     # TODO: look at exif data
     # TODO: how does date get parsed from json by pydantic?
-    print(type(metadata_date), metadata_date)
     if metadata_date is None:
+        return PartialDate.from_str('')
         raise NotImplementedError()
     return PartialDate.from_str(metadata_date)
 
@@ -77,12 +85,14 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
 
     metadata = PhotoMetadataFile.from_file(resource.metadata_file_path)
 
+    file_extension = resource.image_file_path.suffix
     name = get_photo_name(resource.image_file_path)
     date = resolve_photo_date(metadata.date)
 
     return PhotoInfo(
         source_path=resource.image_file_path,
         unique_id=create_photo_unique_id(name, date),
+        file_extension=file_extension,
         name=name,
         date=date,
         title=metadata.title,

@@ -1,3 +1,5 @@
+from collections import Counter
+from collections.abc import Sequence
 import logging
 from pathlib import Path
 import shutil
@@ -19,7 +21,8 @@ class BuildDirectory:
     def clean(self) -> None:
         logger.info(f'Deleting build directory: "{self.root}"')
         if not self.dry_run:
-            shutil.rmtree(self.root, ignore_errors=False)
+            if self.root.exists():
+                shutil.rmtree(self.root, ignore_errors=False)
 
     def prepare_directory(self, dir_path: str | Path) -> Path:
         """Given a relative directory path, ensures that directory exists in the build directory.
@@ -29,7 +32,7 @@ class BuildDirectory:
         if dir_path.is_absolute():
             raise ValueError('dir_path cannot be an absolute path')
         path = self.root / dir_path
-        logger.info(f'Creating directory: "{path}"')
+        logger.debug(f'Creating build directory: "{path}"')
         if not self.dry_run:
             path.mkdir(parents=True, exist_ok=True)
         return path
@@ -44,17 +47,29 @@ class BuildDirectory:
 
 
 def build_photo_asset(build_dir: BuildDirectory, photo_info: PhotoInfo, *, dry_run: bool) -> None:
-    url = get_photo_asset_url(photo_info.unique_id)
-    dest_path = build_dir.prepare_file(url)
+    url = get_photo_asset_url(photo_info.unique_id, photo_info.file_extension)
+    logger.info(f'Creating photo asset URL: {url}')
+    dest_path = build_dir.prepare_file(url.fs_path)
     source_path = photo_info.source_path
-    logger.info(f'Copying photo: "{source_path}" -> "{dest_path}"')
+    logger.debug(f'Copying photo: "{source_path}" -> "{dest_path}"')
     if dest_path.exists():
         raise RuntimeError(f'Photo file already exists in output (possibly duplicate name): "{dest_path}"')
     if not dry_run:
         shutil.copy(source_path, dest_path)
 
 
+def verify_photo_unique_ids(photo_infos: Sequence[PhotoInfo]) -> None:
+    id_counts = Counter(p.unique_id for p in photo_infos)
+    duplicated = [i for i, count in id_counts.items() if count > 1]
+    if duplicated:
+        # Unlikely to occur so it's fine to force the user to fix it manually.
+        raise RuntimeError(f'Duplicate photo unique IDs: {duplicated}')
+
+
 def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
+    logger.info(f'Build directory: "{build_path}"')
+    logger.info(f'Data directory: "{data_path}"')
+
     build_dir = BuildDirectory(build_path, dry_run=dry_run)
     build_dir.clean()
 
@@ -64,6 +79,10 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
     photo_resource_records = find_photos(photo_resources_path)
 
     photo_infos = [read_photo_info(r) for r in photo_resource_records]
+    # Sort by ID for stability and debuggability.
+    photo_infos = sorted(photo_infos, key=lambda p: p.unique_id)
+
+    verify_photo_unique_ids(photo_infos)
 
     # TODO
     for photo in photo_infos:

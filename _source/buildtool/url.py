@@ -1,17 +1,31 @@
+from pathlib import Path, PurePosixPath
+
 from .types import PhotoUniqueId
 
 
-PHOTO_PAGE_URL = '/photo'
+class URLPath(PurePosixPath):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if not self.is_absolute():
+            raise ValueError('path must have a root')
+
+    @property
+    def fs_path(self) -> Path:
+        return Path(*self.parts[1:])
 
 
-def get_single_photo_page_url(unique_id: PhotoUniqueId) -> str:
-    return f'{PHOTO_PAGE_URL}/{unique_id}'
+PHOTO_PAGE_URL = URLPath('/photo')
 
 
-ASSETS_URL = '/assets'
+def get_single_photo_page_url(unique_id: PhotoUniqueId) -> URLPath:
+    return PHOTO_PAGE_URL / unique_id
 
-PHOTO_ASSET_URL = f'{ASSETS_URL}/photo'
+
+ASSETS_URL = URLPath('/assets')
+
+PHOTO_ASSET_URL = ASSETS_URL / 'photo'
 
 
-def get_photo_asset_url(unique_id: PhotoUniqueId) -> str:
-    return f'{PHOTO_ASSET_URL}/{unique_id}'
+def get_photo_asset_url(unique_id: PhotoUniqueId, file_extension: str) -> URLPath:
+    name_part = str(unique_id) + file_extension
+    return PHOTO_ASSET_URL / name_part

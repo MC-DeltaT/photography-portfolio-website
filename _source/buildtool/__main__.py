@@ -5,6 +5,9 @@ from pathlib import Path
 from .build import run_build
 
 
+logger = logging.getLogger(__name__)
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
 
@@ -20,6 +23,7 @@ def main() -> None:
 
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
+        logger.info('DRY RUN - won\'t write output')
     
     # TODO: run ingest
 
