@@ -2,11 +2,12 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 import logging
+from typing import Annotated
 
 import pydantic
 
 from ..genre import PhotoGenre
-from ..types import Aperture, ExposureTime, FocalLength, ISO, NonEmptyStr, PartialDateStr
+from ..types import Aperture, ExposureTime, FocalLength, ISO, NonEmptyStr, PartialDate
 
 
 logger = logging.getLogger(__name__)
@@ -84,7 +85,9 @@ class PhotoMetadataFile(pydantic.BaseModel, frozen=True):
 
     # TODO: allow setting field to null in json which stops infer from image
 
-    date: PartialDateStr | None = None
+    # TODO: specify timezone somehow
+
+    date: Annotated[PartialDate, pydantic.BeforeValidator(PartialDate.from_str)] | None = None
     """Local time when the photo was taken. If None, infer from the image file."""
 
     title: NonEmptyStr | None = None
@@ -123,7 +126,9 @@ class PhotoMetadataFile(pydantic.BaseModel, frozen=True):
 
     @classmethod
     def from_file(cls, path: Path):
-        logger.debug(f'Loading photo metadata file: "{path}"')
+        logger.debug(f'Reading photo metadata file: "{path}"')
         with open(path, 'r', encoding='utf8') as f:
             json_data = f.read()
-        return cls.model_validate_json(json_data, strict=True)
+        obj = cls.model_validate_json(json_data, strict=True)
+        logger.debug(f'Read photo metadata file: {obj}')
+        return obj

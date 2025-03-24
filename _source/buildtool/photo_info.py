@@ -1,10 +1,15 @@
 from dataclasses import dataclass
+import datetime as dt
 from pathlib import Path
+import logging
 
 from .genre import PhotoGenre
-from .image import open_image_file, read_image_metadata
+from .image import open_image_file, read_image_exif_metadata
 from .resource.photo import PhotoResourceRecord, PhotoMetadataFile
-from .types import ISO, Aperture, ExposureTime, FocalLength, PartialDate, PartialDateStr, PhotoUniqueId
+from .types import ISO, Aperture, ExposureTime, FocalLength, PartialDate, PhotoUniqueId
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -42,25 +47,26 @@ def get_photo_name(source_path: Path) -> str:
     return source_path.name.split('.')[0]
 
 
-def resolve_photo_date(user_date: PartialDateStr | None) -> PartialDate:
-    # TODO: look at exif data
-    # TODO: how does date get parsed from json by pydantic?
-    if user_date is None:
-        return PartialDate.from_str('')
-        raise NotImplementedError()
-    return PartialDate.from_str(user_date)
+def resolve_photo_date(image_date: dt.date, user_date: PartialDate | None) -> PartialDate:
+    # TODO: take into account timezone
+    if user_date:
+        return user_date
+    else:
+        return PartialDate.from_date(image_date)
 
 
 def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
     """Creates final information about a photo by combining the image file metadata and user specified metadata."""
 
+    logger.debug(f'Reading photo info: {resource}')
+
     user_metadata = PhotoMetadataFile.from_file(resource.metadata_file_path)
 
-    image_metadata = read_image_metadata(open_image_file(resource.image_file_path))
+    image_metadata = read_image_exif_metadata(open_image_file(resource.image_file_path))
 
     file_extension = resource.image_file_path.suffix
     name = get_photo_name(resource.image_file_path)
-    date = resolve_photo_date(user_metadata.date)
+    date = resolve_photo_date(image_metadata.date_time_original, user_metadata.date)
     camera_model = user_metadata.camera_model or image_metadata.camera_model
     lens_model = user_metadata.lens_model or image_metadata.lens_model
     focal_length = user_metadata.focal_length or image_metadata.focal_length

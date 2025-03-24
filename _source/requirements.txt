@@ -1,3 +1,4 @@
-annotated-types
+annotated-types~=0.7
 pillow~=10.4
 pydantic~=2.10
+python-dateutil~=2.9

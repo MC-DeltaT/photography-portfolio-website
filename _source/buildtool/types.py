@@ -7,6 +7,9 @@ from annotated_types import Gt
 import pydantic
 
 
+N = TypeVar('N')
+
+
 @dataclass(frozen=True)
 class PartialDate:
     year: int | None
@@ -40,6 +43,10 @@ class PartialDate:
         day = int(s[6:8]) if len(s) > 6 else None
         return cls(year=year, month=month, day=day)
 
+    @classmethod
+    def from_date(cls, date: dt.date):
+        return cls(year=date.year, month=date.month, day=date.day)
+
     def __str__(self) -> str:
         s = ''
         if self.year is not None:
@@ -54,22 +61,13 @@ class PartialDate:
         return s
 
 
-def validate_partial_date_str(s: str) -> str:
-    _ = PartialDate.from_str(s)
-    return s
-
-
-PartialDateStr = Annotated[str, pydantic.BeforeValidator(validate_partial_date_str)]
-
 NonEmptyStr = Annotated[str, pydantic.StringConstraints(strict=True, min_length=1)]
 
 PhotoUniqueId = NewType('PhotoUniqueId', str)
 FocalLength = Annotated[NewType('FocalLength', int), Gt(0)] # In millimetres
 Aperture = Annotated[NewType('Aperture', Decimal), Gt(0)]
-ExposureTime = Annotated[NewType('ExposureTime', Decimal), Gt(0)]    # TODO?
+ExposureTime = Annotated[NewType('ExposureTime', Decimal), Gt(0)]
 ISO = Annotated[NewType('ISO', int), Gt(0)]
-
-N = TypeVar('N')
 
 # Use with custom numeric types to allow them to work with Pydantic.
 CoerceNumber = Annotated[N, pydantic.BeforeValidator(lambda v: v if isinstance(v, (int, float, complex, Decimal, str)) else float(v))]

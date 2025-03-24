@@ -1,6 +1,9 @@
+import datetime as dt
 import logging
 from pathlib import Path
+from typing import Annotated
 
+from dateutil.parser import parse as parse_date
 from PIL import ExifTags
 from PIL.Image import Image, open as pil_image_open
 import pydantic
@@ -16,21 +19,36 @@ def open_image_file(path: Path) -> Image:
 
 
 class EXIFMetadata(pydantic.BaseModel, frozen=True):
-    camera_model: str | None
-    lens_model: str | None
+    # # "The date and time of image creation. In Exif standard, it is the date and time the file was changed."
+    # date_time: str | None
+    # "The date and time when the original image data was generated."
+    date_time_original: Annotated[dt.datetime, pydantic.BeforeValidator(parse_date)]
+    # # "The date and time when the image was stored as digital data."
+    # date_time_digitised: str | None
+    # offset_time: str | None
+    # offset_time_original: str | None
+    # offset_time_digitised: str | None
+    camera_model: str
+    lens_model: str
     # Note EXIF data uses a custom type for some numbers,
     # which needs to be coerced to a built-in type to work with Pydantic.
-    focal_length: CoerceNumber[FocalLength] | None  # mm
-    aperture: CoerceNumber[Aperture] | None
-    exposure_time: CoerceNumber[ExposureTime] | None  # seconds
-    iso: CoerceNumber[ISO] | None
+    focal_length: CoerceNumber[FocalLength]  # mm
+    aperture: CoerceNumber[Aperture]
+    exposure_time: CoerceNumber[ExposureTime]  # seconds
+    iso: CoerceNumber[ISO]
 
 
-def read_image_metadata(image: Image) -> EXIFMetadata:
+def read_image_exif_metadata(image: Image) -> EXIFMetadata:
     exif = image.getexif()
     ifd_exif = exif.get_ifd(ExifTags.IFD.Exif)
 
     metadata = EXIFMetadata(
+        # date_time=exif.get(ExifTags.Base.DateTime),
+        date_time_original=ifd_exif.get(ExifTags.Base.DateTimeOriginal),
+        # date_time_digitised=ifd_exif.get(ExifTags.Base.DateTimeDigitized),
+        # offset_time=ifd_exif.get(ExifTags.Base.OffsetTime),
+        # offset_time_original=ifd_exif.get(ExifTags.Base.OffsetTimeOriginal),
+        # offset_time_digitised=ifd_exif.get(ExifTags.Base.OffsetTimeDigitized),
         camera_model=exif.get(ExifTags.Base.Model),
         lens_model=ifd_exif.get(ExifTags.Base.LensModel),
         focal_length=ifd_exif.get(ExifTags.Base.FocalLength),

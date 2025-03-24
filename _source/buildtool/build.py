@@ -67,6 +67,7 @@ def verify_photo_unique_ids(photo_infos: Sequence[PhotoInfo]) -> None:
 
 
 def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
+    logger.info(f'Running website build')
     logger.info(f'Build directory: "{build_path}"')
     logger.info(f'Data directory: "{data_path}"')
 

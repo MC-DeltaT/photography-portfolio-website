@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 
 from .build import run_build
+from .ingest import run_ingest
 
 
 logger = logging.getLogger(__name__)
@@ -14,6 +15,7 @@ def main() -> None:
     arg_parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
+    arg_parser.add_argument('-i', '--ingest', type=Path, default=Path('../ingest'), help='Directory to ingest new photos from')
     arg_parser.add_argument('-d', '--data', type=Path, default=Path('./data'), help='Directory containing source data')
     arg_parser.add_argument('-o', '--output', type=Path, default=Path('../site'), help='Directory to build site into')
     arg_parser.add_argument('-v', '--verbose', action='store_true', help='Log more')
@@ -25,7 +27,7 @@ def main() -> None:
         logging.getLogger().setLevel(logging.DEBUG)
         logger.info('DRY RUN - won\'t write output')
     
-    # TODO: run ingest
+    run_ingest(args.ingest, args.data, dry_run=args.dry_run)
 
     run_build(args.output, args.data, dry_run=args.dry_run)
 
