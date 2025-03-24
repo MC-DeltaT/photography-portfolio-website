@@ -1,9 +1,9 @@
 import logging
 import shutil
 
-from ..resource.css import get_css_resources_path
-from ..url import CSS_ASSETS_URL
-from .common import BuildContext
+from ...resource.css import get_css_resources_path
+from ...url import CSS_ASSETS_URL
+from ..common import BuildContext
 
 
 logger = logging.getLogger(__name__)

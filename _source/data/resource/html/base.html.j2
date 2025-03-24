@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="{{ stylesheet_url }}">
+        {% block head %}{% endblock%}
+        <title>{% block title required %}{% endblock %}</title>
+    </head>
+    <body>
+        {% block content required %}{% endblock %}
+    </body>
+</html>

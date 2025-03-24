@@ -6,9 +6,10 @@ from pathlib import Path
 from ..photo_info import PhotoInfo, read_photo_info
 from ..resource.common import get_resources_path
 from ..resource.photo import find_photos, get_photo_resources_path
+from .asset.css import build_css
+from .asset.photo import build_photo_assets
 from .common import BuildContext, BuildDirectory
-from .css import build_css
-from .photo_asset import build_photo_assets
+from .html import build_single_photo_pages
 
 
 logger = logging.getLogger(__name__)
@@ -45,5 +46,6 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
 
     build_css(build_context)
     build_photo_assets(build_context)
+    build_single_photo_pages(build_context)
 
     ... # TODO
