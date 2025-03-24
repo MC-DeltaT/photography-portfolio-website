@@ -2,7 +2,7 @@ import argparse
 import logging
 from pathlib import Path
 
-from .build import run_build
+from .build.main import run_build
 from .ingest import run_ingest
 
 

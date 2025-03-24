@@ -13,8 +13,8 @@ from ..types import Aperture, ExposureTime, FocalLength, ISO, NonEmptyStr, Parti
 logger = logging.getLogger(__name__)
 
 
-def get_photo_resource_path(resources_path: Path) -> Path:
-    return resources_path / 'images'
+def get_photo_resources_path(resources_path: Path) -> Path:
+    return resources_path / 'photo'
 
 
 SUPPORTED_IMAGE_EXTENSIONS = (
