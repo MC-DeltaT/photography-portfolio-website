@@ -6,7 +6,7 @@ import logging
 import pydantic
 
 from ..genre import PhotoGenre
-from ..types import Aperture, FocalLength, ISO, PartialDateStr, ShutterSpeed
+from ..types import Aperture, ExposureTime, FocalLength, ISO, NonEmptyStr, PartialDateStr
 
 
 logger = logging.getLogger(__name__)
@@ -82,37 +82,40 @@ def find_photos(root: Path) -> list[PhotoResourceRecord]:
 class PhotoMetadataFile(pydantic.BaseModel, frozen=True):
     """Model class for the photo metadata JSON file."""
 
+    # TODO: allow setting field to null in json which stops infer from image
+
     date: PartialDateStr | None = None
     """Local time when the photo was taken. If None, infer from the image file."""
 
-    title: str | None = pydantic.Field(default=None, min_length=1)
+    title: NonEmptyStr | None = None
     """Main name of the photo. Optional."""
 
-    description: str | None = pydantic.Field(default=None, min_length=1)
+    description: NonEmptyStr | None = None
     """General purpose text accompanying the photo."""
 
-    location: str | None = pydantic.Field(default=None, min_length=1)
+    location: NonEmptyStr | None = None
     """Place the photo was taken. Optional."""
 
-    set: str | None = pydantic.Field(default=None, min_length=1)
+    set: NonEmptyStr | None = None
     """Event, occasion, or other collection the photo is part of. Optional."""
 
-    camera_model: str | None = pydantic.Field(default=None, min_length=1)
+    camera_model: NonEmptyStr | None = None
     """Camera model name. If None, infer from the image file."""
 
-    lens_model: str | None = pydantic.Field(default=None, min_length=1)
+    lens_model: NonEmptyStr | None = None
     """Lens model name. If None, infer from the image file."""
 
-    focal_length: FocalLength | None = pydantic.Field(default=None, gt=0)
+    focal_length: FocalLength | None = None
     """Lens focal length. If None, infer from the image file."""
 
-    aperture: Aperture | None = pydantic.Field(default=None, gt=0)
+    aperture: Aperture | None = None
     """Aperture. If None, infer from the image file."""
 
-    shutter_speed: ShutterSpeed | None = None
-    """Shutter speed. If None, infer from the image file."""
+    # TODO: allow format like 1/100
+    exposure_time: ExposureTime | None = None
+    """Exposure duration in seconds (inverse of shutter speed). If None, infer from the image file."""
 
-    iso: ISO | None = pydantic.Field(default=None, gt=0)
+    iso: ISO | None = None
     """ISO. If None, infer from the image file."""
 
     genre: tuple[PhotoGenre, ...] = pydantic.Field(min_length=1)

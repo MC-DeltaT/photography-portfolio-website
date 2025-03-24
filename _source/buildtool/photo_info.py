@@ -2,8 +2,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .genre import PhotoGenre
+from .image import open_image_file, read_image_metadata
 from .resource.photo import PhotoResourceRecord, PhotoMetadataFile
-from .types import ISO, Aperture, FocalLength, PartialDate, PartialDateStr, PhotoUniqueId, ShutterSpeed
+from .types import ISO, Aperture, ExposureTime, FocalLength, PartialDate, PartialDateStr, PhotoUniqueId
 
 
 @dataclass(frozen=True)
@@ -21,7 +22,7 @@ class PhotoInfo:
     lens_model: str | None
     focal_length: FocalLength | None
     aperture: Aperture | None
-    shutter_speed: ShutterSpeed | None
+    exposure_time: ExposureTime | None
     iso: ISO | None
     genre: tuple[PhotoGenre, ...]
 
@@ -41,53 +42,31 @@ def get_photo_name(source_path: Path) -> str:
     return source_path.name.split('.')[0]
 
 
-def resolve_photo_date(metadata_date: PartialDateStr | None) -> PartialDate:
+def resolve_photo_date(user_date: PartialDateStr | None) -> PartialDate:
     # TODO: look at exif data
     # TODO: how does date get parsed from json by pydantic?
-    if metadata_date is None:
+    if user_date is None:
         return PartialDate.from_str('')
         raise NotImplementedError()
-    return PartialDate.from_str(metadata_date)
-
-
-def resolve_photo_camera_model(metadata_camera_model: str | None) -> str | None:
-    # TODO: look at exif data
-    return metadata_camera_model
-
-
-def resolve_photo_lens_model(metadata_lens_model: str | None) -> str | None:
-    # TODO: look at exif data
-    return metadata_lens_model
-
-
-def resolve_photo_focal_length(metadata_focal_length: FocalLength | None) -> FocalLength | None:
-    # TODO: look at exif data
-    return metadata_focal_length
-
-
-def resolve_photo_aperture(metadata_aperture: Aperture | None) -> Aperture | None:
-    # TODO: look at exif data
-    return metadata_aperture
-
-
-def resolve_photo_shutter_speed(metadata_shutter_speed: ShutterSpeed | None) -> ShutterSpeed | None:
-    # TODO: look at exif data
-    return metadata_shutter_speed
-
-
-def resolve_photo_iso(metadata_iso: ISO | None) -> ISO | None:
-    # TODO: look at exif data
-    return metadata_iso
+    return PartialDate.from_str(user_date)
 
 
 def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
     """Creates final information about a photo by combining the image file metadata and user specified metadata."""
 
-    metadata = PhotoMetadataFile.from_file(resource.metadata_file_path)
+    user_metadata = PhotoMetadataFile.from_file(resource.metadata_file_path)
+
+    image_metadata = read_image_metadata(open_image_file(resource.image_file_path))
 
     file_extension = resource.image_file_path.suffix
     name = get_photo_name(resource.image_file_path)
-    date = resolve_photo_date(metadata.date)
+    date = resolve_photo_date(user_metadata.date)
+    camera_model = user_metadata.camera_model or image_metadata.camera_model
+    lens_model = user_metadata.lens_model or image_metadata.lens_model
+    focal_length = user_metadata.focal_length or image_metadata.focal_length
+    aperture = user_metadata.aperture or image_metadata.aperture
+    exposure_time = user_metadata.exposure_time or image_metadata.exposure_time
+    iso = user_metadata.iso or image_metadata.iso
 
     return PhotoInfo(
         source_path=resource.image_file_path,
@@ -95,15 +74,15 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
         file_extension=file_extension,
         name=name,
         date=date,
-        title=metadata.title,
-        description=metadata.description,
-        location=metadata.location,
-        set=metadata.set,
-        camera_model=resolve_photo_camera_model(metadata.camera_model),
-        lens_model=resolve_photo_lens_model(metadata.lens_model),
-        focal_length=resolve_photo_focal_length(metadata.focal_length),
-        aperture=resolve_photo_aperture(metadata.aperture),
-        shutter_speed=resolve_photo_shutter_speed(metadata.shutter_speed),
-        iso=resolve_photo_iso(metadata.iso),
-        genre=metadata.genre
+        title=user_metadata.title,
+        description=user_metadata.description,
+        location=user_metadata.location,
+        set=user_metadata.set,
+        camera_model=camera_model,
+        lens_model=lens_model,
+        focal_length=focal_length,
+        aperture=aperture,
+        exposure_time=exposure_time,
+        iso=iso,
+        genre=user_metadata.genre
     )

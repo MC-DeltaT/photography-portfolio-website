@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 import datetime as dt
 from decimal import Decimal
-from typing import Annotated, NewType
+from typing import Annotated, NewType, TypeVar
 
+from annotated_types import Gt
 import pydantic
 
 
@@ -60,9 +61,15 @@ def validate_partial_date_str(s: str) -> str:
 
 PartialDateStr = Annotated[str, pydantic.BeforeValidator(validate_partial_date_str)]
 
+NonEmptyStr = Annotated[str, pydantic.StringConstraints(strict=True, min_length=1)]
 
 PhotoUniqueId = NewType('PhotoUniqueId', str)
-FocalLength = NewType('FocalLength', int)   # In millimetres
-Aperture = NewType('Aperture', Decimal)
-ShutterSpeed = NewType('ShutterSpeed', float)    # TODO?
-ISO = NewType('ISO', int)
+FocalLength = Annotated[NewType('FocalLength', int), Gt(0)] # In millimetres
+Aperture = Annotated[NewType('Aperture', Decimal), Gt(0)]
+ExposureTime = Annotated[NewType('ExposureTime', Decimal), Gt(0)]    # TODO?
+ISO = Annotated[NewType('ISO', int), Gt(0)]
+
+N = TypeVar('N')
+
+# Use with custom numeric types to allow them to work with Pydantic.
+CoerceNumber = Annotated[N, pydantic.BeforeValidator(lambda v: v if isinstance(v, (int, float, complex, Decimal, str)) else float(v))]
