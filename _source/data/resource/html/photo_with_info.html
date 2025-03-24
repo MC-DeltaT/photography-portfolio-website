@@ -10,7 +10,9 @@
     {% if photo_description %}
         <p class="photo_description">{{ photo_description }}</p>
     {% endif %}
+    {% if photo_settings %}
         <p class="photo_settings">{{ photo_settings|join(', ') }}</p>
+    {% endif %}
         {# TODO: these can be links to that genre's page #}
         <p class="photo_genre">{{ photo_genre|map(attribute='value')|map('capitalize')|join(' | ') }}</p>
     </figcaption>
