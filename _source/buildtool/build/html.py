@@ -127,7 +127,7 @@ def build_gallery_single_style_page(genre: PhotoGenre, context: HTMLBuildContext
             'photos': [get_photo_render_context(p) for p in photos]
         }
     }
-    build_html_page('pages/gallery_single_style.html', get_gallery_style_page_url(genre.name), context, render_context)
+    build_html_page('pages/gallery_single_style.html', get_gallery_style_page_url(genre.value), context, render_context)
 
 
 def build_gallery_by_date_page(context: HTMLBuildContext) -> None:
@@ -172,6 +172,7 @@ def get_photo_render_context(photo: PhotoInfo) -> dict[str, Any]:
     return {
         'image_url': get_photo_asset_url(photo.unique_id, photo.file_extension),
         'title': photo.title,
+        'date': photo.date,
         'location': photo.location,
         'description': photo.description,
         'settings': make_photo_settings_list(photo),
