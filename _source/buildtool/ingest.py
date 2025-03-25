@@ -1,9 +1,9 @@
 from pathlib import Path
 import logging
 import tempfile
-from shutil import copyfile
-import subprocess
+import shutil
 
+from .image import strip_image_exif_gps
 from .resource.common import get_resources_path
 from .resource.photo import PhotoMetadataFile, find_photos, get_photo_resources_path
 
@@ -30,7 +30,7 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
 
     logger.info('Ingesting photos into resources')
     for photo in photos:
-        logger.debug(f'Ingesting photo: {photo}')
+        logger.info(f'Ingesting photo: {photo}')
 
         assert photo.image_file_path.parent == photo.metadata_file_path.parent
         dest_dir = photo_resources_path / photo.image_file_path.parent.relative_to(ingest_path)
@@ -38,11 +38,13 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
         # Copy file to temporary directory while modifying it to provide strong exception guarantee.
         with tempfile.TemporaryDirectory() as tmp_dir:
             tmp_image_file = Path(tmp_dir) / photo.image_file_path.name
-            copyfile(photo.image_file_path, tmp_image_file)
+            shutil.copyfile(photo.image_file_path, tmp_image_file)
+
+            # Some modifications to the image to make it appropriate for web publishing.
             logger.debug('Stripping image of EXIF GPS tags')
             strip_image_exif_gps(tmp_image_file)
-            logger.debug('Reducing image file size')
-            reduce_image_file_size(tmp_image_file)
+
+            # Move the tmp image to the resources directory.
             logger.debug(f'Creating directory: "{dest_dir}"')
             if not dry_run:
                 dest_dir.mkdir(parents=True, exist_ok=True)
@@ -50,28 +52,20 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
             logger.debug(f'Moving image file: "{tmp_image_file}" -> "{dest_image_file}"')
             if not dry_run:
                 tmp_image_file.rename(dest_image_file)
+        # Move the metadata file to the resources directory alongside the image file.
         dest_metadata_file = dest_dir / photo.metadata_file_path.name
         logger.debug(f'Moving metadata file: "{photo.metadata_file_path}" -> "{dest_metadata_file}"')
         if not dry_run:
             photo.metadata_file_path.rename(dest_metadata_file)
 
+        if not dry_run:
+            # Remove the original image
+            photo.image_file_path.unlink()
 
-def strip_image_exif_gps(file: Path) -> None:
-    """Remove all GPS EXIF tags from an image in place.
-        Reason is to avoid people stalking us from photo content."""
-
-    subprocess.run(['exiftool.exe' '-gps*=', str(file)], check=True)
-
-
-def reduce_image_file_size(file: Path) -> None:
-    """Reduces the image dimensions and encoding quality to minimise file size."""
-
-    MAX_DIM = 2000
-    QUALITY = 80
-    args = [
-        'magick.exe', 'convert', str(file),
-        '-resize', f'{MAX_DIM}x{MAX_DIM}'
-        '-quality', str(QUALITY),
-        str(file)
-    ]
-    subprocess.run(args, check=True)
+    if not dry_run:
+        # Remove everything in the ingest directory, which should be empty if the ingest operation succeeded.
+        for entry in ingest_path.iterdir():
+            if entry.is_dir():
+                shutil.rmtree(entry, ignore_errors=False)
+            else:
+                entry.unlink()

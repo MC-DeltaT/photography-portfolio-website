@@ -24,3 +24,8 @@ def build_photo_asset(build_dir: BuildDirectory, photo_info: PhotoInfo, *, dry_r
 def build_photo_assets(context: BuildContext) -> None:
     for photo in context.photos:
         build_photo_asset(context.build_dir, photo, dry_run=context.dry_run)
+
+
+# TODO: shrink photos
+
+# TODO: build photo srcset with different qualities

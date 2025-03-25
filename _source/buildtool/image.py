@@ -1,6 +1,7 @@
 import datetime as dt
 import logging
 from pathlib import Path
+import subprocess
 from typing import Annotated
 
 from dateutil.parser import parse as parse_date
@@ -58,3 +59,25 @@ def read_image_exif_metadata(image: Image) -> EXIFMetadata:
     )
     logger.debug(f"Read image file metadata: {metadata}")
     return metadata
+
+
+def reencode_image(input_file: Path, output_file: Path, max_dimension: int, quality: int) -> Path:
+    output_file = output_file.with_suffix('.jpg')
+    args = [
+        'magick', 'convert', str(input_file),
+        '-resize', f'{max_dimension}x{max_dimension}',
+        '-quality', str(quality),
+        str(output_file)
+    ]
+    logger.debug(f'> {args}')
+    subprocess.run(args, check=True)
+    return output_file
+
+
+def strip_image_exif_gps(file: Path) -> None:
+    """Remove all GPS EXIF tags from an image in place.
+        Reason is to avoid people stalking us from photo content."""
+
+    args = ['exiftool', '-gps*=', str(file)]
+    logger.debug(f'> {args}')
+    subprocess.run(args, check=True)
