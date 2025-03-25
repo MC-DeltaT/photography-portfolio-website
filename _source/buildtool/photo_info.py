@@ -6,7 +6,7 @@ import logging
 from .genre import PhotoGenre
 from .image import open_image_file, read_image_exif_metadata
 from .resource.photo import PhotoResourceRecord, PhotoMetadataFile
-from .types import ISO, Aperture, ExposureTime, FocalLength, PartialDate, PhotoUniqueId
+from .types import ISO, Aperture, ExposureTime, FocalLength, PartialDate, PhotoUniqueId, Size
 
 
 logger = logging.getLogger(__name__)
@@ -29,6 +29,7 @@ class PhotoInfo:
     exposure_time: ExposureTime | None
     iso: ISO | None
     genre: tuple[PhotoGenre, ...]
+    size_px: Size
 
 
 def create_photo_unique_id(name: str, date: PartialDate) -> PhotoUniqueId:
@@ -61,7 +62,8 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
 
     user_metadata = PhotoMetadataFile.from_file(resource.metadata_file_path)
 
-    image_metadata = read_image_exif_metadata(open_image_file(resource.image_file_path))
+    image = open_image_file(resource.image_file_path)
+    image_metadata = read_image_exif_metadata(image)
 
     file_extension = resource.image_file_path.suffix
     name = get_photo_name(resource.image_file_path)
@@ -73,6 +75,7 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
     aperture = user_metadata.aperture or image_metadata.aperture
     exposure_time = user_metadata.exposure_time or image_metadata.exposure_time
     iso = user_metadata.iso or image_metadata.iso
+    size_px = Size((image.width, image.height))
 
     return PhotoInfo(
         source_path=resource.image_file_path,
@@ -89,5 +92,6 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
         aperture=aperture,
         exposure_time=exposure_time,
         iso=iso,
-        genre=user_metadata.genre
+        genre=user_metadata.genre,
+        size_px=size_px
     )

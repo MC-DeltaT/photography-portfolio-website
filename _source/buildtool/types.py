@@ -75,3 +75,7 @@ ISO = Annotated[NewType('ISO', int), Gt(0)]
 
 # Use with custom numeric types to allow them to work with Pydantic.
 CoerceNumber = Annotated[N, pydantic.BeforeValidator(lambda v: v if isinstance(v, (int, float, complex, Decimal, str)) else float(v))]
+
+
+# (width, height)
+Size = NewType('Size', tuple[int, int])
