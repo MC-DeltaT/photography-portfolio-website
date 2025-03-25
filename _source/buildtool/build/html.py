@@ -176,7 +176,8 @@ def get_photo_render_context(photo: PhotoInfo) -> dict[str, Any]:
         'location': photo.location,
         'description': photo.description,
         'settings': make_photo_settings_list(photo),
-        'genre': photo.genre
+        'genre': photo.genre,
+        'page_url': get_single_photo_page_url(photo.unique_id)
     }
 
 

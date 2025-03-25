@@ -20,5 +20,6 @@
     {% endif %}
         {# TODO: these can be links to that genre's page #}
         <p class="photo_genre">{{ photo.genre|map(attribute='value')|map('capitalize')|join(' | ') }}</p>
+        <p class="photo_link"><a href="{{ photo.page_url }}">Link</a></p>
     </figcaption>
 </figure>
