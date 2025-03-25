@@ -10,7 +10,7 @@ import pydantic
 N = TypeVar('N')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True)
 class PartialDate:
     year: int | None
     month: int | None

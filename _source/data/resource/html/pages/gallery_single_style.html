@@ -1,0 +1,14 @@
+{# Shows photos for a single photo style #}
+
+{% extends 'fragments/base.html' %}
+
+{% block title %}Gallery - {{ style.name|capitalize }}{% endblock %}
+
+{% block content %}
+    <h2>Gallery - {{ style.name|capitalize }}</h2>
+    {% for photo in style.photos %}
+        {% include 'fragments/photo_with_info.html' %}
+    {% endfor %}
+{% endblock %}
+
+

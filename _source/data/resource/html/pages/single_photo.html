@@ -1,9 +1,9 @@
 {# Page that shows a single photo with all its information. #}
 
-{% extends 'base.html' %}
+{% extends 'fragments/base.html' %}
 
 {% block title %}Gallery - {{ photo_page_title }}{% endblock %}
 
 {% block content %}
-    {% include 'photo_with_info.html' %}
+    {% include 'fragments/photo_with_info.html' %}
 {% endblock %}

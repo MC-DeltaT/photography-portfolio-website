@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class PhotoGenre(Enum):
+class PhotoGenre(StrEnum):
     ABSTRACT = 'abstract'
     ASTROPHOTOGRAPHY = 'astrophotography'
     COSTUME = 'costume'

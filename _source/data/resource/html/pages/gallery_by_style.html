@@ -1,0 +1,13 @@
+{# Shows list of photo styles to explore #}
+
+{% extends 'fragments/base.html' %}
+
+{% block title %}Gallery - Styles{% endblock %}
+
+{% block content %}
+    <h2>Gallery - Styles</h2>
+    {% for style in styles %}
+        {# TODO: example photo next to each #}
+        <p><a href="{{ style.url }}">{{ style.name|capitalize }}</a></p>
+    {% endfor %}
+{% endblock %}

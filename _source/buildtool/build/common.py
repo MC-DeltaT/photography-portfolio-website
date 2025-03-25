@@ -1,10 +1,9 @@
-from collections.abc import Sequence
 from dataclasses import dataclass
 import logging
 from pathlib import Path
 import shutil
 
-from ..photo_info import PhotoInfo
+from ..photo_collection import PhotoCollection
 
 
 logger = logging.getLogger(__name__)
@@ -49,4 +48,4 @@ class BuildContext:
     data_path: Path
     resources_path: Path
     dry_run: bool
-    photos: Sequence[PhotoInfo]
+    photos: PhotoCollection

@@ -3,6 +3,7 @@ from collections.abc import Sequence
 import logging
 from pathlib import Path
 
+from ..photo_collection import PhotoCollection
 from ..photo_info import PhotoInfo, read_photo_info
 from ..resource.common import get_resources_path
 from ..resource.photo import find_photos, get_photo_resources_path
@@ -34,12 +35,14 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
     resources_path = get_resources_path(data_path)
 
     photo_resource_records = find_photos(get_photo_resources_path(resources_path))
-    photos = [read_photo_info(r) for r in photo_resource_records]
+    photo_infos = [read_photo_info(r) for r in photo_resource_records]
     # Sort by ID for stability and debuggability.
-    photos = sorted(photos, key=lambda p: p.unique_id)
-    verify_photo_unique_ids(photos)
+    photo_infos = sorted(photo_infos, key=lambda p: p.unique_id)
+    verify_photo_unique_ids(photo_infos)
 
-    build_context = BuildContext(build_dir, data_path, resources_path, dry_run, photos)
+    photo_collection = PhotoCollection(photo_infos)
+
+    build_context = BuildContext(build_dir, data_path, resources_path, dry_run, photo_collection)
 
     build_css(build_context)
     build_assets(build_context)
