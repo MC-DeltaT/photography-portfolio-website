@@ -32,9 +32,9 @@ class PhotoInfo:
 
 
 def create_photo_unique_id(name: str, date: PartialDate) -> PhotoUniqueId:
-    date_str = str(date)
+    date_str = date.to_str(separator='')
     if date_str:
-        s = f'{date}-{name}'
+        s = f'{date_str}-{name}'
     else:
         # Totally unknown date.
         # TODO: should we use some placeholder for the date?

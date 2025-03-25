@@ -47,18 +47,22 @@ class PartialDate:
     def from_date(cls, date: dt.date):
         return cls(year=date.year, month=date.month, day=date.day)
 
-    def __str__(self) -> str:
-        s = ''
+    def to_str(self, separator: str = '') -> str:
+        parts: list[str] = []
         if self.year is not None:
             assert 0 <= self.year <= 9999
-            s = str(self.year).zfill(4)
-        if self.month is not None:
-            assert 1 <= self.month <= 12
-            s += str(self.month).zfill(2)
-        if self.day is not None:
-            assert 1 <= self.day <= 31
-            s += str(self.day).zfill(2)
+            parts.append(str(self.year).zfill(4))
+            if self.month is not None:
+                assert 1 <= self.month <= 12
+                parts.append(str(self.month).zfill(2))
+                if self.day is not None:
+                    assert 1 <= self.day <= 31
+                    parts.append(str(self.day).zfill(2))
+        s = separator.join(parts)
         return s
+
+    def __bool__(self) -> bool:
+        return self.year is not None or self.month is not None or self.day is not None
 
 
 NonEmptyStr = Annotated[str, pydantic.StringConstraints(strict=True, min_length=1)]

@@ -172,6 +172,7 @@ def get_photo_render_context(photo: PhotoInfo) -> dict[str, Any]:
     return {
         'image_url': get_photo_asset_url(photo.unique_id, photo.file_extension),
         'title': photo.title,
+        'date': photo.date,
         'location': photo.location,
         'description': photo.description,
         'settings': make_photo_settings_list(photo),
