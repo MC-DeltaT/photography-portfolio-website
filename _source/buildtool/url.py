@@ -30,7 +30,7 @@ PHOTO_PAGE_URL = GALLERY_URL / 'photo'
 
 
 def get_gallery_style_page_url(style: str) -> URLPath:
-    return GALLERY_BY_STYLE_URL / f'{style}.html'
+    return GALLERY_BY_STYLE_URL / f'{style.lower()}.html'
 
 
 def get_single_photo_page_url(unique_id: PhotoUniqueId) -> URLPath:

@@ -17,7 +17,6 @@ class PhotoInfo:
     source_path: Path
     unique_id: PhotoUniqueId
     file_extension: str     # Includes the .
-    name: str
     date: PartialDate
     title: str | None
     description: str | None
@@ -44,7 +43,7 @@ def create_photo_unique_id(name: str, date: PartialDate) -> PhotoUniqueId:
 
 
 def get_photo_name(source_path: Path) -> str:
-    return source_path.name.split('.')[0]
+    return source_path.name.split('.')[0].lower()
 
 
 def resolve_photo_date(image_date: dt.date, user_date: PartialDate | None) -> PartialDate:
@@ -67,6 +66,7 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
     file_extension = resource.image_file_path.suffix
     name = get_photo_name(resource.image_file_path)
     date = resolve_photo_date(image_metadata.date_time_original, user_metadata.date)
+    unique_id = create_photo_unique_id(name, date)
     camera_model = user_metadata.camera_model or image_metadata.camera_model
     lens_model = user_metadata.lens_model or image_metadata.lens_model
     focal_length = user_metadata.focal_length or image_metadata.focal_length
@@ -76,9 +76,8 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
 
     return PhotoInfo(
         source_path=resource.image_file_path,
-        unique_id=create_photo_unique_id(name, date),
+        unique_id=unique_id,
         file_extension=file_extension,
-        name=name,
         date=date,
         title=user_metadata.title,
         description=user_metadata.description,
