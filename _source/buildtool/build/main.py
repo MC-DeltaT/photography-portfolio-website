@@ -36,8 +36,9 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
 
     photo_resource_records = find_photos(get_photo_resources_path(resources_path))
 
-    total_photo_size = sum(p.image_file_path.stat().st_size for p in photo_resource_records)
-    print(f'Average photo size: {int(total_photo_size / len(photo_resource_records) / 1000)} KB')
+    if photo_resource_records:
+        total_photo_size = sum(p.image_file_path.stat().st_size for p in photo_resource_records)
+        print(f'Average photo size: {int(total_photo_size / len(photo_resource_records) / 1000)} KB')
 
     photo_infos = [read_photo_info(r) for r in photo_resource_records]
     # Sort by ID for stability and debuggability.
