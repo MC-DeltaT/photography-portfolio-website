@@ -183,7 +183,7 @@ def get_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> dict[
     srcset = build_state.image_srcsets[photo.unique_id]
     return {
         'image_default_url': srcset.default.url,
-        'image_srcset_urls': [f'{s.url} {s.descriptor}' for s in srcset],
+        'image_srcset_urls': ', '.join(f'{s.url} {s.descriptor}' for s in srcset),
         'image_srcset_sizes': ', '.join(get_photo_srcset_sizes()),
         'title': photo.title,
         'date': photo.date,

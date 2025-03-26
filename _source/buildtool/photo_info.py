@@ -39,7 +39,7 @@ def create_photo_unique_id(name: str, date: PartialDate) -> PhotoUniqueID:
     name = remove_dashes(name)
     if not name:
         raise ValueError('Photo name must not be empty')
-    if name.isalnum() and name.isascii():
+    if not (name.isalnum() and name.isascii()):
         raise ValueError('Photo name must be alphanumeric')
     date_str = date.to_str(separator='')
     if date_str:

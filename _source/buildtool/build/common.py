@@ -41,7 +41,7 @@ class BuildDirectory:
         file_path = Path(file_path)
         abs_dir_path = self.prepare_directory(file_path.parent)
         abs_file_path = abs_dir_path / file_path.name
-        if abs_file_path.exists():
+        if not self.dry_run and abs_file_path.exists():
             raise RuntimeError('Attempting to build file that already exists, probably a mistake!')
         return abs_file_path
 

@@ -51,5 +51,6 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
         photo_collection,
         BuildState())
 
+    # Note: must build photo assets first because they generate the srcset state which is read later when building pages.
     build_all_assets(build_context)
     build_all_html(build_context)

@@ -69,5 +69,6 @@ def build_photo_assets(build_dir: BuildDirectory, photo: PhotoInfo, state: Build
 
 
 def build_all_photo_assets(context: BuildContext) -> None:
+    # TODO: parallelise this, it's very slow
     for photo in context.photos:
         build_photo_assets(context.build_dir, photo, context.state, dry_run=context.dry_run)
