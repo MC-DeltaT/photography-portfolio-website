@@ -1,6 +1,8 @@
 from ..common import BuildContext
-from .photo import build_photo_assets
+from .css import build_all_css_assets
+from .photo import build_all_photo_assets
 
 
-def build_assets(context: BuildContext) -> None:
-    build_photo_assets(context)
+def build_all_assets(context: BuildContext) -> None:
+    build_all_photo_assets(context)
+    build_all_css_assets(context)

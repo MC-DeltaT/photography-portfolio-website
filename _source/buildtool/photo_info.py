@@ -6,7 +6,8 @@ import logging
 from .genre import PhotoGenre
 from .image import open_image_file, read_image_exif_metadata
 from .resource.photo import PhotoResourceRecord, PhotoMetadataFile
-from .types import ISO, Aperture, ExposureTime, FocalLength, PartialDate, PhotoUniqueId, Size
+from .types import ISO, Aperture, ExposureTime, FocalLength, PartialDate, PhotoUniqueID, Size
+from .utility import remove_dashes
 
 
 logger = logging.getLogger(__name__)
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class PhotoInfo:
     source_path: Path
-    unique_id: PhotoUniqueId
+    unique_id: PhotoUniqueID
     file_extension: str     # Includes the .
     date: PartialDate
     title: str | None
@@ -32,7 +33,14 @@ class PhotoInfo:
     size_px: Size
 
 
-def create_photo_unique_id(name: str, date: PartialDate) -> PhotoUniqueId:
+def create_photo_unique_id(name: str, date: PartialDate) -> PhotoUniqueID:
+    # Only allow alphabetic and number characters to simplify and prevent messing with URL encoding.
+    # Allows dashes because they're common, but remove them.
+    name = remove_dashes(name)
+    if not name:
+        raise ValueError('Photo name must not be empty')
+    if name.isalnum() and name.isascii():
+        raise ValueError('Photo name must be alphanumeric')
     date_str = date.to_str(separator='')
     if date_str:
         s = f'{date_str}-{name}'
@@ -40,7 +48,7 @@ def create_photo_unique_id(name: str, date: PartialDate) -> PhotoUniqueId:
         # Totally unknown date.
         # TODO: should we use some placeholder for the date?
         s = name
-    return PhotoUniqueId(s)
+    return PhotoUniqueID(s)
 
 
 def get_photo_name(source_path: Path) -> str:
@@ -68,6 +76,8 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
     file_extension = resource.image_file_path.suffix
     name = get_photo_name(resource.image_file_path)
     date = resolve_photo_date(image_metadata.date_time_original, user_metadata.date)
+    if not date:
+        raise RuntimeError(f'Photo with unknown date: {resource}')
     unique_id = create_photo_unique_id(name, date)
     camera_model = user_metadata.camera_model or image_metadata.camera_model
     lens_model = user_metadata.lens_model or image_metadata.lens_model

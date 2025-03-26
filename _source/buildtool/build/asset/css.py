@@ -9,7 +9,7 @@ from ..common import BuildContext
 logger = logging.getLogger(__name__)
 
 
-def build_css(context: BuildContext) -> None:
+def build_all_css_assets(context: BuildContext) -> None:
     source_path = get_css_resources_path(context.resources_path)
     url = CSS_ASSETS_URL
     logger.info(f'Building CSS assets URL: {url}')

@@ -7,10 +7,9 @@ from ..photo_collection import PhotoCollection
 from ..photo_info import PhotoInfo, read_photo_info
 from ..resource.common import get_resources_path
 from ..resource.photo import find_photos, get_photo_resources_path
-from .asset.css import build_css
-from .asset import build_assets
-from .common import BuildContext, BuildDirectory
-from .html import build_html
+from .asset import build_all_assets
+from .common import BuildContext, BuildDirectory, BuildState
+from .html import build_all_html
 
 
 logger = logging.getLogger(__name__)
@@ -47,8 +46,10 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
 
     photo_collection = PhotoCollection(photo_infos)
 
-    build_context = BuildContext(build_dir, data_path, resources_path, dry_run, photo_collection)
+    build_context = BuildContext(
+        build_dir, data_path, resources_path, dry_run,
+        photo_collection,
+        BuildState())
 
-    build_css(build_context)
-    build_assets(build_context)
-    build_html(build_context)
+    build_all_assets(build_context)
+    build_all_html(build_context)

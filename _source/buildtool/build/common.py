@@ -1,9 +1,10 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import logging
 from pathlib import Path
 import shutil
 
 from ..photo_collection import PhotoCollection
+from ..types import ImageSrcSet, PhotoUniqueID
 
 
 logger = logging.getLogger(__name__)
@@ -39,7 +40,15 @@ class BuildDirectory:
 
         file_path = Path(file_path)
         abs_dir_path = self.prepare_directory(file_path.parent)
-        return abs_dir_path / file_path.name
+        abs_file_path = abs_dir_path / file_path.name
+        if abs_file_path.exists():
+            raise RuntimeError('Attempting to build file that already exists, probably a mistake!')
+        return abs_file_path
+
+
+@dataclass
+class BuildState:
+    image_srcsets: dict[PhotoUniqueID, ImageSrcSet] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -49,3 +58,4 @@ class BuildContext:
     resources_path: Path
     dry_run: bool
     photos: PhotoCollection
+    state: BuildState

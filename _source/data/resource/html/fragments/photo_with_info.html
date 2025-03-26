@@ -1,7 +1,10 @@
 {# Fragment containing a photo accompanied by all its information #}
 
 <figure>
-    <img class="photo_image" src="{{ photo.image_url }}"/>
+    <img class="photo_image"
+        src="{{ photo.image_default_url }}"
+        srcset="{{ photo.image_srcset_urls }}"
+        sizes="{{ photo.image_srcset_sizes }}"/>
     <figcaption>
     {% if photo.title %}
         <p class="photo_title">"{{ photo.title }}"</p>

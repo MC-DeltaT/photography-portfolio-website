@@ -1,6 +1,8 @@
+from collections.abc import Iterator
 from dataclasses import dataclass
 import datetime as dt
 from decimal import Decimal
+from pathlib import Path, PurePosixPath
 from typing import Annotated, NewType, TypeVar
 
 from annotated_types import Gt
@@ -8,6 +10,17 @@ import pydantic
 
 
 N = TypeVar('N')
+
+
+class URLPath(PurePosixPath):
+    def __init__(self, *args, **kwargs) -> None:    # type: ignore
+        super().__init__(*args, **kwargs)   # type: ignore
+        if not self.is_absolute():
+            raise ValueError('path must have a root')
+
+    @property
+    def fs_path(self) -> Path:
+        return Path(*self.parts[1:])
 
 
 @dataclass(frozen=True, order=True)
@@ -67,15 +80,39 @@ class PartialDate:
 
 NonEmptyStr = Annotated[str, pydantic.StringConstraints(strict=True, min_length=1)]
 
-PhotoUniqueId = NewType('PhotoUniqueId', str)
+PhotoUniqueID = NewType('PhotoUniqueID', str)
 FocalLength = Annotated[NewType('FocalLength', int), Gt(0)] # In millimetres
 Aperture = Annotated[NewType('Aperture', Decimal), Gt(0)]
 ExposureTime = Annotated[NewType('ExposureTime', Decimal), Gt(0)]
 ISO = Annotated[NewType('ISO', int), Gt(0)]
 
-# Use with custom numeric types to allow them to work with Pydantic.
 CoerceNumber = Annotated[N, pydantic.BeforeValidator(lambda v: v if isinstance(v, (int, float, complex, Decimal, str)) else float(v))]
+"""Use with custom numeric types to allow them to work with Pydantic."""
 
-
-# (width, height)
 Size = NewType('Size', tuple[int, int])
+"""(width, height)"""
+
+
+@dataclass(frozen=True)
+class ImageSrcSet:
+    @dataclass(frozen=True)
+    class Entry:
+        url: URLPath
+        descriptor: str
+
+    entries: tuple[Entry, ...]
+    default_index: int
+
+    def __post_init__(self) -> None:
+        if self.default_index >= len(self.entries):
+            raise ValueError('Invalid default_index')
+
+    @property
+    def default(self) -> Entry:
+        return self.entries[self.default_index]
+
+    def __iter__(self) -> Iterator[Entry]:
+        return iter(self.entries)
+
+    def __len__(self) -> int:
+        return len(self)

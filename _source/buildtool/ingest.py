@@ -32,6 +32,9 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
     for photo in photos:
         logger.info(f'Ingesting photo: {photo}')
 
+        # Store the photo in the resources directory in the same structure as it is in the ingest directory.
+        # It doesn't really matter what the structure is in the resources directory, other than filenames not conflicting.
+        # This way, we offload the issue of filename uniqueness to the user and simplify the code.
         assert photo.image_file_path.parent == photo.metadata_file_path.parent
         dest_dir = photo_resources_path / photo.image_file_path.parent.relative_to(ingest_path)
 

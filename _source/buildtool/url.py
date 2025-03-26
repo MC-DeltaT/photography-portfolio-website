@@ -1,17 +1,4 @@
-from pathlib import Path, PurePosixPath
-
-from .types import PhotoUniqueId
-
-
-class URLPath(PurePosixPath):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        if not self.is_absolute():
-            raise ValueError('path must have a root')
-
-    @property
-    def fs_path(self) -> Path:
-        return Path(*self.parts[1:])
+from .types import PhotoUniqueID, URLPath
 
 
 # TODO: remove .html, it's just for testing
@@ -33,7 +20,7 @@ def get_gallery_style_page_url(style: str) -> URLPath:
     return GALLERY_BY_STYLE_URL / f'{style.lower()}.html'
 
 
-def get_single_photo_page_url(unique_id: PhotoUniqueId) -> URLPath:
+def get_single_photo_page_url(unique_id: PhotoUniqueID) -> URLPath:
     return PHOTO_PAGE_URL / f'{unique_id}.html'
 
 
@@ -42,8 +29,10 @@ ASSETS_URL = URLPath('/assets')
 PHOTO_ASSETS_URL = ASSETS_URL / 'photo'
 
 
-def get_photo_asset_url(unique_id: PhotoUniqueId, file_extension: str) -> URLPath:
-    name_part = str(unique_id) + file_extension
+def get_photo_asset_url(unique_id: PhotoUniqueID, file_extension: str, srcset_tag: str | None) -> URLPath:
+    assert file_extension.startswith('.')
+    srcset_part = f'-{srcset_tag}' if srcset_tag else ''
+    name_part = f'{unique_id}{srcset_part}{file_extension}'
     return PHOTO_ASSETS_URL / name_part
 
 

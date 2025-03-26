@@ -10,8 +10,9 @@ import jinja2
 from ..genre import PhotoGenre
 from ..photo_info import PhotoInfo
 from ..resource.html import get_html_resources_path
-from ..url import ABOUT_PAGE_URL, GALLERY_BY_DATE_PAGE_URL, GALLERY_BY_STYLE_PAGE_URL, INDEX_PAGE_URL, URLPath, get_css_asset_url, get_gallery_style_page_url, get_photo_asset_url, get_single_photo_page_url
-from .common import BuildContext
+from ..types import URLPath
+from ..url import ABOUT_PAGE_URL, GALLERY_BY_DATE_PAGE_URL, GALLERY_BY_STYLE_PAGE_URL, INDEX_PAGE_URL, get_css_asset_url, get_gallery_style_page_url, get_single_photo_page_url
+from .common import BuildContext, BuildState
 
 
 logger = logging.getLogger(__name__)
@@ -75,7 +76,7 @@ def build_html_page(template_name: str, url: URLPath, context: HTMLBuildContext,
         dest_path.write_text(rendered_html, encoding='utf8')
 
 
-def build_html(context: BuildContext) -> None:
+def build_all_html(context: BuildContext) -> None:
     html_resources_path = get_html_resources_path(context.resources_path)
     jinja2_env = create_jinja2_environment(html_resources_path)
     context = HTMLBuildContext.new(context, jinja2_env)
@@ -103,7 +104,7 @@ def build_simple_pages(context: HTMLBuildContext) -> None:
 
 
 def build_gallery_by_style_page(context: HTMLBuildContext) -> None:
-    render_context = {
+    render_context: dict[str, Any] = {
         'styles': [
             {
                 'name': genre.value,
@@ -121,10 +122,10 @@ def build_gallery_single_style_pages(context: HTMLBuildContext) -> None:
 
 def build_gallery_single_style_page(genre: PhotoGenre, context: HTMLBuildContext) -> None:
     photos = context.photos.get_genre(genre)
-    render_context = {
+    render_context: dict[str, Any] = {
         'style': {
             'name': genre.value,
-            'photos': [get_photo_render_context(p) for p in photos]
+            'photos': [get_photo_render_context(p, context.state) for p in photos]
         }
     }
     build_html_page('pages/gallery_single_style.html', get_gallery_style_page_url(genre.value), context, render_context)
@@ -132,7 +133,7 @@ def build_gallery_single_style_page(genre: PhotoGenre, context: HTMLBuildContext
 
 def build_gallery_by_date_page(context: HTMLBuildContext) -> None:
     # TODO
-    render_context = {}
+    render_context: dict[str, Any] = {}
     build_html_page('pages/gallery_by_date.html', GALLERY_BY_DATE_PAGE_URL, context, render_context)
 
 
@@ -168,9 +169,22 @@ def make_photo_settings_list(photo: PhotoInfo) -> list[str]:
     return result
 
 
-def get_photo_render_context(photo: PhotoInfo) -> dict[str, Any]:
+def get_photo_srcset_sizes() -> list[str]:
+    # TODO: this could be more intelligent based on the real layout of the page
+    return [
+        '(max-width: 500px) 100vw',
+        '(max-width: 1000px) 80vw',
+        '(max-width: 2000px) 70vw',
+        '70vw'
+    ]
+
+
+def get_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> dict[str, Any]:
+    srcset = build_state.image_srcsets[photo.unique_id]
     return {
-        'image_url': get_photo_asset_url(photo.unique_id, photo.file_extension),
+        'image_default_url': srcset.default.url,
+        'image_srcset_urls': [f'{s.url} {s.descriptor}' for s in srcset],
+        'image_srcset_sizes': ', '.join(get_photo_srcset_sizes()),
         'title': photo.title,
         'date': photo.date,
         'location': photo.location,
@@ -185,7 +199,7 @@ def build_single_photo_page(photo: PhotoInfo, context: HTMLBuildContext) -> None
     url = get_single_photo_page_url(photo.unique_id)
     render_context = create_html_render_context({
         'photo_page_title': photo.title or photo.unique_id,
-        'photo': get_photo_render_context(photo)
+        'photo': get_photo_render_context(photo, context.state)
     })
     build_html_page('pages/single_photo.html', url, context, render_context)
 
