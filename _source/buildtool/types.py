@@ -2,6 +2,7 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 import datetime as dt
 from decimal import Decimal
+from enum import StrEnum
 from pathlib import Path, PurePosixPath
 from typing import Annotated, NewType, TypeVar
 
@@ -10,6 +11,22 @@ import pydantic
 
 
 N = TypeVar('N')
+
+
+class PhotoGenre(StrEnum):
+    ABSTRACT = 'abstract'
+    ASTROPHOTOGRAPHY = 'astrophotography'
+    COSTUME = 'costume'
+    EVENT = 'event'
+    LANDSCAPE = 'landscape'
+    MACRO = 'macro'
+    MONOCHROME = 'monochrome'
+    NATURE = 'nature'
+    PEOPLE = 'people'
+    PLANT = 'plant'
+    STILL_LIFE = 'still-life'
+    URBAN = 'urban'
+    WILDLIFE = 'wildlife'
 
 
 class URLPath(PurePosixPath):

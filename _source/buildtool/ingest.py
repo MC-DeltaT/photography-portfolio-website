@@ -3,9 +3,9 @@ import logging
 import tempfile
 import shutil
 
-from .image import strip_image_exif_gps
-from .resource.common import get_resources_path
-from .resource.photo import PhotoMetadataFile, find_photos, get_photo_resources_path
+from buildtool.image import strip_image_exif_gps
+from buildtool.resource.common import get_resources_path
+from buildtool.resource.photo import PhotoMetadataFile, find_photos, get_photo_resources_path
 
 
 logger = logging.getLogger(__name__)

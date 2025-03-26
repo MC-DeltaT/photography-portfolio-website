@@ -7,12 +7,11 @@ from typing import Any
 
 import jinja2
 
-from ..genre import PhotoGenre
-from ..photo_info import PhotoInfo
-from ..resource.html import get_html_resources_path
-from ..types import URLPath
-from ..url import ABOUT_PAGE_URL, GALLERY_BY_DATE_PAGE_URL, GALLERY_BY_STYLE_PAGE_URL, INDEX_PAGE_URL, get_css_asset_url, get_gallery_style_page_url, get_single_photo_page_url
-from .common import BuildContext, BuildState
+from buildtool.build.common import BuildContext, BuildState
+from buildtool.photo_info import PhotoInfo
+from buildtool.resource.html import get_html_resources_path
+from buildtool.types import URLPath, PhotoGenre
+from buildtool.url import ABOUT_PAGE_URL, GALLERY_BY_DATE_PAGE_URL, GALLERY_BY_STYLE_PAGE_URL, INDEX_PAGE_URL, get_css_asset_url, get_gallery_style_page_url, get_single_photo_page_url
 
 
 logger = logging.getLogger(__name__)

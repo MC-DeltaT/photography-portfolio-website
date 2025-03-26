@@ -9,7 +9,7 @@ from PIL import ExifTags
 from PIL.Image import Image, open as pil_image_open
 import pydantic
 
-from .types import Aperture, ExposureTime, FocalLength, ISO, CoerceNumber
+from buildtool.types import Aperture, ExposureTime, FocalLength, ISO, CoerceNumber
 
 
 logger = logging.getLogger(__name__)

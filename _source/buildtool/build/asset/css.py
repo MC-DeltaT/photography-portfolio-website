@@ -1,9 +1,9 @@
 import logging
 import shutil
 
-from ...resource.css import get_css_resources_path
-from ...url import CSS_ASSETS_URL
-from ..common import BuildContext
+from buildtool.build.common import BuildContext
+from buildtool.resource.css import get_css_resources_path
+from buildtool.url import ASSETS_CSS_URL
 
 
 logger = logging.getLogger(__name__)
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 def build_all_css_assets(context: BuildContext) -> None:
     source_path = get_css_resources_path(context.resources_path)
-    url = CSS_ASSETS_URL
+    url = ASSETS_CSS_URL
     logger.info(f'Building CSS assets URL: {url}')
     dest_path = context.build_dir.prepare_directory(url.fs_path)
     logger.debug(f'Copying CSS files: "{source_path}" -> "{dest_path}"')

@@ -1,11 +1,8 @@
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 
-from .types import PartialDate
-
-from .genre import PhotoGenre
-
-from .photo_info import PhotoInfo
+from buildtool.photo_info import PhotoInfo
+from buildtool.types import PartialDate, PhotoGenre
 
 
 @dataclass(frozen=True)

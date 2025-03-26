@@ -6,8 +6,7 @@ from typing import Annotated
 
 import pydantic
 
-from ..genre import PhotoGenre
-from ..types import Aperture, ExposureTime, FocalLength, ISO, NonEmptyStr, PartialDate
+from buildtool.types import Aperture, ExposureTime, FocalLength, ISO, NonEmptyStr, PartialDate, PhotoGenre
 
 
 logger = logging.getLogger(__name__)

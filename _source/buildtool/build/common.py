@@ -3,8 +3,8 @@ import logging
 from pathlib import Path
 import shutil
 
-from ..photo_collection import PhotoCollection
-from ..types import ImageSrcSet, PhotoUniqueID
+from buildtool.photo_collection import PhotoCollection
+from buildtool.types import ImageSrcSet, PhotoUniqueID, URLPath
 
 
 logger = logging.getLogger(__name__)
@@ -44,6 +44,15 @@ class BuildDirectory:
         if not self.dry_run and abs_file_path.exists():
             raise RuntimeError('Attempting to build file that already exists, probably a mistake!')
         return abs_file_path
+
+    def build_file(self, source_path: Path, url: URLPath) -> None:
+        """Build a file that's a simple copy."""
+
+        logger.info(f'Building URL: {url}')
+        dest_path = self.prepare_file(url.fs_path)
+        logger.debug(f'Copying file: "{source_path}" -> "{dest_path}"')
+        if not self.dry_run:
+            shutil.copy(source_path, dest_path)
 
 
 @dataclass

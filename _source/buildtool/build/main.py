@@ -3,13 +3,13 @@ from collections.abc import Sequence
 import logging
 from pathlib import Path
 
-from ..photo_collection import PhotoCollection
-from ..photo_info import PhotoInfo, read_photo_info
-from ..resource.common import get_resources_path
-from ..resource.photo import find_photos, get_photo_resources_path
-from .asset import build_all_assets
-from .common import BuildContext, BuildDirectory, BuildState
-from .html import build_all_html
+from buildtool.build.asset import build_all_assets
+from buildtool.build.common import BuildContext, BuildDirectory, BuildState
+from buildtool.build.html import build_all_html
+from buildtool.photo_collection import PhotoCollection
+from buildtool.photo_info import PhotoInfo, read_photo_info
+from buildtool.resource.common import get_resources_path
+from buildtool.resource.photo import find_photos, get_photo_resources_path
 
 
 logger = logging.getLogger(__name__)

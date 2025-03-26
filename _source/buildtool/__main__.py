@@ -2,8 +2,8 @@ import argparse
 import logging
 from pathlib import Path
 
-from .build.main import run_build
-from .ingest import run_ingest
+from buildtool.build.main import run_build
+from buildtool.ingest import run_ingest
 
 
 logger = logging.getLogger(__name__)
