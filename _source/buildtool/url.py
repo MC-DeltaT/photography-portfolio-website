@@ -24,7 +24,7 @@ def get_single_photo_page_url(unique_id: PhotoUniqueID) -> URLPath:
     return GALLERY_PHOTO_URL / f'{unique_id}.html'
 
 
-ASSETS_URL = URLPath('/assets')
+ASSETS_URL = URLPath('/asset')
 ASSETS_IMAGE_URL = ASSETS_URL / 'image'
 ASSETS_IMAGE_GENERAL_URL = ASSETS_IMAGE_URL / 'general'
 ASSETS_IMAGE_PHOTO_URL = ASSETS_IMAGE_URL / 'photo'
