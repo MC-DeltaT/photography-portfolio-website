@@ -1,5 +1,6 @@
 import logging
 import shutil
+from multiprocessing.pool import ThreadPool
 
 from ...image import reencode_image
 from ...types import ImageSrcSet
@@ -69,6 +70,8 @@ def build_photo_assets(build_dir: BuildDirectory, photo: PhotoInfo, state: Build
 
 
 def build_all_photo_assets(context: BuildContext) -> None:
-    # TODO: parallelise this, it's very slow
-    for photo in context.photos:
-        build_photo_assets(context.build_dir, photo, context.state, dry_run=context.dry_run)
+    # Parallelising this as reencoding images is quite slow.
+    with ThreadPool() as pool:
+        pool.map(
+            lambda photo: build_photo_assets(context.build_dir, photo, context.state, dry_run=context.dry_run),
+            context.photos)
