@@ -1,16 +1,16 @@
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, fields
 import datetime as dt
 from pathlib import Path
 import logging
-from typing import Any
+from typing import Any, Callable
 
 import jinja2
 
 from buildtool.build.common import BuildContext, BuildState
 from buildtool.photo_info import PhotoInfo
 from buildtool.resource.html import get_html_resources_path
-from buildtool.types import URLPath, PhotoGenre
+from buildtool.types import ImageSrcSet, URLPath, PhotoGenre
 from buildtool.url import ABOUT_PAGE_URL, GALLERY_BY_DATE_PAGE_URL, GALLERY_BY_STYLE_PAGE_URL, INDEX_PAGE_URL, get_css_asset_url, get_gallery_style_page_url, get_single_photo_page_url
 
 
@@ -45,7 +45,10 @@ def get_copyright_date_tag() -> str:
         return f'{begin}-{end}'
 
 
-def get_common_html_render_context() -> dict[str, Any]:
+RenderContext = dict[str, Any]
+
+
+def get_common_html_render_context(context: HTMLBuildContext) -> RenderContext:
     return {
         'urls': {
             'main_stylesheet': get_css_asset_url('style.css'),
@@ -53,21 +56,25 @@ def get_common_html_render_context() -> dict[str, Any]:
             'gallery_by_style': GALLERY_BY_STYLE_PAGE_URL,
             'gallery_by_date': GALLERY_BY_DATE_PAGE_URL
         },
-        'copyright_date': get_copyright_date_tag()
+        'copyright_date': get_copyright_date_tag(),
+        'images': {
+            image_id: create_image_render_context(srcset)
+            for image_id, srcset in context.state.image_srcsets.items()
+        }
     }
 
 
-def create_html_render_context(extra: Mapping[str, Any]) -> dict[str, Any]:
-    context = get_common_html_render_context()
-    context.update(extra)
-    return context
+def create_html_render_context(context: HTMLBuildContext, extra: Mapping[str, Any]) -> RenderContext:
+    render_context = get_common_html_render_context(context)
+    render_context.update(extra)
+    return render_context
 
 
 def build_html_page(template_name: str, url: URLPath, context: HTMLBuildContext,
         render_context: Mapping[str, Any] = {}) -> None:
     logger.info(f'Building HTML page URL: {url}')
     template = context.jinja2_env.get_template(template_name)
-    render_context = create_html_render_context(render_context)
+    render_context = create_html_render_context(context, render_context)
     rendered_html = template.render(render_context)
     dest_path = context.build_dir.prepare_file(url.fs_path)
     logger.debug(f'Writing HTML: "{dest_path}"')
@@ -87,23 +94,31 @@ def build_all_html(context: BuildContext) -> None:
     build_single_photo_pages(context)
 
 
+@dataclass(frozen=True)
+class SimplePageRenderSpec:
+    template: str
+    url: URLPath
+    context: Callable[[BuildContext], RenderContext] = lambda c: {}
+
+
 # Pages that don't require any special handling and can be rendered systematically.
 SIMPLE_PAGES = [
-    ('pages/index.html', INDEX_PAGE_URL),
-    ('pages/about.html', ABOUT_PAGE_URL)
+    SimplePageRenderSpec('pages/index.html', INDEX_PAGE_URL),
+    SimplePageRenderSpec('pages/about.html', ABOUT_PAGE_URL)
 ]
 
 
 def build_simple_pages(context: HTMLBuildContext) -> None:
-    for template_name, url in SIMPLE_PAGES:
-        build_html_page(template_name, url, context)
+    for spec in SIMPLE_PAGES:
+        render_context = spec.context(context)
+        build_html_page(spec.template, spec.url, context, render_context)
 
 
 # Note we call genres "styles" for the viewer because it sounds cooler.
 
 
 def build_gallery_by_style_page(context: HTMLBuildContext) -> None:
-    render_context: dict[str, Any] = {
+    render_context: RenderContext = {
         'styles': [
             {
                 'name': genre.value,
@@ -121,10 +136,10 @@ def build_gallery_single_style_pages(context: HTMLBuildContext) -> None:
 
 def build_gallery_single_style_page(genre: PhotoGenre, context: HTMLBuildContext) -> None:
     photos = context.photos.get_genre(genre)
-    render_context: dict[str, Any] = {
+    render_context: RenderContext = {
         'style': {
             'name': genre.value,
-            'photos': [get_photo_render_context(p, context.state) for p in photos]
+            'photos': [create_photo_render_context(p, context.state) for p in photos]
         }
     }
     build_html_page('pages/gallery_single_style.html', get_gallery_style_page_url(genre.value), context, render_context)
@@ -132,7 +147,7 @@ def build_gallery_single_style_page(genre: PhotoGenre, context: HTMLBuildContext
 
 def build_gallery_by_date_page(context: HTMLBuildContext) -> None:
     # TODO
-    render_context: dict[str, Any] = {}
+    render_context: RenderContext = {}
     build_html_page('pages/gallery_by_date.html', GALLERY_BY_DATE_PAGE_URL, context, render_context)
 
 
@@ -143,7 +158,7 @@ def replace_f_number_with_symbol(s: str) -> str:
     return s.replace('f/', f'{F_NUMBER_SYMBOL}/')
 
 
-def make_photo_settings_list(photo: PhotoInfo) -> list[str]:
+def create_photo_settings_list(photo: PhotoInfo) -> list[str]:
     result: list[str] = []
     if photo.camera_model:
         result.append(photo.camera_model)
@@ -178,27 +193,34 @@ def get_photo_srcset_sizes() -> list[str]:
     ]
 
 
-def get_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> dict[str, Any]:
-    srcset = build_state.image_srcsets[photo.unique_id]
+def create_image_render_context(srcset: ImageSrcSet, sizes: Sequence[str] = ()) -> RenderContext:
+    render_context: RenderContext = {
+        'default_url': srcset.default.url,
+        'srcset_urls': ', '.join(f'{s.url} {s.descriptor}' for s in srcset),
+    }
+    if sizes:
+        render_context['srcset_sizes'] = ', '.join(sizes)
+    return render_context
+
+
+def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> RenderContext:
     return {
-        'image_default_url': srcset.default.url,
-        'image_srcset_urls': ', '.join(f'{s.url} {s.descriptor}' for s in srcset),
-        'image_srcset_sizes': ', '.join(get_photo_srcset_sizes()),
+        'image': create_image_render_context(build_state.photo_srcsets[photo.id], get_photo_srcset_sizes()),
         'title': photo.title,
         'date': photo.date,
         'location': photo.location,
         'description': photo.description,
-        'settings': make_photo_settings_list(photo),
+        'settings': create_photo_settings_list(photo),
         'genre': photo.genre,
-        'page_url': get_single_photo_page_url(photo.unique_id)
+        'page_url': get_single_photo_page_url(photo.id)
     }
 
 
 def build_single_photo_page(photo: PhotoInfo, context: HTMLBuildContext) -> None:
-    url = get_single_photo_page_url(photo.unique_id)
-    render_context = create_html_render_context({
-        'photo_page_title': photo.title or photo.unique_id,
-        'photo': get_photo_render_context(photo, context.state)
+    url = get_single_photo_page_url(photo.id)
+    render_context = create_html_render_context(context, {
+        'photo_page_title': photo.title or photo,
+        'photo': create_photo_render_context(photo, context.state)
     })
     build_html_page('pages/single_photo.html', url, context, render_context)
 

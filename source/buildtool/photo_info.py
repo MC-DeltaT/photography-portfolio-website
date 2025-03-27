@@ -5,7 +5,7 @@ import logging
 
 from buildtool.image import open_image_file, read_image_exif_metadata
 from buildtool.resource.photo import PhotoResourceRecord, PhotoMetadataFile
-from buildtool.types import ISO, Aperture, ExposureTime, FocalLength, PartialDate, PhotoGenre, PhotoUniqueID, Size
+from buildtool.types import ISO, Aperture, ExposureTime, FocalLength, PartialDate, PhotoGenre, PhotoID, Size
 from buildtool.utility import remove_dashes
 
 
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class PhotoInfo:
     source_path: Path
-    unique_id: PhotoUniqueID
+    id: PhotoID
     file_extension: str     # Includes the .
     date: PartialDate
     title: str | None
@@ -32,7 +32,7 @@ class PhotoInfo:
     size_px: Size
 
 
-def create_photo_unique_id(name: str, date: PartialDate) -> PhotoUniqueID:
+def create_photo_id(name: str, date: PartialDate) -> PhotoID:
     # Only allow alphabetic and number characters to simplify and prevent messing with URL encoding.
     # Allows dashes because they're common, but remove them.
     name = remove_dashes(name)
@@ -47,7 +47,7 @@ def create_photo_unique_id(name: str, date: PartialDate) -> PhotoUniqueID:
         # Totally unknown date.
         # TODO: should we use some placeholder for the date?
         s = name
-    return PhotoUniqueID(s)
+    return PhotoID(s)
 
 
 def get_photo_name(source_path: Path) -> str:
@@ -72,12 +72,13 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
     image = open_image_file(resource.image_file_path)
     image_metadata = read_image_exif_metadata(image)
 
-    file_extension = resource.image_file_path.suffix
+    # Normalise to lowercase so file names and URLs are consistent.
+    file_extension = resource.image_file_path.suffix.lower()
     name = get_photo_name(resource.image_file_path)
     date = resolve_photo_date(image_metadata.date_time_original, user_metadata.date)
     if not date:
         raise RuntimeError(f'Photo with unknown date: {resource}')
-    unique_id = create_photo_unique_id(name, date)
+    id_ = create_photo_id(name, date)
     camera_model = user_metadata.camera_model or image_metadata.camera_model
     lens_model = user_metadata.lens_model or image_metadata.lens_model
     focal_length = user_metadata.focal_length or image_metadata.focal_length
@@ -88,7 +89,7 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
 
     return PhotoInfo(
         source_path=resource.image_file_path,
-        unique_id=unique_id,
+        id=id_,
         file_extension=file_extension,
         date=date,
         title=user_metadata.title,

@@ -6,6 +6,7 @@ from typing import Annotated
 
 import pydantic
 
+from buildtool.resource.image import SUPPORTED_IMAGE_EXTENSIONS
 from buildtool.types import Aperture, ExposureTime, FocalLength, ISO, NonEmptyStr, PartialDate, PhotoGenre
 
 
@@ -14,13 +15,6 @@ logger = logging.getLogger(__name__)
 
 def get_photo_resources_path(resources_path: Path) -> Path:
     return resources_path / 'photo'
-
-
-SUPPORTED_IMAGE_EXTENSIONS = (
-    '.jpeg',
-    '.jpg',
-    '.png'
-)
 
 
 @dataclass(frozen=True)

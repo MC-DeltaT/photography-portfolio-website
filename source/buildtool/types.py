@@ -97,7 +97,15 @@ class PartialDate:
 
 NonEmptyStr = Annotated[str, pydantic.StringConstraints(strict=True, min_length=1)]
 
-PhotoUniqueID = NewType('PhotoUniqueID', str)
+
+# TODO: needed?
+@dataclass(frozen=True, order=True)
+class ImageAssetID:
+    prefix: str
+    id: str
+
+
+PhotoID = NewType('PhotoID', str)
 FocalLength = Annotated[NewType('FocalLength', int), Gt(0)] # In millimetres
 Aperture = Annotated[NewType('Aperture', Decimal), Gt(0)]
 ExposureTime = Annotated[NewType('ExposureTime', Decimal), Gt(0)]

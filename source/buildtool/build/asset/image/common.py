@@ -1,10 +1,9 @@
-from collections.abc import Sequence
 from dataclasses import dataclass
 import logging
 from pathlib import Path
 
 from buildtool.build.common import BuildDirectory
-from buildtool.image import reencode_image
+from buildtool.image import open_image_file, reencode_image
 from buildtool.types import ImageSrcSet, Size, URLPath
 from buildtool.url import create_image_srcset_url
 
@@ -18,10 +17,23 @@ class ImageSrcSetSpec:
     quality: int
 
 
-def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image_size: Size,
-        srcset_spec: Sequence[ImageSrcSetSpec], base_url: URLPath) -> list[ImageSrcSet.Entry]:
+IMAGE_SRCSET_SPEC = (
+    ImageSrcSetSpec(1500, 85),
+    ImageSrcSetSpec(2000, 85),
+    ImageSrcSetSpec(1000, 80),
+    ImageSrcSetSpec(500, 75),
+)
+"""In order of priority, highest to lowest."""
+
+
+def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, base_url: URLPath,
+        image_size: Size | None = None) -> list[ImageSrcSet.Entry]:
+    if image_size is None:
+        image = open_image_file(image_path)
+        image_size = Size((image.width, image.height))
+
     srcset_entries: list[ImageSrcSet.Entry] = []
-    for spec in srcset_spec:
+    for spec in IMAGE_SRCSET_SPEC:
         # Only need to do anything if the new size is smaller than the original image.
         # Upsampling is pointless, only wastes space.
         if spec.max_dimension <= max(image_size):

@@ -2,9 +2,9 @@
 
 <figure>
     <img class="photo_image"
-        src="{{ photo.image_default_url }}"
-        srcset="{{ photo.image_srcset_urls }}"
-        sizes="{{ photo.image_srcset_sizes }}"/>
+        src="{{ photo.image.default_url }}"
+        srcset="{{ photo.image.srcset_urls }}"
+        sizes="{{ photo.image.srcset_sizes }}"/>
     <figcaption>
     {% if photo.title %}
         <p class="photo_title">"{{ photo.title }}"</p>

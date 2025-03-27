@@ -1,4 +1,4 @@
-from buildtool.types import PhotoUniqueID, URLPath
+from buildtool.types import PhotoID, URLPath
 
 
 # TODO: remove .html, it's just for testing
@@ -20,8 +20,8 @@ def get_gallery_style_page_url(style: str) -> URLPath:
     return GALLERY_BY_STYLE_URL / f'{style.lower()}.html'
 
 
-def get_single_photo_page_url(unique_id: PhotoUniqueID) -> URLPath:
-    return GALLERY_PHOTO_URL / f'{unique_id}.html'
+def get_single_photo_page_url(photo_id: PhotoID) -> URLPath:
+    return GALLERY_PHOTO_URL / f'{photo_id}.html'
 
 
 ASSETS_URL = URLPath('/asset')
@@ -44,11 +44,11 @@ def create_image_srcset_url(base_url: URLPath, srcset_tag: str | None) -> URLPat
         return url
 
 
-def get_photo_asset_base_url(unique_id: PhotoUniqueID, file_extension: str) -> URLPath:
+def get_photo_asset_base_url(photo_id: PhotoID, file_extension: str) -> URLPath:
     """URL for the original image. Can be modified further by create_image_srcset_url() to create a srcset."""
 
     assert file_extension.startswith('.')
-    name_part = f'{unique_id}{file_extension}'
+    name_part = f'{photo_id}{file_extension}'
     return ASSETS_IMAGE_PHOTO_URL / name_part
 
 

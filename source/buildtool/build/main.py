@@ -15,8 +15,8 @@ from buildtool.resource.photo import find_photos, get_photo_resources_path
 logger = logging.getLogger(__name__)
 
 
-def verify_photo_unique_ids(photo_infos: Sequence[PhotoInfo]) -> None:
-    id_counts = Counter(p.unique_id for p in photo_infos)
+def verify_photo_ids(photo_infos: Sequence[PhotoInfo]) -> None:
+    id_counts = Counter(p for p in photo_infos)
     duplicated = [i for i, count in id_counts.items() if count > 1]
     if duplicated:
         # Unlikely to occur so it's fine to force the user to fix it manually.
@@ -37,8 +37,8 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
 
     photo_infos = [read_photo_info(r) for r in photo_resource_records]
     # Sort by ID for stability and debuggability.
-    photo_infos = sorted(photo_infos, key=lambda p: p.unique_id)
-    verify_photo_unique_ids(photo_infos)
+    photo_infos = sorted(photo_infos, key=lambda p: p.id)
+    verify_photo_ids(photo_infos)
 
     photo_collection = PhotoCollection(photo_infos)
 
