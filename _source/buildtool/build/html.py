@@ -76,10 +76,10 @@ def build_html_page(template_name: str, url: URLPath, context: HTMLBuildContext,
 
 
 def build_all_html(context: BuildContext) -> None:
+    logger.info('Building HTML')
     html_resources_path = get_html_resources_path(context.resources_path)
     jinja2_env = create_jinja2_environment(html_resources_path)
     context = HTMLBuildContext.new(context, jinja2_env)
-
     build_simple_pages(context)
     build_gallery_by_style_page(context)
     build_gallery_by_date_page(context)

@@ -40,6 +40,7 @@ def build_photo_assets(build_dir: BuildDirectory, photo: PhotoInfo, state: Build
 
 
 def build_all_photo_assets(context: BuildContext) -> None:
+    logger.info('Building photo assets')
     # Parallelising this as reencoding images is quite slow.
     with ThreadPool() as pool:
         pool.map(
