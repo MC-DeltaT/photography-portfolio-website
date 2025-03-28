@@ -1,6 +1,10 @@
 from dataclasses import dataclass
+from functools import partial
 import logging
+from multiprocessing.pool import ThreadPool
+from operator import call
 from pathlib import Path, PurePosixPath
+from typing import Callable
 
 from buildtool.build.common import BuildContext, BuildDirectory, BuildState
 from buildtool.image import open_image_file, reencode_image
@@ -15,24 +19,27 @@ logger = logging.getLogger(__name__)
 def build_all_image_assets(context: BuildContext) -> None:
     logger.info('Building image assets')
 
-    # TODO: parallelise this
+    build_operations: list[Callable[[], None]] = []
 
     for full_path, relative_path in get_image_resources(context.resources_path):
         image_id = get_image_id(relative_path)
         # Note we don't build the original image as that won't be needed with srcsets.
         # One of the srcset resized images will be picked as the default.
-        build_image_srcset_assets(
-            context.build_dir, full_path, image_id, get_image_base_url(image_id), context.state)
+        build_operations.append(partial(build_image_srcset_assets,
+            context.build_dir, full_path, image_id, get_image_base_url(image_id), context.state))
 
     for photo in context.photos:
         image_id = get_photo_image_id(photo.id)
         context.state.photo_id_to_image_id[photo.id] = image_id
         # We do build the original here because it will be available for download on the site.
-        build_image_srcset_assets(
+        build_operations.append(partial(build_image_srcset_assets,
             context.build_dir, photo.source_path,
             image_id,
             get_image_base_url(image_id), context.state,
-            build_original=True, image_size=photo.size_px)
+            build_original=True, image_size=photo.size_px))
+
+    with ThreadPool() as pool:
+        pool.map(call, build_operations)
 
 
 def get_image_id(relative_path: Path) -> ImageID:
