@@ -32,7 +32,7 @@ class PhotoInfo:
     size_px: Size
 
 
-def create_photo_id(name: str, date: PartialDate) -> PhotoID:
+def create_photo_id(name: str, date: PartialDate, file_extension: str) -> PhotoID:
     # Only allow alphabetic and number characters to simplify and prevent messing with URL encoding.
     # Allows dashes because they're common, but remove them.
     name = remove_dashes(name)
@@ -47,6 +47,8 @@ def create_photo_id(name: str, date: PartialDate) -> PhotoID:
         # Totally unknown date.
         # TODO: should we use some placeholder for the date?
         s = name
+    assert file_extension.startswith('.')
+    s += file_extension
     return PhotoID(s)
 
 
@@ -78,7 +80,7 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
     date = resolve_photo_date(image_metadata.date_time_original, user_metadata.date)
     if not date:
         raise RuntimeError(f'Photo with unknown date: {resource}')
-    id_ = create_photo_id(name, date)
+    id_ = create_photo_id(name, date, file_extension)
     camera_model = user_metadata.camera_model or image_metadata.camera_model
     lens_model = user_metadata.lens_model or image_metadata.lens_model
     focal_length = user_metadata.focal_length or image_metadata.focal_length

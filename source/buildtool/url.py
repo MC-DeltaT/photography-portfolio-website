@@ -1,5 +1,6 @@
-from pathlib import Path
-from buildtool.types import ImageBaseURL, PhotoID, URLPath
+from pathlib import PurePosixPath
+
+from buildtool.types import ImageID, PhotoID, URLPath
 
 
 # TODO: remove .html, it's just for testing
@@ -22,41 +23,34 @@ def get_gallery_style_page_url(style: str) -> URLPath:
 
 
 def get_single_photo_page_url(photo_id: PhotoID) -> URLPath:
-    return GALLERY_PHOTO_URL / f'{photo_id}.html'
+    name_part, _ = photo_id.split('.')
+    return GALLERY_PHOTO_URL / f'{name_part}.html'
 
 
 ASSETS_URL = URLPath('/asset')
 ASSETS_IMAGE_URL = ASSETS_URL / 'image'
-ASSETS_IMAGE_PHOTO_URL = ASSETS_IMAGE_URL / 'photo'
+PHOTO_IMAGE_DIR = 'photo'
 
 
-def create_image_base_url(relative_path: Path) -> ImageBaseURL:
-    if relative_path.parts[0] == 'photo':
-        # All images share the same parent directory, but `photo` is reserved for photos.
-        raise RuntimeError('photo image asset directory is reserved for photos')
-    return ImageBaseURL(ASSETS_IMAGE_URL / relative_path)
+def get_image_base_url(image_id: ImageID) -> URLPath:
+    relative_path = PurePosixPath(image_id)
+    assert not relative_path.is_absolute()
+    return ASSETS_IMAGE_URL / relative_path
 
 
-def create_image_srcset_url(base_url: URLPath, srcset_tag: str | None) -> URLPath:
+def get_image_srcset_url(base_url: URLPath, srcset_tag: str | None) -> URLPath:
     """Takes the URL for the original image and creates a URL for a srcset entry."""
 
     if srcset_tag is None:
         return base_url
     else:
+        assert srcset_tag.isalnum()
         # Add the srcset tag to the end of the name
         parts = base_url.name.split('.')
         parts[0] += f'-{srcset_tag}'
         name = '.'.join(parts)
         url = base_url.with_name(name)
         return url
-
-
-def create_photo_base_url(photo_id: PhotoID, file_extension: str) -> ImageBaseURL:
-    """URL for the original image. Can be modified further by create_image_srcset_url() to create a srcset."""
-
-    assert file_extension.startswith('.')
-    name_part = f'{photo_id}{file_extension}'
-    return ImageBaseURL(ASSETS_IMAGE_PHOTO_URL / name_part)
 
 
 ASSETS_CSS_URL = ASSETS_URL / 'css'

@@ -11,7 +11,7 @@ from buildtool.build.common import BuildContext, BuildState
 from buildtool.photo_info import PhotoInfo
 from buildtool.resource.html import get_html_resources_path
 from buildtool.types import ImageSrcSet, URLPath, PhotoGenre
-from buildtool.url import ABOUT_PAGE_URL, ASSETS_CSS_URL, GALLERY_BY_DATE_PAGE_URL, GALLERY_BY_STYLE_PAGE_URL, INDEX_PAGE_URL, create_photo_base_url, get_gallery_style_page_url, get_single_photo_page_url
+from buildtool.url import ABOUT_PAGE_URL, ASSETS_CSS_URL, GALLERY_BY_DATE_PAGE_URL, GALLERY_BY_STYLE_PAGE_URL, INDEX_PAGE_URL, get_gallery_style_page_url, get_single_photo_page_url
 
 
 logger = logging.getLogger(__name__)
@@ -210,7 +210,7 @@ def create_image_render_context(srcset: ImageSrcSet, sizes: Sequence[str] = ()) 
 def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> RenderContext:
     return {
         'image': create_image_render_context(
-            build_state.image_srcsets[create_photo_base_url(photo.id, photo.file_extension)], get_photo_srcset_sizes()),
+            build_state.image_srcsets[build_state.photo_id_to_image_id[photo.id]], get_photo_srcset_sizes()),
         'title': photo.title,
         'date': photo.date,
         'location': photo.location,

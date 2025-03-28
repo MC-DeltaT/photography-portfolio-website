@@ -98,9 +98,17 @@ class PartialDate:
 NonEmptyStr = Annotated[str, pydantic.StringConstraints(strict=True, min_length=1)]
 
 PhotoID = NewType('PhotoID', str)
-FocalLength = Annotated[NewType('FocalLength', int), Gt(0)] # In millimetres
+"""Uniquely identifies a photo within the set of all photos.
+    Includes the file extension.
+    Separate from ImageID."""
+
+FocalLength = Annotated[NewType('FocalLength', int), Gt(0)]
+"""In millimetres"""
+
 Aperture = Annotated[NewType('Aperture', Decimal), Gt(0)]
+
 ExposureTime = Annotated[NewType('ExposureTime', Decimal), Gt(0)]
+
 ISO = Annotated[NewType('ISO', int), Gt(0)]
 
 CoerceNumber = Annotated[N, pydantic.BeforeValidator(lambda v: v if isinstance(v, (int, float, complex, Decimal, str)) else float(v))]
@@ -109,9 +117,8 @@ CoerceNumber = Annotated[N, pydantic.BeforeValidator(lambda v: v if isinstance(v
 Size = NewType('Size', tuple[int, int])
 """(width, height)"""
 
-
-ImageBaseURL = NewType('ImageBaseURL', URLPath)
-"""The main identifier for an image asset, from which the image srcset is built."""
+ImageID = NewType('ImageID', str)
+"""Path to the image relative to the image asset directory. E.g. photo/xyz.jpg"""
 
 
 @dataclass(frozen=True)
