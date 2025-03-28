@@ -25,6 +25,8 @@ def main() -> None:
 
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
+        # PIL spams debug logs we don't need
+        logging.getLogger('PIL').setLevel(logging.INFO)
         logger.info('DRY RUN - won\'t write output')
     
     run_ingest(args.ingest, args.data, dry_run=args.dry_run)

@@ -2,13 +2,33 @@ from dataclasses import dataclass
 import logging
 from pathlib import Path
 
-from buildtool.build.common import BuildDirectory
+from buildtool.build.common import BuildContext, BuildDirectory, BuildState
 from buildtool.image import open_image_file, reencode_image
-from buildtool.types import ImageSrcSet, Size, URLPath
-from buildtool.url import create_image_srcset_url
+from buildtool.resource.image import get_image_resources
+from buildtool.types import ImageBaseURL, ImageSrcSet, Size
+from buildtool.url import create_image_base_url, create_image_srcset_url, create_photo_base_url
 
 
 logger = logging.getLogger(__name__)
+
+
+def build_all_image_assets(context: BuildContext) -> None:
+    logger.info('Building image assets')
+
+    # TODO: parallelise this
+
+    for full_path, relative_path in get_image_resources(context.resources_path):
+        # Note we don't build the original image as that won't be needed with srcsets.
+        # One of the srcset resized images will be picked as the default.
+        build_image_srcset_assets(
+            context.build_dir, full_path, create_image_base_url(relative_path), context.state)
+
+    for photo in context.photos:
+        # We do build the original here because it will be available for download on the site.
+        build_image_srcset_assets(
+            context.build_dir, photo.source_path,
+            create_photo_base_url(photo.id, photo.file_extension), context.state,
+            build_original=True, image_size=photo.size_px)
 
 
 @dataclass(frozen=True)
@@ -26,8 +46,11 @@ IMAGE_SRCSET_SPEC = (
 """In order of priority, highest to lowest."""
 
 
-def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, base_url: URLPath,
-        image_size: Size | None = None) -> list[ImageSrcSet.Entry]:
+def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, base_url: ImageBaseURL, state: BuildState,
+        build_original: bool = False, image_size: Size | None = None) -> None:
+    if build_original:
+        build_dir.build_file(image_path, base_url)
+    
     if image_size is None:
         image = open_image_file(image_path)
         image_size = Size((image.width, image.height))
@@ -58,4 +81,9 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, base_
     if not srcset_entries:
         raise RuntimeError('Empty image srcset')
 
-    return srcset_entries
+    # Save the resulting srcset assets for later when embedding URLs in pages,
+    # since other it's not easy to know what image sizes we computed here.
+    if base_url in state.image_srcsets:
+        # Probably a bug if we're overwriting.
+        raise RuntimeError(f'Duplicate image srcset: {base_url}')
+    state.image_srcsets[base_url] = ImageSrcSet(tuple(srcset_entries), default_index=0)

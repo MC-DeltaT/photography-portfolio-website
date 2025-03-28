@@ -11,7 +11,7 @@ from buildtool.build.common import BuildContext, BuildState
 from buildtool.photo_info import PhotoInfo
 from buildtool.resource.html import get_html_resources_path
 from buildtool.types import ImageSrcSet, URLPath, PhotoGenre
-from buildtool.url import ABOUT_PAGE_URL, GALLERY_BY_DATE_PAGE_URL, GALLERY_BY_STYLE_PAGE_URL, INDEX_PAGE_URL, get_css_asset_url, get_gallery_style_page_url, get_single_photo_page_url
+from buildtool.url import ABOUT_PAGE_URL, ASSETS_CSS_URL, GALLERY_BY_DATE_PAGE_URL, GALLERY_BY_STYLE_PAGE_URL, INDEX_PAGE_URL, create_photo_base_url, get_gallery_style_page_url, get_single_photo_page_url
 
 
 logger = logging.getLogger(__name__)
@@ -50,14 +50,17 @@ RenderContext = dict[str, Any]
 
 def get_common_html_render_context(context: HTMLBuildContext) -> RenderContext:
     return {
-        'urls': {
-            'main_stylesheet': get_css_asset_url('style.css'),
+        'css': {
+            'main_stylesheet': ASSETS_CSS_URL / 'style.css',
+        },
+        'pages': {
             'about': ABOUT_PAGE_URL,
             'gallery_by_style': GALLERY_BY_STYLE_PAGE_URL,
             'gallery_by_date': GALLERY_BY_DATE_PAGE_URL
         },
         'copyright_date': get_copyright_date_tag(),
         'images': {
+            # TODO: don't want full URL here. Want it relative to /asset/image
             image_id: create_image_render_context(srcset)
             for image_id, srcset in context.state.image_srcsets.items()
         }
@@ -75,6 +78,7 @@ def build_html_page(template_name: str, url: URLPath, context: HTMLBuildContext,
     logger.info(f'Building HTML page URL: {url}')
     template = context.jinja2_env.get_template(template_name)
     render_context = create_html_render_context(context, render_context)
+    logger.debug(f'Render context: {render_context}')
     rendered_html = template.render(render_context)
     dest_path = context.build_dir.prepare_file(url.fs_path)
     logger.debug(f'Writing HTML: "{dest_path}"')
@@ -205,7 +209,8 @@ def create_image_render_context(srcset: ImageSrcSet, sizes: Sequence[str] = ()) 
 
 def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> RenderContext:
     return {
-        'image': create_image_render_context(build_state.photo_srcsets[photo.id], get_photo_srcset_sizes()),
+        'image': create_image_render_context(
+            build_state.image_srcsets[create_photo_base_url(photo.id, photo.file_extension)], get_photo_srcset_sizes()),
         'title': photo.title,
         'date': photo.date,
         'location': photo.location,

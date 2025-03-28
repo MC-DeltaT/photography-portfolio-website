@@ -4,7 +4,7 @@ from pathlib import Path
 import shutil
 
 from buildtool.photo_collection import PhotoCollection
-from buildtool.types import ImageSrcSet, ImageAssetID, URLPath
+from buildtool.types import ImageBaseURL, ImageSrcSet, URLPath
 
 
 logger = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ class BuildDirectory:
 
 @dataclass
 class BuildState:
-    image_srcsets: dict[ImageAssetID, ImageSrcSet] = field(default_factory=dict)
+    image_srcsets: dict[ImageBaseURL, ImageSrcSet] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
