@@ -26,7 +26,7 @@ def build_all_image_assets(context: BuildContext) -> None:
         # Note we don't build the original image as that won't be needed with srcsets.
         # One of the srcset resized images will be picked as the default.
         build_operations.append(partial(build_image_srcset_assets,
-            context.build_dir, full_path, image_id, get_image_base_url(image_id), context.state))
+            context.build_dir, full_path, image_id, get_image_base_url(image_id), context.state, fast=context.fast))
 
     for photo in context.photos:
         image_id = get_photo_image_id(photo.id)
@@ -36,7 +36,7 @@ def build_all_image_assets(context: BuildContext) -> None:
             context.build_dir, photo.source_path,
             image_id,
             get_image_base_url(image_id), context.state,
-            build_original=True, image_size=photo.size_px))
+            build_original=True, image_size=photo.size_px, fast=context.fast))
 
     with ThreadPool() as pool:
         pool.map(call, build_operations)
@@ -69,7 +69,7 @@ IMAGE_SRCSET_SPEC = (
 
 
 def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image_id: ImageID, base_url: URLPath,
-        state: BuildState, build_original: bool = False, image_size: Size | None = None) -> None:
+        state: BuildState, build_original: bool = False, image_size: Size | None = None, *, fast: bool = False) -> None:
     if build_original:
         build_dir.build_file(image_path, base_url)
     
@@ -77,29 +77,37 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
         image = open_image_file(image_path)
         image_size = Size((image.width, image.height))
 
-    srcset_entries: list[ImageSrcSet.Entry] = []
-    for spec in IMAGE_SRCSET_SPEC:
-        # Only need to do anything if the new size is smaller than the original image.
-        # Upsampling is pointless, only wastes space.
-        if spec.max_dimension <= max(image_size):
-            if image_size[0] > image_size[1]:
-                # Width is the constraining dimension.
-                new_width = spec.max_dimension
-            else:
-                # Height is the constraining dimension. Need to calculate the new width after shrinking.
-                # This might be off by 1, but that's probably fine for the browser.
-                aspect_ratio = image_size[0] / image_size[1]
-                new_width = round(aspect_ratio * spec.max_dimension)
-            srcset_descriptor = f'{new_width}w'
-            url = get_image_srcset_url(base_url, srcset_descriptor)
-            logger.info(f'Build image srcset asset URL: {url}')
-            dest_path = build_dir.prepare_file(url.fs_path)
-            logger.debug(f'Image srcset size: max_dim={spec.max_dimension} width={new_width} quality={spec.quality}')
-            logger.debug(f'Reencoding image: "{image_path}" -> "{dest_path}"')
-            if not build_dir.dry_run:
-                reencode_image(image_path, dest_path, spec.max_dimension, spec.quality)
-            srcset_entries.append(ImageSrcSet.Entry(url, srcset_descriptor))
-    
+    if fast:
+        # Reencoding the images takes a while due because they are quite large.
+        # If "fast" mode is enabled, create a dummy srcset with only the original image, which skips reencoding.
+        srcset_descriptor = f'{image_size[0]}w'
+        url = get_image_srcset_url(base_url, srcset_descriptor)
+        build_dir.build_file(image_path, url)
+        srcset_entries = [ImageSrcSet.Entry(url, srcset_descriptor)]
+    else:
+        srcset_entries: list[ImageSrcSet.Entry] = []
+        for spec in IMAGE_SRCSET_SPEC:
+            # Only need to do anything if the new size is smaller than the original image.
+            # Upsampling is pointless, only wastes space.
+            if spec.max_dimension <= max(image_size):
+                if image_size[0] > image_size[1]:
+                    # Width is the constraining dimension.
+                    new_width = spec.max_dimension
+                else:
+                    # Height is the constraining dimension. Need to calculate the new width after shrinking.
+                    # This might be off by 1, but that's probably fine for the browser.
+                    aspect_ratio = image_size[0] / image_size[1]
+                    new_width = round(aspect_ratio * spec.max_dimension)
+                srcset_descriptor = f'{new_width}w'
+                url = get_image_srcset_url(base_url, srcset_descriptor)
+                logger.info(f'Build image srcset asset URL: {url}')
+                dest_path = build_dir.prepare_file(url.fs_path)
+                logger.debug(f'Image srcset size: max_dim={spec.max_dimension} width={new_width} quality={spec.quality}')
+                logger.debug(f'Reencoding image: "{image_path}" -> "{dest_path}"')
+                if not build_dir.dry_run:
+                    reencode_image(image_path, dest_path, spec.max_dimension, spec.quality)
+                srcset_entries.append(ImageSrcSet.Entry(url, srcset_descriptor))
+
     if not srcset_entries:
         raise RuntimeError('Empty image srcset')
 

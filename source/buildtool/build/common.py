@@ -66,6 +66,7 @@ class BuildContext:
     build_dir: BuildDirectory
     data_path: Path
     resources_path: Path
+    fast: bool
     dry_run: bool
     photos: PhotoCollection
     state: BuildState

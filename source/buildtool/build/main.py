@@ -23,7 +23,7 @@ def verify_photo_ids(photo_infos: Sequence[PhotoInfo]) -> None:
         raise RuntimeError(f'Duplicate photo unique IDs: {duplicated}')
 
 
-def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
+def run_build(build_path: Path, data_path: Path, *, fast: bool, dry_run: bool) -> None:
     logger.info(f'Running website build')
     logger.info(f'Build directory: "{build_path}"')
     logger.info(f'Data directory: "{data_path}"')
@@ -43,9 +43,10 @@ def run_build(build_path: Path, data_path: Path, *, dry_run: bool) -> None:
     photo_collection = PhotoCollection(photo_infos)
 
     build_context = BuildContext(
-        build_dir, data_path, resources_path, dry_run,
-        photo_collection,
-        BuildState())
+        build_dir=build_dir, data_path=data_path, resources_path=resources_path,
+        fast=fast, dry_run=dry_run,
+        photos=photo_collection,
+        state=BuildState())
 
     # Note: must build photo assets first because they generate the srcset state which is read later when building pages.
     build_all_assets(build_context)
