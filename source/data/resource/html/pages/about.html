@@ -9,20 +9,35 @@
 {%endblock %}
 
 {% block content %}
-    {# TODO: use sections? #}
+    <section>
+        <div class="section-content">
+            <h2>About</h2>
+            <p>
+                Reece Jones is a photographer based in North Sydney, Australia.
+                Starting out in 2023, his journey with photography has always been one of experimentating and learning.
+                Reece works with a variety of photography styles and subjects, with his current passions being people, nature, and abstract.
+            </p>
+            <br>
+            {# TODO: photo of me alongside #}
+            <p>
+                "My photography began from zero as a hobby, and it's evolved from there.
+                It was never about being the best photographer ever, more like being a better photographer than myself a week ago.
+                Much of what I've learnt has been self-taught - simply playing around, idealising a particular style ever now and then, and wondering what could be next.
+                <br>
+                The best part of this craft is it's basically only limited by what you and those around you can imagine.
+                I love bringing a creative vision to life - bringing a part of our internal experience into reality.
+                Seeing the smile on someone's face when your collaboration has brought about a way of seeing the world they never expected, that's priceless."
+            </p>
+        </div>
+    </section>
 
-    <h2>About</h2>
-
-    {# TODO: photo of me #}
-
-    <p>Reece Jones is a photographer based in North Sydney, Australia.
-        Starting out in 2023, his journey with photography has always been one of experimentating and learning.
-        Reece works with a variety of photography styles and subjects, with his current passions including people, nature, and abstract.</p>
-
-    <div class="contact-section">
-        <a onclick="showEmail()" class="button" role="button">Show Contact Email</a>
-        <a id="email-display" class="contact-email"></a>
-    </div>
+    <section>
+        <div class="section-content">
+            <h2>Contact</h2>
+            <a onclick="showEmail()" id="email-button" class="button" role="button">Show Contact Email</a>
+            <a id="email-display" class="contact-email"></a>
+        </div>
+    </section>
 
     {# Generate the email dynamically, suck it spammers #}
     <script>
@@ -33,7 +48,7 @@
             const emailDisplay = document.getElementById('email-display');
             emailDisplay.textContent = email;
             emailDisplay.href = `mailto:${email}`
-            document.querySelector('.contact-section .button').style.display = 'none';
+            document.getElementById('email-button').style.display = 'none';
         }
     </script>
 {% endblock %}
