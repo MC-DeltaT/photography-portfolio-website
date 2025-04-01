@@ -1,28 +1,51 @@
 {# Fragment containing a photo accompanied by all its information #}
 
-<figure>
-    <img class="photo_image"
-        src="{{ photo.image.default_url }}"
-        srcset="{{ photo.image.srcset_urls }}"
-        sizes="{{ photo.image.srcset_sizes }}"/>
-    <figcaption>
-    {% if photo.title %}
-        <p class="photo_title">"{{ photo.title }}"</p>
-    {% endif %}
-    {% if photo.date %}
-        <p class="photo_date">{{ photo.date.to_str('-') }}</p>
-    {% endif %}
-    {% if photo.location %}
-        <p class="photo_location">{{ photo.location }}</p>
-    {% endif %}
-    {% if photo.description %}
-        <p class="photo_description">{{ photo.description }}</p>
-    {% endif %}
-    {% if photo.settings %}
-        <p class="photo_settings">{{ photo.settings|join(', ') }}</p>
-    {% endif %}
-        {# TODO: these can be links to that genre's page #}
-        <p class="photo_genre">{{ photo.genre|map(attribute='value')|map('capitalize')|join(' | ') }}</p>
-        <p class="photo_link"><a href="{{ photo.page_url }}">Link</a></p>
-    </figcaption>
-</figure>
+<article class="photo-detail">
+    <figure class="photo-container">
+        <img class="photo-image"
+            src="{{ photo.image.default_url }}"
+            srcset="{{ photo.image.srcset_urls }}"
+            sizes="{{ photo.image.srcset_sizes }}"
+            alt="{{ photo.title or 'Photograph' }}"/>
+        <figcaption class="photo-info">
+            <div class="photo-header">
+                {% if photo.title %}
+                    <h1 class="photo-title">"{{ photo.title }}"</h1>
+                {% endif %}
+                {% if photo.date %}
+                    <time class="photo-date">{{ photo.date.to_str('-') }}</time>
+                {% endif %}
+            </div>
+
+            {% if photo.location %}
+                <p class="photo-location">{{ photo.location }}</p>
+            {% endif %}
+
+            {% if photo.description %}
+                <div class="photo-description">
+                    {{ photo.description }}
+                </div>
+            {% endif %}
+
+            <div class="photo-meta">
+                {% if photo.settings %}
+                    <div class="photo-settings">
+                        <h3>Technical Details</h3>
+                        <p>{{ photo.settings|join(', ') }}</p>
+                    </div>
+                {% endif %}
+
+                {% if photo.genre %}
+                    <div class="photo-genres">
+                        <h3>Categories</h3>
+                        <div class="genre-tags">
+                            {% for genre in photo.genre %}
+                                <a href="{{ genre.url }}" class="genre-tag">{{ genre.name|capitalize }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </figcaption>
+    </figure>
+</article>

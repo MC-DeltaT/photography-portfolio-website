@@ -5,24 +5,42 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    {# TODO #}
-    <img class="homepage_hero_image"
-        src="{{ images['general/homepage_hero.jpg'].default_url }}"
-        srcset="{{ images['general/homepage_hero.jpg'].srcset_urls }}"
-        sizes="100vw"/>
-    <h1>Reece Jones</h1>
-    <h2>Freelance Photographer - North Sydney</h2>
+    <div class="hero-section">
+        <img class="homepage-hero-image"
+            src="{{ images['general/homepage_hero.jpg'].default_url }}"
+            srcset="{{ images['general/homepage_hero.jpg'].srcset_urls }}"
+            sizes="100vw"
+            alt="Photography portfolio hero image"/>
+        <div class="hero-content">
+            <h1>Reece Jones</h1>
+            <h2>Freelance Photographer - North Sydney</h2>
+            <p class="hero-subtitle">Capturing moments, creating memories</p>
+        </div>
+    </div>
 
-    <section>
-        <h2>About</h2>
-        <p>Reece is a photographer based in Sydney, Australia.
-            He works with a variety of photography styles and subjects, including nature, still life, and people.</p>
-        <p><a href="{{ pages.about }}">More info</a></p>
+    <section class="about-preview">
+        <div class="section-content">
+            <h2>About</h2>
+            <p>Reece is a photographer based in Sydney, Australia.
+                He works with a variety of photography styles and subjects, including nature, still life, and people.</p>
+            <a href="{{ pages.about }}" class="button">Learn More</a>
+        </div>
     </section>
-    <section>
-        <h2>Gallery</h2>
-        <h3><a href="{{ pages.gallery_by_style }}">By Style</a></h3>
-        <h3><a href="{{ pages.gallery_by_date }}">By Date</a></h3>
+
+    <section class="gallery-preview">
+        <div class="section-content">
+            <h2>Gallery</h2>
+            <div class="gallery-options">
+                <div class="gallery-option">
+                    <h3><a href="{{ pages.gallery_by_style }}">By Style</a></h3>
+                    <p>Explore photographs organized by artistic style and theme</p>
+                </div>
+                <div class="gallery-option">
+                    <h3><a href="{{ pages.gallery_by_date }}">By Date</a></h3>
+                    <p>Browse through recent and archived photographs</p>
+                </div>
+            </div>
+        </div>
     </section>
 {% endblock %}
 

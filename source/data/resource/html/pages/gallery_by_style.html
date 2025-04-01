@@ -5,9 +5,30 @@
 {% block title %}Gallery - Styles{% endblock %}
 
 {% block content %}
-    <h2>Gallery - Styles</h2>
-    {% for style in styles %}
-        {# TODO: example photo next to each #}
-        <p><a href="{{ style.url }}">{{ style.name|capitalize }}</a></p>
-    {% endfor %}
+    <div class="gallery-header">
+        <h1>Photo Styles</h1>
+        <p class="gallery-intro">Explore photographs organized by artistic style and theme</p>
+    </div>
+
+    <div class="style-grid">
+        {% for style in styles %}
+            <a href="{{ style.url }}" class="style-card">
+                {# TODO #}
+                {% if style.example_photo is defined %}
+                    <div class="style-image">
+                        <img src="{{ style.example_photo.default_url }}"
+                             srcset="{{ style.example_photo.srcset_urls }}"
+                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                             alt="Example of {{ style.name }} photography"/>
+                    </div>
+                {% endif %}
+                <div class="style-info">
+                    <h2>{{ style.name|capitalize }}</h2>
+                    {% if style.photo_count %}
+                        <p class="style-count">{{ style.photo_count }} photos</p>
+                    {% endif %}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
 {% endblock %}

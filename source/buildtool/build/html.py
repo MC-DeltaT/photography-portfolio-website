@@ -60,7 +60,6 @@ def get_common_html_render_context(context: HTMLBuildContext) -> RenderContext:
         },
         'copyright_date': get_copyright_date_tag(),
         'images': {
-            # TODO: don't want full URL here. Want it relative to /asset/image
             image_id: create_image_render_context(srcset)
             for image_id, srcset in context.state.image_srcsets.items()
         }
@@ -126,7 +125,8 @@ def build_gallery_by_style_page(context: HTMLBuildContext) -> None:
         'styles': [
             {
                 'name': genre.value,
-                'url': get_gallery_style_page_url(genre.value)
+                'url': get_gallery_style_page_url(genre.value),
+                'photo_count': len(context.photos.get_genre(genre))
             } for genre in context.photos.genres
         ]
     }
@@ -216,7 +216,13 @@ def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> Re
         'location': photo.location,
         'description': photo.description,
         'settings': create_photo_settings_list(photo),
-        'genre': photo.genre,
+        'genre': [
+            {
+                'name': genre.value,
+                'url': get_gallery_style_page_url(genre.value)
+            }
+            for genre in sorted(photo.genre)
+        ],
         'page_url': get_single_photo_page_url(photo.id)
     }
 

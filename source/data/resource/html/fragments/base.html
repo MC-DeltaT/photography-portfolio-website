@@ -2,14 +2,22 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{{ css.main_stylesheet }}">
         {% block head %}{% endblock%}
         <title>Reece Jones Photography - {% block title required %}{% endblock %}</title>
     </head>
     <body>
-        {# TODO: not on title page? #}
         <header>
-            <h1><a href="/">Reece Jones Photography</a></h1>
+            <nav class="main-nav">
+                <div class="nav-brand">
+                    <h1><a href="/">Reece Jones Photography</a></h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="{{ pages.gallery_by_style }}">Gallery</a></li>
+                    <li><a href="{{ pages.about }}">About</a></li>
+                </ul>
+            </nav>
         </header>
 
         <main>
@@ -17,7 +25,9 @@
         </main>
 
         <footer>
-            <p>© Reece Jones {{ copyright_date }}</p>
+            <div class="footer-content">
+                <p>© Reece Jones {{ copyright_date }}</p>
+            </div>
         </footer>
     </body>
 </html>
