@@ -1,5 +1,9 @@
 /* TODO: stress test the style against different browser sizes */
 
+/* TODO: probably split into multiple files for the different pages */
+
+/* TODO: reduce custom styling across pages, make it consistent with index page */
+
 /* Base styles and CSS reset */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -126,7 +130,7 @@ a:hover {
 
 /* Sections */
 section {
-    margin-bottom: calc(var(--spacing-unit) * 3);
+    margin-bottom: calc(var(--spacing-unit) * 4);
 }
 
 /* Photo location */
@@ -286,24 +290,9 @@ section {
 }
 
 .section-content {
-    max-width: 800px;
+    max-width: 800px;   /* TODO: don't hardcode like this */
     margin: 0 auto;
     padding: 0 var(--spacing-unit);
-}
-
-.about-preview {
-    background-color: var(--color-background);
-    padding: calc(var(--spacing-unit) * 3) 0;
-}
-
-.about-preview p {
-    margin-bottom: calc(var(--spacing-unit) * 2);
-    line-height: 1.8;
-}
-
-.gallery-preview {
-    background-color: var(--color-background);
-    padding: calc(var(--spacing-unit) * 3) 0;
 }
 
 .gallery-options {
@@ -337,12 +326,14 @@ section {
 
 .button {
     display: inline-block;
+    margin: var(--spacing-unit) 0;
     padding: calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 1.25);
     background-color: var(--color-primary);
     color: var(--color-background);
     text-decoration: none;
     border-radius: 4px;
     transition: background-color 0.2s ease;
+    cursor: pointer;
 }
 
 .button:hover {
@@ -568,10 +559,6 @@ section {
     margin-top: calc(var(--spacing-unit) * 2);
     margin-bottom: var(--spacing-unit);
     text-align: left;
-}
-
-.contact-section .button {
-    cursor: pointer;
 }
 
 .email-text {
