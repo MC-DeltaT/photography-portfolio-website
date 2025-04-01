@@ -13,15 +13,12 @@
     <div class="style-grid">
         {% for style in styles %}
             <a href="{{ style.url }}" class="style-card">
-                {# TODO #}
-                {% if style.example_photo is defined %}
-                    <div class="style-image">
-                        <img src="{{ style.example_photo.default_url }}"
-                             srcset="{{ style.example_photo.srcset_urls }}"
-                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                             alt="Example of {{ style.name }} photography"/>
-                    </div>
-                {% endif %}
+                <div class="style-image">
+                    <img src="{{ style.example_photo.default_url }}"
+                            srcset="{{ style.example_photo.srcset_urls }}"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            alt="Example of {{ style.name }} photography"/>
+                </div>
                 <div class="style-info">
                     <h2>{{ style.name|capitalize }}</h2>
                     {% if style.photo_count %}

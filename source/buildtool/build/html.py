@@ -3,7 +3,7 @@ from dataclasses import dataclass, fields
 import datetime as dt
 from pathlib import Path
 import logging
-from typing import Any, Callable
+from typing import Any
 
 import jinja2
 
@@ -96,33 +96,66 @@ def get_copyright_date_tag() -> str:
 
 
 @dataclass(frozen=True)
-class BasicPageRenderSpec:
+class BasicPage:
     template: str
     url: URLPath
-    context: Callable[[BuildContext], RenderContext] = lambda c: {}
+
+    def render_context(self, context: BuildContext) -> RenderContext:
+        return {}
 
 
-# Pages that don't require any special handling and can be rendered systematically.
-BASIC_PAGES = [
-    BasicPageRenderSpec('pages/index.html', INDEX_PAGE_URL),
-    BasicPageRenderSpec('pages/about.html', ABOUT_PAGE_URL),
-    BasicPageRenderSpec('pages/gallery_by_style.html', GALLERY_BY_STYLE_PAGE_URL, lambda context: {
-        'styles': [
-            {
+@dataclass(frozen=True)
+class GalleryByStylePage(BasicPage):
+    def __init__(self) -> None:
+        super().__init__(
+            template='pages/gallery_by_style.html',
+            url=GALLERY_BY_STYLE_PAGE_URL
+        )
+
+    def render_context(self, context: BuildContext) -> dict[str, Any]:
+        def create_style_context(genre: PhotoGenre) -> RenderContext:
+            photos = context.photos.get_genre(genre)
+            assert len(photos) > 0
+            # Example photo is latest photo in genre.
+            example_photo = max(photos, key=lambda p: p.date)
+            return {
                 'name': genre.value,
                 'url': get_gallery_style_page_url(genre.value),
-                'photo_count': len(context.photos.get_genre(genre))
-            } for genre in context.photos.genres
-        ]
-    }),
-    BasicPageRenderSpec('pages/gallery_by_date.html', GALLERY_BY_DATE_PAGE_URL)    # TODO
+                'photo_count': len(photos),
+                'example_photo':
+                    create_image_render_context(context.state.image_srcsets[context.state.photo_id_to_image_id[example_photo.id]])
+            }
+        
+        return {
+            'styles': [
+                create_style_context(genre) for genre in context.photos.genres
+            ]
+        }
+
+
+@dataclass(frozen=True)
+class GalleryByDatePage(BasicPage):
+    def __init__(self) -> None:
+        super().__init__(
+            template='pages/gallery_by_date.html',
+            url=GALLERY_BY_DATE_PAGE_URL
+        )
+
+    # TODO
+
+
+BASIC_PAGES = [
+    BasicPage('pages/index.html', INDEX_PAGE_URL),
+    BasicPage('pages/about.html', ABOUT_PAGE_URL),
+    GalleryByStylePage(),
+    GalleryByDatePage()
 ]
 
 
 def build_basic_pages(context: HTMLBuildContext) -> None:
-    for spec in BASIC_PAGES:
-        render_context = spec.context(context)
-        build_html_page(spec.template, spec.url, context, render_context)
+    for page in BASIC_PAGES:
+        render_context = page.render_context(context)
+        build_html_page(page.template, page.url, context, render_context)
 
 
 # Note we call genres "styles" for the viewer because it sounds cooler.
@@ -134,7 +167,8 @@ def build_gallery_single_style_pages(context: HTMLBuildContext) -> None:
 
 
 def build_gallery_single_style_page(genre: PhotoGenre, context: HTMLBuildContext) -> None:
-    photos = context.photos.get_genre(genre)
+    # Order photos newest to oldest.
+    photos = sorted(context.photos.get_genre(genre), key=lambda p: p.date, reverse=True)
     render_context: RenderContext = {
         'style': {
             'name': genre.value,

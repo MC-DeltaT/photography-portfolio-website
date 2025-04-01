@@ -1,3 +1,5 @@
+/* TODO: stress test the style against different browser sizes */
+
 /* Base styles and CSS reset */
 *, *::before, *::after {
     box-sizing: border-box;
