@@ -8,7 +8,7 @@
     {# Put this outside the main element because that has padding.
         In this one case, we want it to span the full width of the viewport. #}
     <div class="hero-section">
-        <img class="homepage-hero-image"
+        <img class="hero-image"
             src="{{ images['general/homepage_hero.jpg'].default_url }}"
             srcset="{{ images['general/homepage_hero.jpg'].srcset_urls }}"
             sizes="100vw"
@@ -29,6 +29,8 @@
             <a href="{{ pages.about }}" class="button">Learn More</a>
         </div>
     </section>
+
+    {# TODO: there's too much space between these sections. review the CSS #}
 
     <section class="gallery-preview">
         <div class="section-content">
