@@ -1,6 +1,5 @@
 .hero-section {
     position: relative;
-    margin-bottom: calc(var(--spacing-unit) * 2);
     overflow: hidden;
     height: fit-content;
 }
@@ -44,7 +43,7 @@
     }
 
     .hero-content h1 {
-        font-size: 5.0rem;
+        font-size: 4.0rem;
     }
 
     .hero-content h2 {

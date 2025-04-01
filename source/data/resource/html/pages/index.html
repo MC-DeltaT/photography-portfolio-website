@@ -12,6 +12,7 @@
     {# Put this outside the main element because that has padding.
         In this one case, we want it to span the full width of the viewport. #}
     <div class="hero-section">
+        {# TODO: text goes off image on mobile. Probably need to use the method from William's site #}
         <img class="hero-image"
             src="{{ images['general/homepage_hero.jpg'].default_url }}"
             srcset="{{ images['general/homepage_hero.jpg'].srcset_urls }}"
