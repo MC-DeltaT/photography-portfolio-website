@@ -17,6 +17,16 @@ from buildtool.url import ABOUT_PAGE_URL, ASSETS_CSS_URL, GALLERY_BY_DATE_PAGE_U
 logger = logging.getLogger(__name__)
 
 
+def build_all_html(context: BuildContext) -> None:
+    logger.info('Building HTML')
+    html_resources_path = get_html_resources_path(context.resources_path)
+    jinja2_env = create_jinja2_environment(html_resources_path)
+    context = HTMLBuildContext.new(context, jinja2_env)
+    build_basic_pages(context)
+    build_gallery_single_style_pages(context)
+    build_single_photo_pages(context)
+
+
 @dataclass(frozen=True)
 class HTMLBuildContext(BuildContext):
     jinja2_env: jinja2.Environment
@@ -36,13 +46,17 @@ def create_jinja2_environment(html_resources_path: Path) -> jinja2.Environment:
     )
 
 
-def get_copyright_date_tag() -> str:
-    begin = 2025
-    end = dt.date.today().year
-    if begin == end:
-        return str(begin)
-    else:
-        return f'{begin}-{end}'
+def build_html_page(template_name: str, url: URLPath, context: HTMLBuildContext,
+        render_context: Mapping[str, Any] = {}) -> None:
+    logger.info(f'Building HTML page URL: {url}')
+    template = context.jinja2_env.get_template(template_name)
+    render_context = create_html_render_context(context, render_context)
+    logger.debug(f'Render context: {render_context}')
+    rendered_html = template.render(render_context)
+    dest_path = context.build_dir.prepare_file(url.fs_path)
+    logger.debug(f'Writing HTML: "{dest_path}"')
+    if not context.dry_run:
+        dest_path.write_text(rendered_html, encoding='utf8')
 
 
 RenderContext = dict[str, Any]
@@ -72,56 +86,27 @@ def create_html_render_context(context: HTMLBuildContext, extra: Mapping[str, An
     return render_context
 
 
-def build_html_page(template_name: str, url: URLPath, context: HTMLBuildContext,
-        render_context: Mapping[str, Any] = {}) -> None:
-    logger.info(f'Building HTML page URL: {url}')
-    template = context.jinja2_env.get_template(template_name)
-    render_context = create_html_render_context(context, render_context)
-    logger.debug(f'Render context: {render_context}')
-    rendered_html = template.render(render_context)
-    dest_path = context.build_dir.prepare_file(url.fs_path)
-    logger.debug(f'Writing HTML: "{dest_path}"')
-    if not context.dry_run:
-        dest_path.write_text(rendered_html, encoding='utf8')
-
-
-def build_all_html(context: BuildContext) -> None:
-    logger.info('Building HTML')
-    html_resources_path = get_html_resources_path(context.resources_path)
-    jinja2_env = create_jinja2_environment(html_resources_path)
-    context = HTMLBuildContext.new(context, jinja2_env)
-    build_simple_pages(context)
-    build_gallery_by_style_page(context)
-    build_gallery_by_date_page(context)
-    build_gallery_single_style_pages(context)
-    build_single_photo_pages(context)
+def get_copyright_date_tag() -> str:
+    begin = 2025
+    end = dt.date.today().year
+    if begin == end:
+        return str(begin)
+    else:
+        return f'{begin}-{end}'
 
 
 @dataclass(frozen=True)
-class SimplePageRenderSpec:
+class BasicPageRenderSpec:
     template: str
     url: URLPath
     context: Callable[[BuildContext], RenderContext] = lambda c: {}
 
 
 # Pages that don't require any special handling and can be rendered systematically.
-SIMPLE_PAGES = [
-    SimplePageRenderSpec('pages/index.html', INDEX_PAGE_URL),
-    SimplePageRenderSpec('pages/about.html', ABOUT_PAGE_URL)
-]
-
-
-def build_simple_pages(context: HTMLBuildContext) -> None:
-    for spec in SIMPLE_PAGES:
-        render_context = spec.context(context)
-        build_html_page(spec.template, spec.url, context, render_context)
-
-
-# Note we call genres "styles" for the viewer because it sounds cooler.
-
-
-def build_gallery_by_style_page(context: HTMLBuildContext) -> None:
-    render_context: RenderContext = {
+BASIC_PAGES = [
+    BasicPageRenderSpec('pages/index.html', INDEX_PAGE_URL),
+    BasicPageRenderSpec('pages/about.html', ABOUT_PAGE_URL),
+    BasicPageRenderSpec('pages/gallery_by_style.html', GALLERY_BY_STYLE_PAGE_URL, lambda context: {
         'styles': [
             {
                 'name': genre.value,
@@ -129,8 +114,18 @@ def build_gallery_by_style_page(context: HTMLBuildContext) -> None:
                 'photo_count': len(context.photos.get_genre(genre))
             } for genre in context.photos.genres
         ]
-    }
-    build_html_page('pages/gallery_by_style.html', GALLERY_BY_STYLE_PAGE_URL, context, render_context)
+    }),
+    BasicPageRenderSpec('pages/gallery_by_date.html', GALLERY_BY_DATE_PAGE_URL)    # TODO
+]
+
+
+def build_basic_pages(context: HTMLBuildContext) -> None:
+    for spec in BASIC_PAGES:
+        render_context = spec.context(context)
+        build_html_page(spec.template, spec.url, context, render_context)
+
+
+# Note we call genres "styles" for the viewer because it sounds cooler.
 
 
 def build_gallery_single_style_pages(context: HTMLBuildContext) -> None:
@@ -149,10 +144,48 @@ def build_gallery_single_style_page(genre: PhotoGenre, context: HTMLBuildContext
     build_html_page('pages/gallery_single_style.html', get_gallery_style_page_url(genre.value), context, render_context)
 
 
-def build_gallery_by_date_page(context: HTMLBuildContext) -> None:
-    # TODO
-    render_context: RenderContext = {}
-    build_html_page('pages/gallery_by_date.html', GALLERY_BY_DATE_PAGE_URL, context, render_context)
+def build_single_photo_pages(context: HTMLBuildContext) -> None:
+    for photo in context.photos:
+        build_single_photo_page(photo, context)
+
+
+def build_single_photo_page(photo: PhotoInfo, context: HTMLBuildContext) -> None:
+    url = get_single_photo_page_url(photo.id)
+    render_context = create_html_render_context(context, {
+        'photo_page_title': photo.title or photo,
+        'photo': create_photo_render_context(photo, context.state)
+    })
+    build_html_page('pages/single_photo.html', url, context, render_context)
+
+
+def create_image_render_context(srcset: ImageSrcSet, sizes: Sequence[str] = ()) -> RenderContext:
+    render_context: RenderContext = {
+        'default_url': srcset.default.url,
+        'srcset_urls': ', '.join(f'{s.url} {s.descriptor}' for s in srcset),
+    }
+    if sizes:
+        render_context['srcset_sizes'] = ', '.join(sizes)
+    return render_context
+
+
+def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> RenderContext:
+    return {
+        'image': create_image_render_context(
+            build_state.image_srcsets[build_state.photo_id_to_image_id[photo.id]], get_photo_srcset_sizes()),
+        'title': photo.title,
+        'date': photo.date,
+        'location': photo.location,
+        'description': photo.description,
+        'settings': create_photo_settings_list(photo),
+        'genre': [
+            {
+                'name': genre.value,
+                'url': get_gallery_style_page_url(genre.value)
+            }
+            for genre in sorted(photo.genre)
+        ],
+        'page_url': get_single_photo_page_url(photo.id)
+    }
 
 
 F_NUMBER_SYMBOL = 'ƒ'
@@ -195,47 +228,3 @@ def get_photo_srcset_sizes() -> list[str]:
         '(max-width: 2000px) 70vw',
         '70vw'
     ]
-
-
-def create_image_render_context(srcset: ImageSrcSet, sizes: Sequence[str] = ()) -> RenderContext:
-    render_context: RenderContext = {
-        'default_url': srcset.default.url,
-        'srcset_urls': ', '.join(f'{s.url} {s.descriptor}' for s in srcset),
-    }
-    if sizes:
-        render_context['srcset_sizes'] = ', '.join(sizes)
-    return render_context
-
-
-def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> RenderContext:
-    return {
-        'image': create_image_render_context(
-            build_state.image_srcsets[build_state.photo_id_to_image_id[photo.id]], get_photo_srcset_sizes()),
-        'title': photo.title,
-        'date': photo.date,
-        'location': photo.location,
-        'description': photo.description,
-        'settings': create_photo_settings_list(photo),
-        'genre': [
-            {
-                'name': genre.value,
-                'url': get_gallery_style_page_url(genre.value)
-            }
-            for genre in sorted(photo.genre)
-        ],
-        'page_url': get_single_photo_page_url(photo.id)
-    }
-
-
-def build_single_photo_page(photo: PhotoInfo, context: HTMLBuildContext) -> None:
-    url = get_single_photo_page_url(photo.id)
-    render_context = create_html_render_context(context, {
-        'photo_page_title': photo.title or photo,
-        'photo': create_photo_render_context(photo, context.state)
-    })
-    build_html_page('pages/single_photo.html', url, context, render_context)
-
-
-def build_single_photo_pages(context: HTMLBuildContext) -> None:
-    for photo in context.photos:
-        build_single_photo_page(photo, context)
