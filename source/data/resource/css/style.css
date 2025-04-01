@@ -132,6 +132,7 @@ section {
 .homepage-hero-image {
     width: 100%;
     height: auto;
+    max-height: 80vh;
     margin-bottom: calc(var(--spacing-unit) * 2);
     object-fit: cover;
 }
@@ -256,8 +257,6 @@ section {
 /* Homepage sections */
 .hero-section {
     position: relative;
-    margin: calc(-1 * var(--spacing-unit));
-    margin-bottom: calc(var(--spacing-unit) * 3);
 }
 
 .hero-content {
@@ -335,7 +334,7 @@ section {
 
 .button {
     display: inline-block;
-    padding: calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 1.5);
+    padding: calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 1.25);
     background-color: var(--color-primary);
     color: var(--color-background);
     text-decoration: none;

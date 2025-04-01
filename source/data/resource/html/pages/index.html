@@ -4,7 +4,9 @@
 
 {% block title %}Home{% endblock %}
 
-{% block content %}
+{% block pre_content %}
+    {# Put this outside the main element because that has padding.
+        In this one case, we want it to span the full width of the viewport. #}
     <div class="hero-section">
         <img class="homepage-hero-image"
             src="{{ images['general/homepage_hero.jpg'].default_url }}"
@@ -16,7 +18,9 @@
             <h2>Freelance Photographer - Sydney</h2>
         </div>
     </div>
+{% endblock %}
 
+{% block content %}
     <section class="about-preview">
         <div class="section-content">
             <h2>About</h2>

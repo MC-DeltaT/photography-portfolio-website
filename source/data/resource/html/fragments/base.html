@@ -20,6 +20,8 @@
             </nav>
         </header>
 
+        {% block pre_content %}{% endblock %}
+
         <main>
             {% block content required %}{% endblock %}
         </main>
