@@ -273,7 +273,7 @@ section {
 .hero-content h1 {
     margin: 0;
     font-size: 5.0rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
 }
 
 .hero-content h2 {
