@@ -560,3 +560,22 @@ section {
         gap: var(--spacing-unit);
     }
 }
+
+/* Contact section styling */
+.contact-section {
+    margin-top: calc(var(--spacing-unit) * 2);
+    margin-bottom: var(--spacing-unit);
+    text-align: left;
+}
+
+.contact-section .button {
+    cursor: pointer;
+}
+
+.email-text {
+    color: var(--color-text);
+    font-size: 1.1rem;
+    padding: calc(var(--spacing-unit) * 0.75);
+    border-radius: 4px;
+    display: inline-block;
+}

@@ -5,6 +5,8 @@
 {% block title %}About{% endblock %}
 
 {% block content %}
+    {# TODO: use sections? #}
+
     <h2>About</h2>
 
     {# TODO: photo of me #}
@@ -13,7 +15,22 @@
         Starting out in 2023, his journey with photography has always been one of experimentating and learning.
         Reece works with a variety of photography styles and subjects, with his current passions including people, nature, and abstract.</p>
 
-    {# TODO? show email dynamically on button press #}
-    <p>Contact: reece (dot) jones131 (at) gmail (dot) com</p>
+    <div class="contact-section">
+        <a onclick="showEmail()" class="button" role="button">Show Contact Email</a>
+        <a id="email-display" class="email-text"></a>
+    </div>
+
+    {# Generate the email dynamically, suck it spammers #}
+    <script>
+        function showEmail() {
+            const parts = ['reece', 'jones131', 'gmail'];
+            const symbol = ['', '.', '@', '.', 'com'];
+            const email = parts[0] + symbol[1] + parts[1] + symbol[2] + parts[2] + symbol[3] + symbol[4];
+            const emailDisplay = document.getElementById('email-display');
+            emailDisplay.textContent = email;
+            emailDisplay.href = `mailto:${email}`
+            document.querySelector('.contact-section .button').style.display = 'none';
+        }
+    </script>
 {% endblock %}
 
