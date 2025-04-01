@@ -176,7 +176,10 @@ main {
 }
 
 section {
+    max-width: 800px;   /* TODO: don't hardcode like this */
+    margin: 0 auto;
     margin-bottom: calc(var(--spacing-unit) * 4);
+    padding: 0 var(--spacing-unit);
 }
 
 footer {
@@ -216,29 +219,16 @@ footer {
         padding: calc(var(--spacing-unit) * 0.5) 0;
     }
 
+    section {
+        padding: 0 calc(var(--spacing-unit) * 0.5);
+    }
+
     .footer-content {
         flex-direction: column;
         text-align: center;
         padding: 0 calc(var(--spacing-unit) * 0.5);
     }
 }
-
-
-
-
-/* TODO: use this for all pages? */
-.section-content {
-    max-width: 800px;   /* TODO: don't hardcode like this */
-    margin: 0 auto;
-    padding: 0 var(--spacing-unit);
-}
-
-@media (max-width: 768px) {
-    .section-content {
-        padding: 0 calc(var(--spacing-unit) * 0.5);
-    }
-}
-
 
 
 
