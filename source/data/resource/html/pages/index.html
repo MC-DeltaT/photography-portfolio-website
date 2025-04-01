@@ -4,6 +4,10 @@
 
 {% block title %}Home{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ css.index }}">
+{% endblock %}
+
 {% block pre_content %}
     {# Put this outside the main element because that has padding.
         In this one case, we want it to span the full width of the viewport. #}

@@ -4,6 +4,10 @@
 
 {% block title %}About{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ css.about }}">
+{%endblock %}
+
 {% block content %}
     {# TODO: use sections? #}
 
@@ -17,7 +21,7 @@
 
     <div class="contact-section">
         <a onclick="showEmail()" class="button" role="button">Show Contact Email</a>
-        <a id="email-display" class="email-text"></a>
+        <a id="email-display" class="contact-email"></a>
     </div>
 
     {# Generate the email dynamically, suck it spammers #}

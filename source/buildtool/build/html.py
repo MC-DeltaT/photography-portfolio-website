@@ -65,7 +65,9 @@ RenderContext = dict[str, Any]
 def get_common_html_render_context(context: HTMLBuildContext) -> RenderContext:
     return {
         'css': {
-            'main_stylesheet': ASSETS_CSS_URL / 'style.css',
+            'main': ASSETS_CSS_URL / 'main.css',
+            'index': ASSETS_CSS_URL / 'index.css',
+            'about': ASSETS_CSS_URL / 'about.css'
         },
         'pages': {
             'about': ABOUT_PAGE_URL,
