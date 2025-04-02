@@ -171,6 +171,20 @@ footer {
     gap: var(--spacing-unit);
 }
 
+.github-link {
+    display: inline-flex;
+    align-items: center;
+    transition: opacity 0.2s ease;
+}
+
+.github-link:hover {
+    opacity: 0.8;
+}
+
+.github-link img {
+    filter: brightness(0) invert(1);
+}
+
 
 /* Desktop / large */
 @media (max-width: 1440px) {
