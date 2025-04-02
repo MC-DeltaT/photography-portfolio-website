@@ -1,13 +1,12 @@
 /* TODO: reduce custom styling across pages, make it consistent with index page */
 
 :root {
-    /* TODO: clean up these colours */
-    --color-primary: #2c3e50;
-    --color-secondary: #34495e;
-    --color-accent: #95a5a6;
-    --color-background: #ffffff;
-    --color-text: #2c3e50;
-    --color-text-light: #7f8c8d;
+    --colour-background: #ffffff;
+    --colour-primary: #2c3e50;
+    --colour-text: var(--colour-primary);
+    --colour-background-inverted: var(--colour-primary);
+    --colour-text-inverted: var(--colour-background);
+    --colour-accent: #95a5a6;
     --spacing-unit: 1rem;
     --section-width: 70vw;
     --transition-duration: 0.2s;
@@ -25,8 +24,8 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.6;
-    color: var(--color-text);
-    background-color: var(--color-background);
+    color: var(--colour-text);
+    background-color: var(--colour-background);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -53,21 +52,21 @@ h3 {
 }
 
 a {
-    color: var(--color-text);
+    color: var(--colour-text);
     text-decoration: none;
     transition: color var(--transition-duration) ease;
 }
 
 a:hover {
-    color: var(--color-accent);
+    color: var(--colour-accent);
 }
 
 .button {
     display: inline-block;
     margin: var(--spacing-unit) 0;
     padding: calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 1.25);
-    background-color: var(--color-primary);
-    color: var(--color-background);
+    background-color: var(--colour-background-inverted);
+    color: var(--colour-text-inverted);
     text-decoration: none;
     border-radius: 4px;
     transition: background-color var(--transition-duration) ease;
@@ -75,14 +74,14 @@ a:hover {
 }
 
 .button:hover {
-    background-color: var(--color-secondary);
+    background-color: var(--colour-accent);
 }
 
 
 /* Common layout */
 
 header {
-    background-color: var(--color-background);
+    background-color: var(--colour-background);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
@@ -103,7 +102,7 @@ header a {
 }
 
 header a:hover {
-    color: var(--color-accent);
+    color: var(--colour-accent);
 }
 
 .header-nav {
@@ -136,7 +135,7 @@ header a:hover {
 }
 
 .header-nav-links a:hover {
-    color: var(--color-accent);
+    color: var(--colour-accent);
 }
 
 main {
@@ -155,8 +154,8 @@ section {
 }
 
 footer {
-    background-color: var(--color-primary);
-    color: var(--color-background);
+    background-color: var(--colour-background-inverted);
+    color: var(--colour-text-inverted);
     padding: var(--spacing-unit);
     margin-top: auto;
 }
@@ -249,7 +248,7 @@ footer {
 /* Photo location */
 .photo-location {
     font-style: italic;
-    color: var(--color-text-light);
+    color: var(--colour-text-light);
     font-size: 0.9rem;
 }
 
@@ -262,7 +261,7 @@ footer {
 
 .photo-container {
     margin: 0;
-    background-color: var(--color-background);
+    background-color: var(--colour-background);
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -287,17 +286,17 @@ footer {
 .photo-title {
     font-size: 2rem;
     margin: 0;
-    color: var(--color-primary);
+    color: var(--colour-text);
 }
 
 .photo-date {
-    color: var(--color-text-light);
+    color: var(--colour-accent);
     font-size: 1.1rem;
     margin-top: calc(var(--spacing-unit) * 0.5);
 }
 
 .photo-location {
-    color: var(--color-accent);
+    color: var(--colour-accent);
     font-size: 1.1rem;
     margin-bottom: calc(var(--spacing-unit) * 1.5);
 }
@@ -319,7 +318,7 @@ footer {
 .photo-meta h3 {
     font-size: 1.2rem;
     margin-bottom: var(--spacing-unit);
-    color: var(--color-secondary);
+    color: var(--colour-text);
 }
 
 .genre-tags {
@@ -329,8 +328,8 @@ footer {
 }
 
 .genre-tag {
-    background-color: var(--color-primary);
-    color: var(--color-background);
+    background-color: var(--colour-background-inverted);
+    color: var(--colour-text-inverted);
     padding: calc(var(--spacing-unit) * 0.5) calc(var(--spacing-unit) * 1);
     border-radius: 4px;
     font-size: 0.9rem;
@@ -338,7 +337,7 @@ footer {
 }
 
 .genre-tag:hover {
-    background-color: var(--color-secondary);
+    background-color: var(--colour-accent);
 }
 
 /* Responsive design */

@@ -6,7 +6,7 @@
 }
 
 .style-card {
-    background-color: var(--color-background);
+    background-color: var(--colour-background);
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -45,6 +45,6 @@
 
 .style-info h3 {
     margin: 0;
-    color: var(--color-primary);
+    color: var(--colour-text);
     font-size: 1.5rem;
 }

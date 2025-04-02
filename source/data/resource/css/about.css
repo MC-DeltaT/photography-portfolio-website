@@ -1,5 +1,5 @@
 .contact-email {
-    color: var(--color-text);
+    color: var(--colour-text);
     font-size: 1.1rem;
     padding: calc(var(--spacing-unit) * 0.75);
     border-radius: 4px;
