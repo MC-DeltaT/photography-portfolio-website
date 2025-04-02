@@ -101,6 +101,7 @@ def get_copyright_date_tag() -> str:
 
 def get_gallery_age(photos: PhotoCollection) -> int:
     oldest_photo = min((p for p in photos if p.date), key=lambda p: p.date)
+    assert oldest_photo.date.year
     age = round(dt.date.today().year - oldest_photo.date.year)
     assert age >= 0
     age = max(1, age)
