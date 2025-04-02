@@ -6,7 +6,7 @@
     --colour-text: var(--colour-primary);
     --colour-background-inverted: var(--colour-primary);
     --colour-text-inverted: var(--colour-background);
-    --colour-accent: #95a5a6;
+    --colour-accent: #8d9b9c;
     --spacing-unit: 1rem;
     --section-width: 70vw;
     --transition-duration: 0.2s;
@@ -55,10 +55,6 @@ a {
     color: var(--colour-text);
     text-decoration: none;
     transition: color var(--transition-duration) ease;
-}
-
-a:hover {
-    color: var(--colour-accent);
 }
 
 .button {
