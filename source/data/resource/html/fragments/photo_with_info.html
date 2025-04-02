@@ -5,7 +5,10 @@
         <img class="photo-image"
             src="{{ photo.image.default_url }}"
             srcset="{{ photo.image.srcset_urls }}"
-            sizes="{{ photo.image.srcset_sizes }}"
+            sizes="(max-width: 500px) 100vw,
+                   (max-width: 1000px) 80vw,
+                   (max-width: 2000px) 70vw,
+                   70vw"
             alt="{{ photo.title or 'Photograph' }}"/>
         <figcaption class="photo-info">
             <div class="photo-header">

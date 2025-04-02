@@ -1,4 +1,4 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 from dataclasses import dataclass, fields
 import datetime as dt
 from pathlib import Path
@@ -192,20 +192,18 @@ def build_single_photo_page(photo: PhotoInfo, context: HTMLBuildContext) -> None
     build_html_page('pages/single_photo.html', url, context, render_context)
 
 
-def create_image_render_context(srcset: ImageSrcSet, sizes: Sequence[str] = ()) -> RenderContext:
+def create_image_render_context(srcset: ImageSrcSet) -> RenderContext:
     render_context: RenderContext = {
         'default_url': srcset.default.url,
         'srcset_urls': ', '.join(f'{s.url} {s.descriptor}' for s in srcset),
     }
-    if sizes:
-        render_context['srcset_sizes'] = ', '.join(sizes)
     return render_context
 
 
 def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> RenderContext:
     return {
         'image': create_image_render_context(
-            build_state.image_srcsets[build_state.photo_id_to_image_id[photo.id]], get_photo_srcset_sizes()),
+            build_state.image_srcsets[build_state.photo_id_to_image_id[photo.id]]),
         'title': photo.title,
         'date': photo.date,
         'location': photo.location,
@@ -252,13 +250,3 @@ def create_photo_settings_list(photo: PhotoInfo) -> list[str]:
     if photo.iso:
         result.append(f'ISO {photo.iso}')
     return result
-
-
-def get_photo_srcset_sizes() -> list[str]:
-    # TODO: this could be more intelligent based on the real layout of the page
-    return [
-        '(max-width: 500px) 100vw',
-        '(max-width: 1000px) 80vw',
-        '(max-width: 2000px) 70vw',
-        '70vw'
-    ]
