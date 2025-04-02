@@ -5,12 +5,10 @@
 {% block title %}Home{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ css.index }}">
+    <link rel="stylesheet" href="{{ css.index }}">
 {% endblock %}
 
-{% block pre_content %}
-    {# Put this outside the main element because that has padding.
-        In this one case, we want it to span the full width of the viewport. #}
+{% block content %}
     <div class="hero-section">
         <img class="hero-image"
             src="{{ images['general/homepage_hero.jpg'].default_url }}"
@@ -20,23 +18,8 @@
         <div class="hero-content">
             <h1>Reece Jones</h1>
             <h2>Freelance Photographer | Sydney</h2>
+            <p>Sharing the world through the lens</p>
+            <a href="{{ pages.gallery }}" class="button hero-button">View Gallery</a>
         </div>
     </div>
 {% endblock %}
-
-{% block content %}
-    <section>
-        <h2>About</h2>
-        {# TODO: say something more exciting! #}
-        <p>Reece is a photographer based in North Sydney, Australia.
-            He works with a variety of photography styles and subjects, including nature, still life, and people.</p>
-        <a href="{{ pages.about }}" class="button">Learn More</a>
-    </section>
-
-    <section>
-        <h2>Gallery</h2>
-        <p>Explore a collection of the best works from the past {% if gallery_age == 1 %}year{% else %}{{ gallery_age }} years{% endif %}.</p>
-        <a href="{{ pages.gallery }}" class="button">Visit Gallery</a>
-    </section>
-{% endblock %}
-
