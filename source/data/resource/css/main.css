@@ -10,6 +10,7 @@
     --color-text-light: #7f8c8d;
     --spacing-unit: 1rem;
     --section-width: 70vw;
+    --transition-duration: 0.2s;
 }
 
 
@@ -54,7 +55,7 @@ h3 {
 a {
     color: var(--color-text);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color var(--transition-duration) ease;
 }
 
 a:hover {
@@ -69,7 +70,7 @@ a:hover {
     color: var(--color-background);
     text-decoration: none;
     border-radius: 4px;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-duration) ease;
     cursor: pointer;
 }
 
@@ -98,7 +99,7 @@ header h1 {
 
 header a {
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color var(--transition-duration) ease;
 }
 
 header a:hover {
@@ -131,7 +132,7 @@ header a:hover {
 .header-nav-links a {
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.2s ease;
+    transition: color var(--transition-duration) ease;
 }
 
 .header-nav-links a:hover {
@@ -174,7 +175,7 @@ footer {
 .github-link {
     display: inline-flex;
     align-items: center;
-    transition: opacity 0.2s ease;
+    transition: opacity var(--transition-duration) ease;
 }
 
 .github-link:hover {
@@ -333,7 +334,7 @@ footer {
     padding: calc(var(--spacing-unit) * 0.5) calc(var(--spacing-unit) * 1);
     border-radius: 4px;
     font-size: 0.9rem;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-duration) ease;
 }
 
 .genre-tag:hover {

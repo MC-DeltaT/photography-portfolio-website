@@ -64,7 +64,7 @@ main {
     color: var(--color-primary);
     font-weight: 600;
     font-size: 1.1rem;
-    transition: all 0.3s ease;
+    transition: all var(--transition-duration) ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
