@@ -2,17 +2,20 @@
 main {
     margin: 0px;
     padding: 0px;
+    display: flex;
+    flex-direction: column;
 }
 
 .hero-section {
     position: relative;
     width: 100%;
-    /* TODO: hero doesn't cover whole page on mobile because header-height is auto */
-    height: calc(100vh - var(--header-height));
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    /* Approximate header height to get it to fill the whole screen. */
+    min-height: calc(100vh - 4em);
 }
 
 .hero-image {
@@ -87,7 +90,6 @@ main {
     }
 
     .hero-button {
-        padding: calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 1.5);
         font-size: 1rem;
     }
 }
