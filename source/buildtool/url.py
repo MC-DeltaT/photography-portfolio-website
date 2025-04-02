@@ -11,10 +11,8 @@ INDEX_PAGE_URL = URLPath('/index.html')
 ABOUT_PAGE_URL = URLPath('/about.html')
 
 GALLERY_URL = URLPath('/gallery')
+GALLERY_PAGE_URL = GALLERY_URL.with_suffix('.html')
 GALLERY_BY_STYLE_URL = GALLERY_URL / 'style'
-GALLERY_BY_STYLE_PAGE_URL = GALLERY_BY_STYLE_URL.with_suffix('.html')
-GALLERY_BY_DATE_URL = GALLERY_URL / 'date'
-GALLERY_BY_DATE_PAGE_URL = GALLERY_BY_DATE_URL.with_suffix('.html')
 GALLERY_PHOTO_URL = GALLERY_URL / 'photo'
 
 

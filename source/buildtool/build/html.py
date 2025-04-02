@@ -8,10 +8,11 @@ from typing import Any
 import jinja2
 
 from buildtool.build.common import BuildContext, BuildState
+from buildtool.photo_collection import PhotoCollection
 from buildtool.photo_info import PhotoInfo
 from buildtool.resource.html import get_html_resources_path
 from buildtool.types import ImageSrcSet, URLPath, PhotoGenre
-from buildtool.url import ABOUT_PAGE_URL, ASSETS_CSS_URL, GALLERY_BY_DATE_PAGE_URL, GALLERY_BY_STYLE_PAGE_URL, INDEX_PAGE_URL, get_gallery_style_page_url, get_single_photo_page_url
+from buildtool.url import ABOUT_PAGE_URL, ASSETS_CSS_URL, GALLERY_PAGE_URL, INDEX_PAGE_URL, get_gallery_style_page_url, get_single_photo_page_url
 
 
 logger = logging.getLogger(__name__)
@@ -67,14 +68,15 @@ def get_common_html_render_context(context: HTMLBuildContext) -> RenderContext:
         'css': {
             'main': ASSETS_CSS_URL / 'main.css',
             'index': ASSETS_CSS_URL / 'index.css',
-            'about': ASSETS_CSS_URL / 'about.css'
+            'about': ASSETS_CSS_URL / 'about.css',
+            'gallery': ASSETS_CSS_URL / 'gallery.css'
         },
         'pages': {
             'about': ABOUT_PAGE_URL,
-            'gallery_by_style': GALLERY_BY_STYLE_PAGE_URL,
-            'gallery_by_date': GALLERY_BY_DATE_PAGE_URL
+            'gallery': GALLERY_PAGE_URL
         },
         'copyright_date': get_copyright_date_tag(),
+        'gallery_age': get_gallery_age(context.photos),
         'images': {
             image_id: create_image_render_context(srcset)
             for image_id, srcset in context.state.image_srcsets.items()
@@ -97,6 +99,13 @@ def get_copyright_date_tag() -> str:
         return f'{begin}-{end}'
 
 
+def get_gallery_age(photos: PhotoCollection) -> int:
+    oldest_photo = min((p for p in photos if p.date), key=lambda p: p.date)
+    age = round(dt.date.today().year - oldest_photo.date.year)
+    assert age >= 0
+    age = max(1, age)
+    return age
+
 @dataclass(frozen=True)
 class BasicPage:
     template: str
@@ -107,11 +116,11 @@ class BasicPage:
 
 
 @dataclass(frozen=True)
-class GalleryByStylePage(BasicPage):
+class GalleryPage(BasicPage):
     def __init__(self) -> None:
         super().__init__(
-            template='pages/gallery_by_style.html',
-            url=GALLERY_BY_STYLE_PAGE_URL
+            template='pages/gallery.html',
+            url=GALLERY_PAGE_URL
         )
 
     def render_context(self, context: BuildContext) -> dict[str, Any]:
@@ -135,22 +144,10 @@ class GalleryByStylePage(BasicPage):
         }
 
 
-@dataclass(frozen=True)
-class GalleryByDatePage(BasicPage):
-    def __init__(self) -> None:
-        super().__init__(
-            template='pages/gallery_by_date.html',
-            url=GALLERY_BY_DATE_PAGE_URL
-        )
-
-    # TODO
-
-
 BASIC_PAGES = [
     BasicPage('pages/index.html', INDEX_PAGE_URL),
     BasicPage('pages/about.html', ABOUT_PAGE_URL),
-    GalleryByStylePage(),
-    GalleryByDatePage()
+    GalleryPage()
 ]
 
 

@@ -1,0 +1,41 @@
+{# Main gallery landing page #}
+
+{% extends 'fragments/base.html' %}
+
+{% block title %}Gallery{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ css.gallery }}">
+{% endblock %}
+
+{% block content %}
+    <section>
+        <h1>Gallery</h1>
+    </section>
+
+    <section>
+        <h2>By Style</h2>
+        {# TODO: this seems to only want to do up to 3 columns, even when there is more space #}
+        <div class="style-grid">
+            {% for style in styles %}
+                <a href="{{ style.url }}" class="style-card">
+                    <div class="style-image">
+                        <img src="{{ style.example_photo.default_url }}"
+                                srcset="{{ style.example_photo.srcset_urls }}"
+                                sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 33vw"
+                                alt="Example of {{ style.name }} photography"/>
+                    </div>
+                    <div class="style-info">
+                        <h3>{{ style.name|capitalize }}</h3>
+                        <p>{{ style.photo_count }} photos</p>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section>
+        <h2>By Date</h2>
+        <p>Explore photographs chronologically - coming soon</p>
+    </section>
+{% endblock %} 
