@@ -182,21 +182,21 @@ footer {
 
 
 /* Desktop / large */
-@media (max-width: 1440px) {
+@media (min-width: 1024px) {
     :root {
         --section-width: 60vw;
     }
 }
 
 /* Laptop */
-@media (max-width: 1024px) {
+@media (min-width: 768px) and (max-width: 1024px) {
     :root {
         --section-width: 70vw;
     }
 }
 
 /* Tablet */
-@media (max-width: 768px) {
+@media (min-width: 480px) and (max-width: 768px) {
     :root {
         --section-width: 80vw;
     }
