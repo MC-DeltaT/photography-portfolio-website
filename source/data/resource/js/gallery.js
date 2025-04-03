@@ -1,5 +1,3 @@
-// TODO: month selection is broken
-
 document.addEventListener('DOMContentLoaded', () => {
     const photoGrid = document.querySelector('.photo-grid');
     const genreFilter = document.getElementById('genre-filter');
@@ -41,7 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const genreMatch = !selectedGenre || cardGenre.includes(selectedGenre);
             const yearMatch = !selectedYear || cardYear === selectedYear;
-            const monthMatch = !selectedMonth || cardMonth === selectedMonth;
+            
+            // Handle month matching with YYYY-MM format
+            let monthMatch = true;
+            if (selectedMonth) {
+                const [selectedYear, selectedMonthNum] = selectedMonth.split('-');
+                monthMatch = cardYear === selectedYear && cardMonth === selectedMonthNum;
+            }
 
             card.style.display = genreMatch && yearMatch && monthMatch ? 'block' : 'none';
         });
@@ -53,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const monthOptions = monthFilter.querySelectorAll('option:not([value=""])');
         
         monthOptions.forEach(option => {
-            const monthYear = option.value.split('-');
-            option.style.display = !selectedYear || monthYear[0] === selectedYear ? 'block' : 'none';
+            const [year] = option.value.split('-');
+            option.style.display = !selectedYear || year === selectedYear ? 'block' : 'none';
         });
     }
 

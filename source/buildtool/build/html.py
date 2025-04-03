@@ -183,6 +183,10 @@ def create_image_render_context(srcset: ImageSrcSet) -> RenderContext:
 
 
 def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> RenderContext:
+    # Page design doesn't really support photos without year or month (e.g. how do you sort them?).
+    # Should think twice about allowing photos with no date.
+    assert photo.date.year is not None
+    assert photo.date.month is not None
     return {
         'image': create_image_render_context(
             build_state.image_srcsets[build_state.photo_id_to_image_id[photo.id]]),

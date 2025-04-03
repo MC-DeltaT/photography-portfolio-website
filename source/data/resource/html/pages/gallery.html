@@ -9,8 +9,6 @@
     <script src="{{ js.gallery }}" defer></script>
 {% endblock %}
 
-{# TODO: improve design manually #}
-
 {% block content %}
     <noscript>
         <p>This page requires JavaScript to be enabled.<br>
@@ -38,7 +36,6 @@
                     {% endfor %}
                 </select>
             </div>
-            {# TODO: bit weird to filter by year and month? #}
             <div class="filter-group">
                 <label for="month-filter">Month:</label>
                 <select id="month-filter">
@@ -55,7 +52,7 @@
                 <article class="photo-card" 
                         data-genre="{{ photo.genre|join(' ') }}"
                         data-year="{{ photo.date.year }}"
-                        data-month="{{ photo.date.month }}">
+                        data-month="{{ '%02d' % photo.date.month }}">
                     <a href="{{ photo.page_url }}">
                         <div class="photo-image">
                             <img src="{{ photo.image.default_url }}"
