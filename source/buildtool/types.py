@@ -40,7 +40,7 @@ class URLPath(PurePosixPath):
         return Path(*self.parts[1:])
 
 
-@dataclass(frozen=True, order=True)
+@dataclass(frozen=True)
 class PartialDate:
     year: int | None
     month: int | None
@@ -99,6 +99,12 @@ class PartialDate:
 
     def __bool__(self) -> bool:
         return self.year is not None or self.month is not None or self.day is not None
+
+    def __lt__(self, other: 'PartialDate') -> bool:
+        def key(date: PartialDate) -> tuple[int, int, int]:
+            return (date.year or 0, date.month or 0, date.day or 0)
+        
+        return key(self) < key(other)
 
 
 NonEmptyStr = Annotated[str, pydantic.StringConstraints(strict=True, min_length=1)]

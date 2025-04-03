@@ -4,13 +4,12 @@ from pathlib import Path
 import subprocess
 from typing import Annotated
 
-from dateutil.parser import parse as parse_date
 from PIL import ExifTags
 from PIL.Image import Image, open as pil_image_open
 import pydantic
 
 from buildtool.types import Aperture, ExposureTime, FocalLength, ISO, CoerceNumber
-
+from buildtool.utility import parse_datetime
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +22,7 @@ class EXIFMetadata(pydantic.BaseModel, frozen=True):
     # # "The date and time of image creation. In Exif standard, it is the date and time the file was changed."
     # date_time: str | None
     # "The date and time when the original image data was generated."
-    date_time_original: Annotated[dt.datetime, pydantic.BeforeValidator(parse_date)]
+    date_time_original: Annotated[dt.datetime, pydantic.BeforeValidator(parse_datetime)]
     # # "The date and time when the image was stored as digital data."
     # date_time_digitised: str | None
     # offset_time: str | None
