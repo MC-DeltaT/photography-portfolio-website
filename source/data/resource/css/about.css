@@ -5,3 +5,32 @@
     border-radius: 4px;
     display: inline-block;
 }
+
+.photographer-section {
+    display: block;
+    margin: var(--spacing-unit) 0;
+}
+
+.photographer-image {
+    float: right;
+    width: 40%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: var(--spacing-unit);
+    margin-bottom: var(--spacing-unit);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .photographer-section {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .photographer-image {
+        float: none;
+        width: 100%;
+        margin: var(--spacing-unit) auto;
+    }
+}
