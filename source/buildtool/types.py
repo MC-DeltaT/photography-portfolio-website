@@ -77,17 +77,23 @@ class PartialDate:
     def from_date(cls, date: dt.date):
         return cls(year=date.year, month=date.month, day=date.day)
 
-    def to_str(self, separator: str = '') -> str:
+    def to_str(self, separator: str = '', unknown_placeholder: str = '') -> str:
         parts: list[str] = []
-        if self.year is not None:
+        if self.year is None:
+            parts.append(unknown_placeholder * 4)
+        else:
             assert 0 <= self.year <= 9999
             parts.append(str(self.year).zfill(4))
-            if self.month is not None:
-                assert 1 <= self.month <= 12
-                parts.append(str(self.month).zfill(2))
-                if self.day is not None:
-                    assert 1 <= self.day <= 31
-                    parts.append(str(self.day).zfill(2))
+        if self.month is None:
+            parts.append(unknown_placeholder * 2)
+        else:
+            assert 1 <= self.month <= 12
+            parts.append(str(self.month).zfill(2))
+        if self.day is None:
+            parts.append(unknown_placeholder * 2)
+        else:
+            assert 1 <= self.day <= 31
+            parts.append(str(self.day).zfill(2))
         s = separator.join(parts)
         return s
 

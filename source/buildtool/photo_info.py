@@ -31,6 +31,11 @@ class PhotoInfo:
     genre: tuple[PhotoGenre, ...]
     size_px: Size
 
+    @property
+    def chronological_sort_key(self):
+        # Sort by date, then by ID to break ties consistently.
+        return self.date.to_str(unknown_placeholder='0'), self.id
+
 
 def create_photo_id(name: str, date: PartialDate, file_extension: str) -> PhotoID:
     # Only allow alphabetic and number characters to simplify and prevent messing with URL encoding.

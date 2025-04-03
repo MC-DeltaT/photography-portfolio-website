@@ -45,6 +45,13 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="filter-group">
+                <label for="sort-direction">Sort:</label>
+                <select id="sort-direction">
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                </select>
+            </div>
         </div>
 
         <div class="photo-grid">
@@ -52,7 +59,8 @@
                 <article class="photo-card" 
                         data-genre="{{ photo.genre|join(' ') }}"
                         data-year="{{ photo.date.year }}"
-                        data-month="{{ '%02d' % photo.date.month }}">
+                        data-month="{{ '%02d' % photo.date.month }}"
+                        data-sort-key="{{ photo.chronological_sort_key }}">
                     <a href="{{ photo.page_url }}">
                         <div class="photo-image">
                             <img src="{{ photo.image.default_url }}"

@@ -129,8 +129,8 @@ class GalleryPage(BasicPage):
         )
 
     def render_context(self, context: BuildContext) -> dict[str, Any]:
-        # Get all photos sorted by date (newest first)
-        all_photos = sorted(context.photos, key=lambda p: p.date, reverse=True)
+        # Get all photos sorted by date (newest first). Also order by ID to break ties consistently.
+        all_photos = sorted(context.photos, key=lambda p: (p.date, p.id), reverse=True)
         
         # Get unique years and months for filters
         years = sorted({d.year for d in context.photos.dates if d.year}, reverse=True)
@@ -196,7 +196,8 @@ def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> Re
         'description': photo.description,
         'settings': create_photo_settings_list(photo),
         'genre': [genre.value for genre in sorted(photo.genre)],
-        'page_url': get_single_photo_page_url(photo.id)
+        'page_url': get_single_photo_page_url(photo.id),
+        'chronological_sort_key': '-'.join(photo.chronological_sort_key)
     }
 
 

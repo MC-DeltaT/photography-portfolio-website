@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const genreFilter = document.getElementById('genre-filter');
     const yearFilter = document.getElementById('year-filter');
     const monthFilter = document.getElementById('month-filter');
+    const sortDirection = document.getElementById('sort-direction');
     const photoCards = document.querySelectorAll('.photo-card');
     
     // Initialize Intersection Observer for infinite scrolling
@@ -27,6 +28,22 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.photo-image img').forEach(img => {
         observer.observe(img);
     });
+
+    // Sort photos based on date
+    function sortPhotos() {
+        const cards = Array.from(photoCards);
+        const isNewestFirst = sortDirection.value === 'newest';
+        
+        // Sort by date, then by ID to break ties consistently.
+        cards.sort((a, b) => {
+            const multiplier = isNewestFirst ? -1 : 1;
+            return multiplier * (a.dataset.sortKey).localeCompare(b.dataset.sortKey);
+        });
+        // Reorder the cards in the DOM
+        cards.forEach(card => {
+            photoGrid.appendChild(card);
+        });
+    }
 
     // Filter photos based on selected criteria
     function filterPhotos() {
@@ -51,6 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             card.style.display = genreMatch && yearMatch && monthMatch ? 'block' : 'none';
         });
+
+        // Re-sort visible photos
+        sortPhotos();
     }
 
     // Update month options based on selected year
@@ -71,7 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
         filterPhotos();
     });
     monthFilter.addEventListener('change', filterPhotos);
+    sortDirection.addEventListener('change', sortPhotos);
 
     // Initialize month options
     updateMonthOptions();
+    filterPhotos();
 }); 
