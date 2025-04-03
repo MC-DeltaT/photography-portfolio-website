@@ -14,8 +14,7 @@ main {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    /* Approximate header height to get it to fill the whole screen. */
-    min-height: calc(100vh - 4em);
+    min-height: calc(100vh - var(--approx-header-height));
 }
 
 .hero-image {

@@ -1,32 +1,15 @@
 /* TODO: tidy this junk */
 
-/* Photo location */
-.photo-location {
-    font-style: italic;
-    color: var(--colour-text-light);
-    font-size: 0.9rem;
-}
-
-/* Single Photo Page */
-.photo-detail {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: calc(var(--spacing-unit) * 2) 0;
-}
-
 .photo-container {
-    margin: 0;
-    background-color: var(--colour-background);
+    width: 100%;
+    min-height: calc(100vh - var(--approx-header-height));
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* TODO: image is cut off a bit */
 .photo-image {
-    width: 100%;
-    height: auto;
-    display: block;
-    max-height: 80vh;
     object-fit: contain;
 }
 
@@ -45,21 +28,15 @@
 }
 
 .photo-date {
-    color: var(--colour-accent);
-    font-size: 1.1rem;
-    margin-top: calc(var(--spacing-unit) * 0.5);
+    /*  TODO */
 }
 
 .photo-location {
-    color: var(--colour-accent);
-    font-size: 1.1rem;
-    margin-bottom: calc(var(--spacing-unit) * 1.5);
+    font-style: italic;
 }
 
 .photo-description {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    margin-bottom: calc(var(--spacing-unit) * 2);
+    /* TODO */
 }
 
 .photo-meta {
@@ -95,20 +72,8 @@
     background-color: var(--colour-accent);
 }
 
-/* Responsive design */
+/* TODO */
 @media (max-width: 480px) {
-    .photo-detail {
-        padding: var(--spacing-unit);
-    }
-
-    .photo-info {
-        padding: var(--spacing-unit);
-    }
-
-    .photo-title {
-        font-size: 1.75rem;
-    }
-
     .photo-meta {
         grid-template-columns: 1fr;
     }

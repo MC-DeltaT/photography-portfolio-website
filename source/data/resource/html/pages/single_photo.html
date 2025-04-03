@@ -4,6 +4,61 @@
 
 {% block title %}Gallery - {{ photo_page_title }}{% endblock %}
 
+{% block head %}
+    <link rel="stylesheet" href="{{ css.photo }}">
+{% endblock %}
+
 {% block content %}
-    {% include 'fragments/photo_with_info.html' %}
+    <section>
+        <figure class="photo-container">
+            <img class="photo-image"
+                src="{{ photo.image.default_url }}"
+                srcset="{{ photo.image.srcset_urls }}"
+                sizes="(max-width: 480px) 90vw, (max-width: 768px) 80vw, (max-width: 1024px) 70vw, 60vw"
+                alt="{{ photo.title or 'Photograph' }}"/>
+            <figcaption class="photo-info">
+                <div class="photo-header">
+                    {% if photo.title %}
+                        <h1 class="photo-title">"{{ photo.title }}"</h1>
+                    {% endif %}
+                    {% if photo.date %}
+                        <time class="photo-date">{{ photo.date.to_str('-') }}</time>
+                    {% endif %}
+                </div>
+    
+                {% if photo.location %}
+                    <p class="photo-location">{{ photo.location }}</p>
+                {% endif %}
+    
+                {% if photo.description %}
+                    <div class="photo-description">
+                        {{ photo.description }}
+                    </div>
+                {% endif %}
+    
+                <div class="photo-meta">
+                    {% if photo.settings %}
+                        <div class="photo-settings">
+                            <h3>Technical Details</h3>
+                            <p>{{ photo.settings|join(', ') }}</p>
+                        </div>
+                    {% endif %}
+    
+                    {% if photo.genre %}
+                        <div class="photo-genres">
+                            <h3>Styles</h3>
+                            <div class="genre-tags">
+                                {% for genre in photo.genre %}
+                                    {# TODO: genre urls #}
+                                    <a href="{{ pages.gallery }}" class="genre-tag">{{ genre|capitalize }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+    
+                {# TODO: add link to original image #}
+            </figcaption>
+        </figure>
+    </section>
 {% endblock %}

@@ -70,7 +70,8 @@ def get_common_html_render_context(context: HTMLBuildContext) -> RenderContext:
             'main': ASSETS_CSS_URL / 'main.css',
             'index': ASSETS_CSS_URL / 'index.css',
             'about': ASSETS_CSS_URL / 'about.css',
-            'gallery': ASSETS_CSS_URL / 'gallery.css'
+            'gallery': ASSETS_CSS_URL / 'gallery.css',
+            'photo': ASSETS_CSS_URL / 'photo.css'
         },
         'js': {
             'gallery': ASSETS_JS_URL / 'gallery.js'
@@ -168,7 +169,7 @@ def build_single_photo_pages(context: HTMLBuildContext) -> None:
 def build_single_photo_page(photo: PhotoInfo, context: HTMLBuildContext) -> None:
     url = get_single_photo_page_url(photo.id)
     render_context = create_html_render_context(context, {
-        'photo_page_title': photo.title or photo,
+        'photo_page_title': photo.title or photo.id.split('.')[0],
         'photo': create_photo_render_context(photo, context.state)
     })
     build_html_page('pages/single_photo.html', url, context, render_context)
