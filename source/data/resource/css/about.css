@@ -9,6 +9,7 @@
 .photographer-section {
     display: block;
     margin: var(--spacing-unit) 0;
+    overflow: hidden; /* Clearfix to contain floated elements */
 }
 
 .photographer-image {
@@ -19,6 +20,14 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-left: var(--spacing-unit);
     margin-bottom: var(--spacing-unit);
+    max-height: 100%; /* Ensure image doesn't exceed container height */
+}
+
+/* Desktop / large */
+@media (min-width: 1440px) {
+    .photographer-image {
+        width: 30%;
+    }
 }
 
 /* Mobile */

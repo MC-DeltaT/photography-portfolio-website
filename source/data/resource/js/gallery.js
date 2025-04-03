@@ -1,3 +1,5 @@
+// TODO: check the performance of this design once we have many photos
+
 document.addEventListener('DOMContentLoaded', () => {
     const photoGrid = document.querySelector('.photo-grid');
     const genreFilter = document.getElementById('genre-filter');
