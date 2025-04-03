@@ -12,12 +12,7 @@ ABOUT_PAGE_URL = URLPath('/about.html')
 
 GALLERY_URL = URLPath('/gallery')
 GALLERY_PAGE_URL = GALLERY_URL.with_suffix('.html')
-GALLERY_BY_STYLE_URL = GALLERY_URL / 'style'
 GALLERY_PHOTO_URL = GALLERY_URL / 'photo'
-
-
-def get_gallery_style_page_url(style: str) -> URLPath:
-    return GALLERY_BY_STYLE_URL / f'{style.lower()}.html'
 
 
 def get_single_photo_page_url(photo_id: PhotoID) -> URLPath:
@@ -52,3 +47,5 @@ def get_image_srcset_url(base_url: URLPath, srcset_tag: str | None) -> URLPath:
 
 
 ASSETS_CSS_URL = ASSETS_URL / 'css'
+
+ASSETS_JS_URL = ASSETS_URL / 'js'

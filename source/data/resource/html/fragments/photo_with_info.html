@@ -43,7 +43,8 @@
                         <h3>Categories</h3>
                         <div class="genre-tags">
                             {% for genre in photo.genre %}
-                                <a href="{{ genre.url }}" class="genre-tag">{{ genre.name|capitalize }}</a>
+                                {# TODO: genre urls #}
+                                <a href="{{ pages.gallery }}" class="genre-tag">{{ genre|capitalize }}</a>
                             {% endfor %}
                         </div>
                     </div>

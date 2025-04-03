@@ -1,31 +1,62 @@
-.style-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: var(--spacing-unit);
-    padding: 0 var(--spacing-unit);
+/* TODO: manually tidy this */
+
+.gallery-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--spacing-unit) * 2);
 }
 
-.style-card {
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: var(--colour-text);
+}
+
+.filter-group select {
+    border: 1px solid var(--colour-text);
+    border-radius: 4px;
     background-color: var(--colour-background);
+    color: var(--colour-text);
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.filter-group select:hover {
+    border-color: var(--colour-accent);
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-unit);
+    padding: var(--spacing-unit);
+    margin: 0 auto;
+}
+
+.photo-card {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    text-decoration: none;
     transition: transform var(--transition-duration) ease, box-shadow var(--transition-duration) ease;
 }
 
-.style-card:hover {
+.photo-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.style-image {
+.photo-image {
     position: relative;
     padding-top: 75%; /* 4:3 aspect ratio */
     overflow: hidden;
 }
 
-.style-image img {
+.photo-image img {
     position: absolute;
     top: 0;
     left: 0;
@@ -35,16 +66,23 @@
     transition: transform var(--transition-duration) ease;
 }
 
-.style-card:hover .style-image img {
+.photo-card:hover .photo-image img {
     transform: scale(1.05);
 }
 
-.style-info {
-    padding: var(--spacing-unit);
-}
+/* Mobile */
+@media (max-width: 480px) {
+    .gallery-filters {
+        flex-direction: column;
+        gap: var(--spacing-unit);
+        width: 100%;
+    }
 
-.style-info h3 {
-    margin: 0;
-    color: var(--colour-text);
-    font-size: 1.5rem;
+    .filter-group select {
+        flex: 1;
+    }
+
+    .photo-grid {
+        grid-template-columns: 1fr;
+    }
 }

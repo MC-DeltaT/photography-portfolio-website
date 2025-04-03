@@ -1,4 +1,4 @@
-{# Main gallery landing page #}
+{# Main photo gallery page #}
 
 {% extends 'fragments/base.html' %}
 
@@ -6,35 +6,67 @@
 
 {% block head %}
     <link rel="stylesheet" href="{{ css.gallery }}">
+    <script src="{{ js.gallery }}" defer></script>
 {% endblock %}
 
+{# TODO: improve design manually #}
+
 {% block content %}
-    <section>
-        <h1>Gallery</h1>
-    </section>
+    <noscript>
+        <p>This page requires JavaScript to be enabled.<br>
+            (Don't worry, it's not doing anything malicious! Only client-side filtering of the photo gallery.)</p>
+    </noscript>
 
     <section>
-        <h2>By Style</h2>
-        <div class="style-grid">
-            {% for style in styles %}
-                <a href="{{ style.url }}" class="style-card">
-                    <div class="style-image">
-                        <img src="{{ style.example_photo.default_url }}"
-                                srcset="{{ style.example_photo.srcset_urls }}"
+        <h1>Gallery</h1>
+        <div class="gallery-filters">
+            <div class="filter-group">
+                <label for="genre-filter">Style:</label>
+                <select id="genre-filter">
+                    <option value="">All</option>
+                    {% for genre in genres %}
+                        <option value="{{ genre }}">{{ genre|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="year-filter">Year:</label>
+                <select id="year-filter">
+                    <option value="">All</option>
+                    {% for year in years %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {# TODO: bit weird to filter by year and month? #}
+            <div class="filter-group">
+                <label for="month-filter">Month:</label>
+                <select id="month-filter">
+                    <option value="">All</option>
+                    {% for month in months %}
+                        <option value="{{ month }}">{{ month }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="photo-grid">
+            {% for photo in photos %}
+                <article class="photo-card" 
+                        data-genre="{{ photo.genre|join(' ') }}"
+                        data-year="{{ photo.date.year }}"
+                        data-month="{{ photo.date.month }}">
+                    <a href="{{ photo.page_url }}">
+                        <div class="photo-image">
+                            <img src="{{ photo.image.default_url }}"
+                                srcset="{{ photo.image.srcset_urls }}"
                                 sizes="(max-width: 480px) 90vw, (max-width: 1024px) 30vw, 20vw"
-                                alt="Example of {{ style.name }} photography"/>
-                    </div>
-                    <div class="style-info">
-                        <h3>{{ style.name|capitalize }}</h3>
-                        <p>{{ style.photo_count }} photos</p>
-                    </div>
-                </a>
+                                alt="{{ photo.title or 'Photograph' }}"
+                                loading="lazy"/>
+                        </div>
+                    </a>
+                </article>
             {% endfor %}
         </div>
     </section>
-
-    <section>
-        <h2>By Date</h2>
-        <p>Explore photographs chronologically - coming soon</p>
-    </section>
-{% endblock %} 
+{% endblock %}

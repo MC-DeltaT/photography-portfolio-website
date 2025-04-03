@@ -11,8 +11,8 @@ from buildtool.build.common import BuildContext, BuildState
 from buildtool.photo_collection import PhotoCollection
 from buildtool.photo_info import PhotoInfo
 from buildtool.resource.html import get_html_resources_path
-from buildtool.types import ImageSrcSet, URLPath, PhotoGenre
-from buildtool.url import ABOUT_PAGE_URL, ASSETS_CSS_URL, GALLERY_PAGE_URL, INDEX_PAGE_URL, get_gallery_style_page_url, get_single_photo_page_url
+from buildtool.types import ImageSrcSet, URLPath
+from buildtool.url import ABOUT_PAGE_URL, ASSETS_CSS_URL, ASSETS_JS_URL, GALLERY_PAGE_URL, INDEX_PAGE_URL, get_single_photo_page_url
 
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,6 @@ def build_all_html(context: BuildContext) -> None:
     jinja2_env = create_jinja2_environment(html_resources_path)
     context = HTMLBuildContext.new(context, jinja2_env)
     build_basic_pages(context)
-    build_gallery_single_style_pages(context)
     build_single_photo_pages(context)
 
 
@@ -44,6 +43,8 @@ def create_jinja2_environment(html_resources_path: Path) -> jinja2.Environment:
         loader=jinja2.FileSystemLoader(html_resources_path),
         autoescape=jinja2.select_autoescape(),
         undefined=jinja2.StrictUndefined,
+        trim_blocks=True,
+        lstrip_blocks=True
     )
 
 
@@ -70,6 +71,9 @@ def get_common_html_render_context(context: HTMLBuildContext) -> RenderContext:
             'index': ASSETS_CSS_URL / 'index.css',
             'about': ASSETS_CSS_URL / 'about.css',
             'gallery': ASSETS_CSS_URL / 'gallery.css'
+        },
+        'js': {
+            'gallery': ASSETS_JS_URL / 'gallery.js'
         },
         'pages': {
             'about': ABOUT_PAGE_URL,
@@ -125,23 +129,21 @@ class GalleryPage(BasicPage):
         )
 
     def render_context(self, context: BuildContext) -> dict[str, Any]:
-        def create_style_context(genre: PhotoGenre) -> RenderContext:
-            photos = context.photos.get_genre(genre)
-            assert len(photos) > 0
-            # Example photo is latest photo in genre.
-            example_photo = max(photos, key=lambda p: p.date)
-            return {
-                'name': genre.value,
-                'url': get_gallery_style_page_url(genre.value),
-                'photo_count': len(photos),
-                'example_photo':
-                    create_image_render_context(context.state.image_srcsets[context.state.photo_id_to_image_id[example_photo.id]])
-            }
+        # Get all photos sorted by date (newest first)
+        all_photos = sorted(context.photos, key=lambda p: p.date, reverse=True)
+        
+        # Get unique years and months for filters
+        years = sorted({d.year for d in context.photos.dates if d.year}, reverse=True)
+        months = sorted(
+            {f'{d.year}-{d.month:02d}' for d in context.photos.dates if d.year and d.month},
+            reverse=True
+        )
         
         return {
-            'styles': [
-                create_style_context(genre) for genre in context.photos.genres
-            ]
+            'photos': [create_photo_render_context(p, context.state) for p in all_photos],
+            'genres': [genre.value for genre in context.photos.genres],
+            'years': years,
+            'months': months
         }
 
 
@@ -156,26 +158,6 @@ def build_basic_pages(context: HTMLBuildContext) -> None:
     for page in BASIC_PAGES:
         render_context = page.render_context(context)
         build_html_page(page.template, page.url, context, render_context)
-
-
-# Note we call genres "styles" for the viewer because it sounds cooler.
-
-
-def build_gallery_single_style_pages(context: HTMLBuildContext) -> None:
-    for genre in context.photos.genres:
-        build_gallery_single_style_page(genre, context)
-
-
-def build_gallery_single_style_page(genre: PhotoGenre, context: HTMLBuildContext) -> None:
-    # Order photos newest to oldest.
-    photos = sorted(context.photos.get_genre(genre), key=lambda p: p.date, reverse=True)
-    render_context: RenderContext = {
-        'style': {
-            'name': genre.value,
-            'photos': [create_photo_render_context(p, context.state) for p in photos]
-        }
-    }
-    build_html_page('pages/gallery_single_style.html', get_gallery_style_page_url(genre.value), context, render_context)
 
 
 def build_single_photo_pages(context: HTMLBuildContext) -> None:
@@ -209,13 +191,7 @@ def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> Re
         'location': photo.location,
         'description': photo.description,
         'settings': create_photo_settings_list(photo),
-        'genre': [
-            {
-                'name': genre.value,
-                'url': get_gallery_style_page_url(genre.value)
-            }
-            for genre in sorted(photo.genre)
-        ],
+        'genre': [genre.value for genre in sorted(photo.genre)],
         'page_url': get_single_photo_page_url(photo.id)
     }
 
