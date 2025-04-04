@@ -230,7 +230,7 @@ def create_photo_settings_list(photo: PhotoInfo) -> list[str]:
             exposure_time_str = str(round(photo.exposure_time, 1))
         else:
             exposure_time_str = f"1/{int(round(1 / photo.exposure_time))}"
-        result.append(f'{exposure_time_str} s')
+        result.append(f'{exposure_time_str}s')
     if photo.iso:
         result.append(f'ISO {photo.iso}')
     return result
