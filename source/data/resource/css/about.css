@@ -9,10 +9,15 @@
 .photographer-section {
     display: block;
     margin: var(--spacing-unit) 0;
-    overflow: hidden; /* Clearfix to contain floated elements */
+    padding: var(--spacing-unit);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-/* TODO: slight box on quote */
+.photographer-section q {
+    font-style: italic;
+}
 
 .photographer-image {
     float: right;
@@ -42,6 +47,7 @@
     .photographer-image {
         float: none;
         width: 100%;
-        margin: var(--spacing-unit) auto;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
