@@ -1,3 +1,9 @@
+:root {
+    --hero-title-font-size: 6.0rem;
+    --hero-subtitle-font-size: 2rem;
+    --hero-text-font-size: 1.25rem;
+}
+
 /* All pages have default margin and padding except the homepage. Want it to take up the whole screen. */
 main {
     margin: 0;
@@ -38,20 +44,20 @@ main {
 
 .hero-content h1 {
     margin: 0;
-    font-size: 5.5rem;
+    font-size: var(--hero-title-font-size);
     text-shadow: 3px 3px 5px var(--colour-shadow-hover);
     font-weight: var(--font-weight-bold);
 }
 
 .hero-content h2 {
     margin: var(--spacing) 0;
-    font-size: 2rem;
+    font-size: var(--hero-subtitle-font-size);
     text-shadow: 2px 2px 4px var(--colour-shadow-hover);
     font-weight: var(--font-weight-medium);
 }
 
 .hero-content p {
-    font-size: var(--font-size-large);
+    font-size: var(--hero-text-font-size);
     margin: var(--spacing) 0;
     text-shadow: 1px 1px 2px var(--colour-shadow-hover);
     opacity: 0.9;
@@ -61,7 +67,7 @@ main {
     background-color: var(--colour-background);
     color: var(--colour-text);
     font-weight: var(--font-weight-bold);
-    font-size: var(--font-size-large);
+    font-size: var(--hero-button-font-size);
     box-shadow: var(--box-shadow);
 }
 
@@ -74,11 +80,9 @@ main {
 
 /* Mobile */
 @media (max-width: 480px) {
-    .hero-content h1 {
-        font-size: 3.5rem;
-    }
-
-    .hero-content h2 {
-        font-size: 1.5rem;
+    :root {
+        --hero-title-font-size: 3.5rem;
+        --hero-subtitle-font-size: 1.25rem;
+        --hero-text-font-size: 1.0rem;
     }
 }
