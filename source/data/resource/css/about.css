@@ -12,6 +12,8 @@
     overflow: hidden; /* Clearfix to contain floated elements */
 }
 
+/* TODO: slight box on quote */
+
 .photographer-image {
     float: right;
     width: 40%;

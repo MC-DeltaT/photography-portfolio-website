@@ -1,80 +1,32 @@
-/* TODO: tidy this junk */
-
 .photo-container {
-    width: 100%;
-    min-height: calc(100vh - var(--approx-header-height));
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* TODO: image is cut off a bit */
+/* TODO: needs to be centered horizontally */
 .photo-image {
+    max-width: 100%;
+    max-height: 80vh;
     object-fit: contain;
 }
 
 .photo-info {
-    padding: calc(var(--spacing-unit) * 2);
+    padding: var(--spacing-unit);
 }
 
 .photo-header {
-    margin-bottom: calc(var(--spacing-unit) * 1.5);
+    margin-bottom: var(--spacing-unit);
 }
 
 .photo-title {
-    font-size: 2rem;
-    margin: 0;
-    color: var(--colour-text);
+    margin-bottom: calc(var(--spacing-unit) / 2);
 }
 
-.photo-date {
-    /*  TODO */
-}
-
-.photo-location {
-    font-style: italic;
+.photo-date-location {
+    font-weight: bold;
 }
 
 .photo-description {
-    /* TODO */
-}
-
-.photo-meta {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: calc(var(--spacing-unit) * 2);
-    padding-top: calc(var(--spacing-unit) * 2);
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.photo-meta h3 {
-    font-size: 1.2rem;
     margin-bottom: var(--spacing-unit);
-    color: var(--colour-text);
-}
-
-.genre-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-unit);
-}
-
-.genre-tag {
-    background-color: var(--colour-background-inverted);
-    color: var(--colour-text-inverted);
-    padding: calc(var(--spacing-unit) * 0.5) calc(var(--spacing-unit) * 1);
-    border-radius: 4px;
-    font-size: 0.9rem;
-    transition: background-color var(--transition-duration) ease;
-}
-
-.genre-tag:hover {
-    background-color: var(--colour-accent);
-}
-
-/* TODO */
-@media (max-width: 480px) {
-    .photo-meta {
-        grid-template-columns: 1fr;
-    }
 }

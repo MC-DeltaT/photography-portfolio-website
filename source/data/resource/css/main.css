@@ -39,7 +39,7 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
     font-size: 2.5rem;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
 }
 
 h2 {
@@ -50,10 +50,18 @@ h3 {
     font-size: 1.5rem;
 }
 
+h4 {
+    font-size: 1.25rem;
+}
+
 a {
     color: var(--colour-text);
     text-decoration: none;
     transition: color var(--transition-duration) ease;
+}
+
+a:hover {
+    color: var(--colour-accent);
 }
 
 .button {
@@ -69,6 +77,7 @@ a {
 }
 
 .button:hover {
+    color: var(--colour-text-inverted);
     background-color: var(--colour-accent);
 }
 
@@ -89,15 +98,6 @@ header h1 {
     margin: 0;
     font-size: 1.5rem;
     padding: 0 var(--spacing-unit);
-}
-
-header a {
-    text-decoration: none;
-    transition: color var(--transition-duration) ease;
-}
-
-header a:hover {
-    color: var(--colour-accent);
 }
 
 .header-nav {
@@ -124,14 +124,10 @@ header a:hover {
 }
 
 .header-nav-links a {
-    text-decoration: none;
     font-weight: 500;
-    transition: color var(--transition-duration) ease;
 }
 
-.header-nav-links a:hover {
-    color: var(--colour-accent);
-}
+/* TODO: both main and section have padding, which is too much */
 
 main {
     flex: 1;

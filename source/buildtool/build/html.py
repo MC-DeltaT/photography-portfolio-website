@@ -131,7 +131,7 @@ class GalleryPage(BasicPage):
 
     def render_context(self, context: BuildContext) -> dict[str, Any]:
         # Get all photos sorted by date (newest first). Also order by ID to break ties consistently.
-        all_photos = sorted(context.photos, key=lambda p: (p.date, p.id), reverse=True)
+        all_photos = sorted(context.photos, key=lambda p: p.chronological_sort_key, reverse=True)
         
         # Get unique years and months for filters
         years = sorted({d.year for d in context.photos.dates if d.year}, reverse=True)
@@ -188,6 +188,8 @@ def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> Re
     # Should think twice about allowing photos with no date.
     assert photo.date.year is not None
     assert photo.date.month is not None
+    # Page design assumes genres are always present.
+    assert photo.genre
     return {
         'image': create_image_render_context(
             build_state.image_srcsets[build_state.photo_id_to_image_id[photo.id]]),

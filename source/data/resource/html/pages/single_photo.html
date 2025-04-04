@@ -19,16 +19,12 @@
             <figcaption class="photo-info">
                 <div class="photo-header">
                     {% if photo.title %}
-                        <h1 class="photo-title">"{{ photo.title }}"</h1>
+                        <h2 class="photo-title">{{ photo.title }}</h2>
                     {% endif %}
-                    {% if photo.date %}
-                        <time class="photo-date">{{ photo.date.to_str('-') }}</time>
-                    {% endif %}
+                    <p class="photo-date-location">
+                        {{ photo.date.to_str('-') }}{% if photo.location %} at {{ photo.location }}{% endif %}
+                    </p>
                 </div>
-    
-                {% if photo.location %}
-                    <p class="photo-location">{{ photo.location }}</p>
-                {% endif %}
     
                 {% if photo.description %}
                     <div class="photo-description">
@@ -38,22 +34,12 @@
     
                 <div class="photo-meta">
                     {% if photo.settings %}
-                        <div class="photo-settings">
-                            <h3>Technical Details</h3>
-                            <p>{{ photo.settings|join(', ') }}</p>
-                        </div>
+                        <p>{{ photo.settings|join(', ') }}</p>
                     {% endif %}
     
                     {% if photo.genre %}
-                        <div class="photo-genres">
-                            <h3>Styles</h3>
-                            <div class="genre-tags">
-                                {% for genre in photo.genre %}
-                                    {# TODO: genre urls #}
-                                    <a href="{{ pages.gallery }}" class="genre-tag">{{ genre|capitalize }}</a>
-                                {% endfor %}
-                            </div>
-                        </div>
+                        {# TODO: genre urls #}
+                        <p>Styles: {{ photo.genre|map('capitalize')|join(', ') }}</p>
                     {% endif %}
                 </div>
     

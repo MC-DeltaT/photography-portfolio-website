@@ -41,7 +41,6 @@ main {
     font-size: 5.5rem;
     text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
     font-weight: 700;
-    letter-spacing: -0.02em;
 }
 
 .hero-content h2 {
