@@ -1,8 +1,8 @@
 .photo-figure {
-    border-radius: 8px;
+    border-radius: var(--border-radius-large);
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: var(--spacing-unit);
+    box-shadow: var(--box-shadow);
+    padding: var(--spacing);
 }
 
 .photo-image {
@@ -15,21 +15,21 @@
 }
 
 .photo-info {
-    padding: var(--spacing-unit);
+    padding: var(--spacing);
 }
 
 .photo-header {
-    margin-bottom: var(--spacing-unit);
+    margin-bottom: var(--spacing);
 }
 
 .photo-title {
-    margin-bottom: calc(var(--spacing-unit) / 2);
+    margin-bottom: var(--spacing-small);
 }
 
 .photo-date-location {
-    font-weight: bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .photo-description {
-    margin-bottom: var(--spacing-unit);
+    margin-bottom: var(--spacing);
 }

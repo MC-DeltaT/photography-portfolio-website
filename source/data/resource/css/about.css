@@ -1,17 +1,16 @@
 .contact-email {
     color: var(--colour-text);
-    font-size: 1.1rem;
-    padding: calc(var(--spacing-unit) * 0.75);
-    border-radius: 4px;
+    padding: var(--spacing-small);
+    border-radius: var(--border-radius);
     display: inline-block;
 }
 
 .photographer-section {
     display: block;
-    margin: var(--spacing-unit) 0;
-    padding: var(--spacing-unit);
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: var(--spacing) 0;
+    padding: var(--spacing);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--box-shadow);
     overflow: hidden;
 }
 
@@ -23,10 +22,10 @@
     float: right;
     width: 40%;
     height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-left: var(--spacing-unit);
-    margin-bottom: var(--spacing-unit);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--box-shadow);
+    margin-left: var(--spacing);
+    margin-bottom: var(--spacing);
     max-height: 100%; /* Ensure image doesn't exceed container height */
 }
 

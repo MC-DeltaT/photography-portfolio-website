@@ -1,14 +1,41 @@
 :root {
+    /* Colors */
     --colour-background: #ffffff;
     --colour-primary: #2c3e50;
     --colour-text: var(--colour-primary);
     --colour-background-inverted: var(--colour-primary);
     --colour-text-inverted: var(--colour-background);
     --colour-accent: #8d9b9c;
-    --spacing-unit: 1rem;
+    --colour-border: rgba(0, 0, 0, 0.1);
+    --colour-shadow: rgba(0, 0, 0, 0.1);
+    --colour-shadow-hover: rgba(0, 0, 0, 0.2);
+    
+    /* Typography */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-size-base: 1rem;
+    --font-size-large: 1.25rem;
+    --font-weight-medium: 500;
+    --font-weight-bold: 600;
+    --line-height-base: 1.6;
+    --line-height-heading: 1.2;
+    
+    /* Layout */
+    --spacing: 1rem;
+    --spacing-small: calc(var(--spacing) * 0.5);
+    --spacing-medium: calc(var(--spacing) * 1.5);
+    --spacing-large: calc(var(--spacing) * 2);
     --section-width: 70vw;
+    --border-radius: 4px;
+    --border-radius-large: 8px;
+    --box-shadow: 0 4px 8px var(--colour-shadow);
+    --box-shadow-hover: 0 6px 12px var(--colour-shadow-hover);
+    
+    /* Transitions */
     --transition-duration: 0.2s;
-    --approx-header-height: 4em;    /* Don't use this for anything very important. */
+    --transition-timing: ease;
+    
+    /* Misc */
+    --approx-header-height: 4em;
 }
 
 
@@ -21,8 +48,9 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.6;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
     color: var(--colour-text);
     background-color: var(--colour-background);
     min-height: 100vh;
@@ -31,10 +59,10 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-weight: 600;
-    line-height: 1.2;
-    margin-bottom: var(--spacing-unit);
+    font-family: var(--font-family);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-heading);
+    margin-bottom: var(--spacing);
 }
 
 h1 {
@@ -57,7 +85,7 @@ h4 {
 a {
     color: var(--colour-text);
     text-decoration: none;
-    transition: color var(--transition-duration) ease;
+    transition: color var(--transition-duration) var(--transition-timing);
 }
 
 a:hover {
@@ -66,14 +94,15 @@ a:hover {
 
 .button {
     display: inline-block;
-    margin: var(--spacing-unit) 0;
-    padding: calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 1.25);
+    margin: var(--spacing) 0;
+    padding: var(--spacing-small) var(--spacing-medium);
     background-color: var(--colour-background-inverted);
     color: var(--colour-text-inverted);
     text-decoration: none;
-    border-radius: 4px;
-    transition: background-color var(--transition-duration) ease;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-duration) var(--transition-timing);
     cursor: pointer;
+    font-weight: var(--font-weight-medium);
 }
 
 .button:hover {
@@ -86,7 +115,7 @@ a:hover {
 
 header {
     background-color: var(--colour-background);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--colour-border);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -97,19 +126,18 @@ header {
 header h1 {
     margin: 0;
     font-size: 1.5rem;
-    padding: 0 var(--spacing-unit);
+    padding: 0 var(--spacing);
 }
 
 .header-nav {
-    max-width: var(--container-width);
     margin: 0 auto;
-    padding: var(--spacing-unit) var(--spacing-unit);
+    padding: var(--spacing) var(--spacing);
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: calc(var(--spacing-unit) * 0.5);
+    gap: var(--spacing-small);
 }
 
 .header-nav-brand h1 {
@@ -120,23 +148,22 @@ header h1 {
 .header-nav-links {
     display: flex;
     list-style: none;
-    gap: calc(var(--spacing-unit) * 1.5);
+    gap: var(--spacing-medium);
 }
 
 .header-nav-links a {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
 }
 
 main {
     flex: 1;
-    max-width: var(--container-width);
     margin: 0 auto;
-    padding: var(--spacing-unit);
+    padding: var(--spacing);
     width: 100%;
 }
 
 section {
-    margin: 0 auto calc(var(--spacing-unit) * 2);
+    margin: 0 auto var(--spacing);
     width: 100%;
     max-width: var(--section-width);
 }
@@ -144,20 +171,19 @@ section {
 footer {
     background-color: var(--colour-background-inverted);
     color: var(--colour-text-inverted);
-    padding: var(--spacing-unit);
+    padding: var(--spacing);
     margin-top: auto;
     font-size: 0.75rem;
 }
 
 .footer-content {
-    max-width: var(--container-width);
     margin: 0 auto;
-    padding: 0 var(--spacing-unit);
+    padding: 0 var(--spacing);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--spacing-unit);
+    gap: var(--spacing);
 }
 
 .github-link {
@@ -200,7 +226,7 @@ footer {
 @media (max-width: 480px) {
     :root {
         --section-width: 90vw;
-        --spacing-unit: 0.75rem;
+        --spacing: 0.75rem;
     }
 
     h1 {

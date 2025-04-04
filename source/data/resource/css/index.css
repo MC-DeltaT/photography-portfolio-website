@@ -1,7 +1,7 @@
 /* All pages have default margin and padding except the homepage. Want it to take up the whole screen. */
 main {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
 }
@@ -32,43 +32,42 @@ main {
     text-align: center;
     color: var(--colour-text-inverted);
     z-index: 1;
-    padding: var(--spacing-unit);
+    padding: var(--spacing);
     margin: 0 auto;
 }
 
 .hero-content h1 {
     margin: 0;
     font-size: 5.5rem;
-    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
-    font-weight: 700;
+    text-shadow: 3px 3px 5px var(--colour-shadow-hover);
+    font-weight: var(--font-weight-bold);
 }
 
 .hero-content h2 {
-    margin: var(--spacing-unit) 0;
+    margin: var(--spacing) 0;
     font-size: 2rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    font-weight: 500;
+    text-shadow: 2px 2px 4px var(--colour-shadow-hover);
+    font-weight: var(--font-weight-medium);
 }
 
 .hero-content p {
-    font-size: 1.25rem;
-    margin: var(--spacing-unit) 0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    font-size: var(--font-size-large);
+    margin: var(--spacing) 0;
+    text-shadow: 1px 1px 2px var(--colour-shadow-hover);
     opacity: 0.9;
 }
 
 .hero-button {
     background-color: var(--colour-background);
     color: var(--colour-text);
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: all var(--transition-duration) ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-large);
+    box-shadow: var(--box-shadow);
 }
 
 .hero-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--box-shadow-hover);
     background-color: var(--colour-background-inverted);
     color: var(--colour-text-inverted);
 }
@@ -81,13 +80,5 @@ main {
 
     .hero-content h2 {
         font-size: 1.5rem;
-    }
-
-    .hero-description {
-        font-size: 1.1rem;
-    }
-
-    .hero-button {
-        font-size: 1rem;
     }
 }

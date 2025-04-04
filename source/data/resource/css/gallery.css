@@ -1,26 +1,26 @@
 .gallery-filters {
     display: flex;
     flex-wrap: wrap;
-    gap: calc(var(--spacing-unit) * 2);
+    gap: var(--spacing-medium);
 }
 
 .filter-group {
     display: flex;
     align-items: center;
-    gap: var(--spacing-unit);
+    gap: var(--spacing-small);
 }
 
 .filter-group label {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     color: var(--colour-text);
 }
 
 .filter-group select {
     border: 1px solid var(--colour-text);
-    border-radius: 4px;
+    border-radius: var(--border-radius);
     background-color: var(--colour-background);
     color: var(--colour-text);
-    font-size: 1rem;
+    font-size: var(--font-size-base);
     cursor: pointer;
 }
 
@@ -31,21 +31,22 @@
 .photo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: var(--spacing-unit);
-    padding: var(--spacing-unit);
+    gap: var(--spacing);
+    padding: var(--spacing);
     margin: 0 auto;
 }
 
 .photo-card {
-    border-radius: 8px;
+    border-radius: var(--border-radius-large);
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform var(--transition-duration) ease, box-shadow var(--transition-duration) ease;
+    box-shadow: var(--box-shadow);
+    transition: transform var(--transition-duration) var(--transition-timing),
+                box-shadow var(--transition-duration) var(--transition-timing);
 }
 
 .photo-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--box-shadow-hover);
 }
 
 .photo-image {
@@ -61,7 +62,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform var(--transition-duration) ease;
+    transition: transform var(--transition-duration) var(--transition-timing);
 }
 
 .photo-card:hover .photo-image img {
@@ -72,7 +73,7 @@
 @media (max-width: 480px) {
     .gallery-filters {
         flex-direction: column;
-        gap: var(--spacing-unit);
+        gap: var(--spacing);
         width: 100%;
     }
 
