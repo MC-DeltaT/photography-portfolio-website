@@ -78,6 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedYear = yearFilter.value;
         const monthOptions = monthFilter.querySelectorAll('option:not([value=""])');
         
+        // Reset month selection to "All" when year changes
+        monthFilter.value = '';
+        
         monthOptions.forEach(option => {
             const [year] = option.value.split('-');
             option.style.display = !selectedYear || year === selectedYear ? 'block' : 'none';
@@ -90,7 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMonthOptions();
         filterPhotos();
     });
-    monthFilter.addEventListener('change', filterPhotos);
+    monthFilter.addEventListener('change', () => {
+        // Set the year filter based on the selected month
+        if (monthFilter.value) {
+            const [year] = monthFilter.value.split('-');
+            yearFilter.value = year;
+        }
+        filterPhotos();
+    });
     sortDirection.addEventListener('change', sortPhotos);
 
     // Initialize month options
