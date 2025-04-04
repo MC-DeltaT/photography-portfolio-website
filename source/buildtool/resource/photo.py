@@ -2,6 +2,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 import logging
+import os
 from typing import Annotated
 
 import pydantic
@@ -49,7 +50,8 @@ def find_photos(root: Path, skip_invalid: bool = False) -> list[PhotoResourceRec
 
     logger.info(f'Finding photos in: "{root}"')
     records: list[PhotoResourceRecord] = []
-    for dir_path, _subdirs, files in root.walk():
+    for dir_path, _subdirs, files in os.walk(root):
+        dir_path = Path(dir_path)
         files = sorted(files)
         metadata_files = get_photo_metadata_files(dir_path, files)
         logger.debug(f'Metadata files in "{dir_path}" : {metadata_files}')

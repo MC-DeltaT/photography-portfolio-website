@@ -27,7 +27,7 @@ For use in CI, the convenience script [`deploy.sh`](./deploy.sh) can be used.
 
 ## Requirements
 
-- Python 3.12
+- Python 3.11
 - See [requirements.txt](source/requirements.txt)
 - ExifTool
 - ImageMagick

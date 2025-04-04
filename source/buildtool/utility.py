@@ -1,6 +1,7 @@
 from collections.abc import Collection, Iterator
 import datetime as dt
 from pathlib import Path
+import os
 
 import dateutil.parser
 
@@ -10,7 +11,8 @@ def remove_dashes(s: str) -> str:
 
 
 def find_files(root: Path, extensions: Collection[str]) -> Iterator[Path]:
-    for dir_path, _subdirs, files in root.walk():
+    for dir_path, _subdirs, files in os.walk(root):
+        dir_path = Path(dir_path)
         file_paths = [dir_path / f for f in files]
         if extensions:
             file_paths = [f for f in file_paths if f.suffix in extensions]

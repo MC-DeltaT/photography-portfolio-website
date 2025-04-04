@@ -30,10 +30,12 @@ class PhotoGenre(StrEnum):
 
 
 class URLPath(PurePosixPath):
-    def __init__(self, *args, **kwargs) -> None:    # type: ignore
-        super().__init__(*args, **kwargs)   # type: ignore
-        if not self.is_absolute():
+    @classmethod
+    def _from_parts(cls, args):
+        path = super()._from_parts(args)
+        if not path.is_absolute():
             raise ValueError('path must have a root')
+        return path
 
     @property
     def fs_path(self) -> Path:
