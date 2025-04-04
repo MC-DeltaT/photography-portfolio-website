@@ -33,7 +33,8 @@ def main() -> None:
     if args.dry_run and args.fast:
         arg_parser.error('fast should not be used with dry_run')
 
-    run_ingest(args.ingest, args.data, dry_run=args.dry_run)
+    if args.ingest.exists():
+        run_ingest(args.ingest, args.data, dry_run=args.dry_run)
 
     run_build(args.output, args.data, fast=args.fast, dry_run=args.dry_run)
 
