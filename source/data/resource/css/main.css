@@ -127,8 +127,6 @@ header h1 {
     font-weight: 500;
 }
 
-/* TODO: both main and section have padding, which is too much */
-
 main {
     flex: 1;
     max-width: var(--container-width);
@@ -138,8 +136,7 @@ main {
 }
 
 section {
-    margin: var(--spacing-unit) auto calc(var(--spacing-unit) * 2);
-    padding: 0 var(--spacing-unit);
+    margin: 0 auto calc(var(--spacing-unit) * 2);
     width: 100%;
     max-width: var(--section-width);
 }
