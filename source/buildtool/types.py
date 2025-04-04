@@ -26,7 +26,7 @@ class PhotoGenre(StrEnum):
     PLANT = 'plant'
     STILL_LIFE = 'still-life'
     URBAN = 'urban'
-    WILDLIFE = 'wildlife'
+    WILDLIFE = 'wildlife'   # TODO: should this be replaced with "animal"?
 
 
 class URLPath(PurePosixPath):

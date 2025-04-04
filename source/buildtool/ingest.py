@@ -18,7 +18,7 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
 
     # The file structure is the same as when stored in the resources directory,
     # so we can reuse this code.
-    photos = find_photos(ingest_path)
+    photos = find_photos(ingest_path, skip_invalid=True)
 
     # Validate metadata file.
     logger.info('Validating photo metadata files')
@@ -64,11 +64,3 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
         if not dry_run:
             # Remove the original image
             photo.image_file_path.unlink()
-
-    if not dry_run:
-        # Remove everything in the ingest directory, which should be empty if the ingest operation succeeded.
-        for entry in ingest_path.iterdir():
-            if entry.is_dir():
-                shutil.rmtree(entry, ignore_errors=False)
-            else:
-                entry.unlink()

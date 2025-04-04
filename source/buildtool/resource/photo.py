@@ -44,7 +44,7 @@ def image_file_from_metadata_file(metadata_file: Path) -> Path:
     return metadata_file.with_suffix('')
 
 
-def find_photos(root: Path) -> list[PhotoResourceRecord]:
+def find_photos(root: Path, skip_invalid: bool = False) -> list[PhotoResourceRecord]:
     """Finds all photos within the directory."""
 
     logger.info(f'Finding photos in: "{root}"')
@@ -60,14 +60,27 @@ def find_photos(root: Path) -> list[PhotoResourceRecord]:
 
         for f in image_files:
             if f not in expected_image_files:
-                raise RuntimeError(f'Image file with no metadata file: {f}')
+                if skip_invalid:
+                    logger.warning(f'Image file with no metadata file: {f}')
+                else:
+                    raise RuntimeError(f'Image file with no metadata file: {f}')
 
         for metadata_file, image_file in zip(metadata_files, expected_image_files):
             logger.debug(f'Resolved metadata file to image file: "{metadata_file}" -> "{image_file}"')
             if not image_file.exists():
-                raise RuntimeError(f'Metadata file with no image file: "{metadata_file}"')
+                error_msg = f'Metadata file with no image file: "{metadata_file}"'
+                if skip_invalid:
+                    logger.warning(error_msg)
+                    continue
+                else:
+                    raise RuntimeError(error_msg)
             if not image_file.suffix.lower() in SUPPORTED_IMAGE_EXTENSIONS:
-                raise RuntimeError(f'Unsupported image format: "{image_file}"')
+                error_msg = f'Unsupported image format: "{image_file}"'
+                if skip_invalid:
+                    logger.warning(error_msg)
+                    continue
+                else:
+                    raise RuntimeError(error_msg)
             record = PhotoResourceRecord(image_file, metadata_file)
             records.append(record)
     return records
