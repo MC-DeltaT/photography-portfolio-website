@@ -1,0 +1,35 @@
+.photo-figure {
+    border-radius: var(--border-radius-large);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    padding: var(--spacing);
+}
+
+.photo-image {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.photo-info {
+    padding: var(--spacing);
+}
+
+.photo-header {
+    margin-bottom: var(--spacing);
+}
+
+.photo-title {
+    margin-bottom: var(--spacing-small);
+}
+
+.photo-date-location {
+    font-weight: var(--font-weight-bold);
+}
+
+.photo-description {
+    margin-bottom: var(--spacing);
+}
