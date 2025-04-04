@@ -1,14 +1,17 @@
-.photo-container {
+.photo-figure {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: var(--spacing-unit);
 }
 
-/* TODO: needs to be centered horizontally */
 .photo-image {
     max-width: 100%;
     max-height: 80vh;
     object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
 }
 
 .photo-info {

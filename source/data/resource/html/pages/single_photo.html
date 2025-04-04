@@ -10,7 +10,7 @@
 
 {% block content %}
     <section>
-        <figure class="photo-container">
+        <figure class="photo-figure">
             <img class="photo-image"
                 src="{{ photo.image.default_url }}"
                 srcset="{{ photo.image.srcset_urls }}"
@@ -44,6 +44,7 @@
                 </div>
     
                 {# TODO: add link to original image #}
+                {# TODO: add copy link to this page #}
             </figcaption>
         </figure>
     </section>
