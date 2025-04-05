@@ -47,6 +47,8 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
             logger.debug('Stripping image of EXIF GPS tags')
             strip_image_exif_gps(tmp_image_file)
 
+            # TODO: should try reducing the size to something more reasonable (e.g. max 3000px) to decrease build times.
+
             # Move the tmp image to the resources directory.
             logger.debug(f'Creating directory: "{dest_dir}"')
             if not dry_run:
