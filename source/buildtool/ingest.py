@@ -1,14 +1,17 @@
 from pathlib import Path
 import logging
 import tempfile
-import shutil
 
-from buildtool.image import strip_image_exif_gps
+from buildtool.image import reencode_image, strip_image_exif_gps
 from buildtool.resource.common import get_resources_path
 from buildtool.resource.photo import PhotoMetadataFile, find_photos, get_photo_resources_path
 
 
 logger = logging.getLogger(__name__)
+
+
+IMAGE_MAX_DIMENSION = 3000
+IMAGE_QUALITY = 85
 
 
 def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
@@ -41,13 +44,14 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
         # Copy file to temporary directory while modifying it to provide strong exception guarantee.
         with tempfile.TemporaryDirectory() as tmp_dir:
             tmp_image_file = Path(tmp_dir) / photo.image_file_path.name
-            shutil.copyfile(photo.image_file_path, tmp_image_file)
+            
+            # Reduce the image size and quality because the originals will take up way too much space eventually.
+            logger.debug('Reencoding image')
+            reencode_image(photo.image_file_path, tmp_image_file, IMAGE_MAX_DIMENSION, IMAGE_QUALITY)
 
             # Some modifications to the image to make it appropriate for web publishing.
             logger.debug('Stripping image of EXIF GPS tags')
             strip_image_exif_gps(tmp_image_file)
-
-            # TODO: should try reducing the size to something more reasonable (e.g. max 3000px) to decrease build times.
 
             # Move the tmp image to the resources directory.
             logger.debug(f'Creating directory: "{dest_dir}"')
