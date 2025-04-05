@@ -28,7 +28,7 @@ def run_build(build_path: Path, data_path: Path, *, fast: bool, dry_run: bool) -
     logger.info(f'Build directory: "{build_path}"')
     logger.info(f'Data directory: "{data_path}"')
 
-    build_dir = BuildDirectory(build_path, dry_run=dry_run)
+    build_dir = BuildDirectory(build_path, fast=fast, dry_run=dry_run)
     build_dir.clean()
 
     resources_path = get_resources_path(data_path)

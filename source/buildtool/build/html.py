@@ -55,10 +55,7 @@ def build_html_page(template_name: str, url: URLPath, context: HTMLBuildContext,
     render_context = create_html_render_context(context, render_context)
     logger.debug(f'Render context: {render_context}')
     rendered_html = template.render(render_context)
-    dest_path = context.build_dir.prepare_file(url.fs_path)
-    logger.debug(f'Writing HTML: "{dest_path}"')
-    if not context.dry_run:
-        dest_path.write_text(rendered_html, encoding='utf8')
+    context.build_dir.build_content(rendered_html, url)
 
 
 RenderContext = dict[str, Any]

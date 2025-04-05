@@ -11,8 +11,9 @@ logger = logging.getLogger(__name__)
 
 
 class BuildDirectory:
-    def __init__(self, root: Path, *, dry_run: bool) -> None:
+    def __init__(self, root: Path, *, fast: bool, dry_run: bool) -> None:
         self.root = root
+        self.fast = fast
         self.dry_run = dry_run
 
     def clean(self) -> None:
@@ -50,9 +51,24 @@ class BuildDirectory:
 
         logger.info(f'Building URL: {url}')
         dest_path = self.prepare_file(url.fs_path)
-        logger.debug(f'Copying file: "{source_path}" -> "{dest_path}"')
+        if self.fast:
+            if not source_path.is_absolute():
+                source_path = source_path.resolve()
+            logger.debug(f'Symlinking file: "{source_path}" -> "{dest_path}"')
+            if not self.dry_run:
+                dest_path.symlink_to(source_path)
+        else:
+            logger.debug(f'Copying file: "{source_path}" -> "{dest_path}"')
+            if not self.dry_run:
+                shutil.copy(source_path, dest_path)
+
+    def build_content(self, content: str, url: URLPath) -> None:
+        """Build a file with the given content."""
+
+        logger.info(f'Building URL: {url}')
+        dest_path = self.prepare_file(url.fs_path)
         if not self.dry_run:
-            shutil.copy(source_path, dest_path)
+            dest_path.write_text(content, encoding='utf8')
 
 
 @dataclass
