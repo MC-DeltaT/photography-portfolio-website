@@ -2,7 +2,23 @@
     --photo-card-size: 100px;
 }
 
+.gallery-filters-details {
+    padding: var(--spacing-small);
+    border: 1px solid var(--colour-border);
+    border-radius: var(--border-radius);
+}
+
+.gallery-filters-summary {
+    cursor: pointer;
+    transition: all var(--transition-duration) var(--transition-timing);
+}
+
+.gallery-filters-summary:hover {
+    border-color: var(--colour-accent);
+}
+
 .gallery-filters {
+    padding: var(--spacing-small);
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacing-medium);

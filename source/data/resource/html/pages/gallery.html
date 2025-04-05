@@ -17,42 +17,47 @@
 
     <section>
         <h1>Gallery</h1>
-        <div class="gallery-filters">
-            <div class="filter-group">
-                <label for="genre-filter">Style:</label>
-                <select id="genre-filter">
-                    <option value="">All</option>
-                    {% for genre in genres %}
-                        <option value="{{ genre }}">{{ genre|capitalize }}</option>
-                    {% endfor %}
-                </select>
+        <details class="gallery-filters-details">
+            <summary class="gallery-filters-summary">
+                <span>Filters</span>
+            </summary>
+            <div class="gallery-filters">
+                <div class="filter-group">
+                    <label for="genre-filter">Style:</label>
+                    <select id="genre-filter">
+                        <option value="">All</option>
+                        {% for genre in genres %}
+                            <option value="{{ genre }}">{{ genre|capitalize }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="year-filter">Year:</label>
+                    <select id="year-filter">
+                        <option value="">All</option>
+                        {% for year in years %}
+                            <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="month-filter">Month:</label>
+                    <select id="month-filter">
+                        <option value="">All</option>
+                        {% for month in months %}
+                            <option value="{{ month }}">{{ month }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="sort-direction">Sort:</label>
+                    <select id="sort-direction">
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                    </select>
+                </div>
             </div>
-            <div class="filter-group">
-                <label for="year-filter">Year:</label>
-                <select id="year-filter">
-                    <option value="">All</option>
-                    {% for year in years %}
-                        <option value="{{ year }}">{{ year }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="month-filter">Month:</label>
-                <select id="month-filter">
-                    <option value="">All</option>
-                    {% for month in months %}
-                        <option value="{{ month }}">{{ month }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="sort-direction">Sort:</label>
-                <select id="sort-direction">
-                    <option value="newest">Newest</option>
-                    <option value="oldest">Oldest</option>
-                </select>
-            </div>
-        </div>
+        </details>
 
         <div class="photo-grid">
             {% for photo in photos %}
