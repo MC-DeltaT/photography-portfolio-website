@@ -1,13 +1,24 @@
 #!/bin/bash
 
-# TODO: build needs other packages which we don't have in CI
+set -e
 
-cd ./source
+# Prepare externals.
+(
+    cd ./externals/exiftool ;
+    mkdir build ;
+    gunzip -cd Image-ExifTool-13.26.tar.gz | tar -xf - -C build --strip-components=1
+)
 
-python3.11 -m venv .venv
-source .venv/bin/activate
+# Add externals to PATH.
+export PATH="$PATH:$(pwd)/externals/exiftool/build"
+export PATH="$PATH:$(pwd)/externals/imagemagick"
 
-pip install --upgrade pip
-pip install -r requirements.txt
-
-python -m buildtool --verbose
+# Build the website.
+(
+    cd ./source ;
+    python3.11 -m venv .venv ;
+    source .venv/bin/activate ;
+    pip install --upgrade pip ;
+    pip install -r requirements.txt ;
+    python -m buildtool --verbose
+)

@@ -62,6 +62,7 @@ def read_image_exif_metadata(image: Image) -> EXIFMetadata:
 
 def reencode_image(input_file: Path, output_file: Path, max_dimension: int, quality: int) -> Path:
     output_file = output_file.with_suffix('.jpg')
+    # We could do this with a Python library, but I only trust ImageMagick to pass through the metadata correctly.
     args = [
         'magick', 'convert', str(input_file),
         '-resize', f'{max_dimension}x{max_dimension}',
@@ -77,6 +78,7 @@ def strip_image_exif_gps(file: Path) -> None:
     """Remove all GPS EXIF tags from an image in place.
         Reason is to avoid people stalking us from photo content."""
 
+    # We could do this with a Python library, but I only trust ExifTool to do it correctly.
     args = ['exiftool', '-gps*=', str(file)]
     logger.debug(f'> {args}')
     subprocess.run(args, check=True)
