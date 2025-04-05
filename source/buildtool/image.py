@@ -64,7 +64,7 @@ def reencode_image(input_file: Path, output_file: Path, max_dimension: int, qual
     output_file = output_file.with_suffix('.jpg')
     # We could do this with a Python library, but I only trust ImageMagick to pass through the metadata correctly.
     args = [
-        'magick', 'convert', str(input_file),
+        'magick', str(input_file),
         '-resize', f'{max_dimension}x{max_dimension}',
         '-quality', str(quality),
         str(output_file)
