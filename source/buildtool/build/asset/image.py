@@ -70,6 +70,8 @@ IMAGE_SRCSET_SPEC = (
 
 def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image_id: ImageID, base_url: URLPath,
         state: BuildState, build_original: bool = False, image_size: Size | None = None, *, fast: bool = False) -> None:
+    logger.info(f'Building image srcset assets: "{image_path}"')
+    
     if build_original:
         build_dir.build_file(image_path, base_url)
     

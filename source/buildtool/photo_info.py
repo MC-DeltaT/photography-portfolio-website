@@ -72,7 +72,7 @@ def resolve_photo_date(image_date: dt.date, user_date: PartialDate | None) -> Pa
 def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
     """Creates final information about a photo by combining the image file metadata and user specified metadata."""
 
-    logger.debug(f'Reading photo info: {resource}')
+    logger.info(f'Reading photo info: {resource}')
 
     user_metadata = PhotoMetadataFile.from_file(resource.metadata_file_path)
 
