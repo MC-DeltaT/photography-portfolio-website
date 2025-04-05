@@ -3,9 +3,6 @@ from pathlib import PurePosixPath
 from buildtool.types import ImageID, PhotoID, URLPath
 
 
-# TODO: remove .html, it's just for testing
-
-
 INDEX_PAGE_URL = URLPath('/index.html')
 
 ABOUT_PAGE_URL = URLPath('/about.html')
