@@ -23,7 +23,8 @@
                 class="photographer-image"
                 src="{{ images['general/the_photographer.jpg'].default_url }}"
                 srcset="{{ images['general/the_photographer.jpg'].srcset_urls }}"
-                sizes="(max-width: 480px) 100vw, 40vw"
+                {# Determined based on the section width and image width #}
+                sizes="(max-width: 480px) 90vw, 30vw"
                 alt="Reece Jones">
             <q>My photography began from zero as a hobby, and it's evolved from there.
                 It was never about being the best photographer ever, more like being a better photographer than myself a week ago.

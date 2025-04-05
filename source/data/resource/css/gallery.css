@@ -1,5 +1,5 @@
 :root {
-    --photo-card-size: 100px;
+    --photo-card-size: 200px;   /* Default is arbitrary - it's always overidden */
 }
 
 .gallery-filters-details {
@@ -112,6 +112,10 @@
 
 /* Mobile */
 @media (max-width: 480px) {
+    :root {
+        --photo-card-size: 100px;
+    }
+
     .gallery-filters {
         flex-direction: column;
         gap: var(--spacing);

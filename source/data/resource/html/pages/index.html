@@ -10,7 +10,6 @@
 
 {% block content %}
     <div class="hero-section">
-        {# TODO: investigate all srcset uses. Suspect it's not resulting in the best image size choices. #}
         <img class="hero-image"
             src="{{ images['general/homepage_hero.jpg'].default_url }}"
             srcset="{{ images['general/homepage_hero.jpg'].srcset_urls }}"
