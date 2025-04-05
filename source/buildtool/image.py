@@ -60,12 +60,13 @@ def read_image_exif_metadata(image: Image) -> EXIFMetadata:
     return metadata
 
 
-def reencode_image(input_file: Path, output_file: Path, max_dimension: int, quality: int) -> Path:
+def reencode_image(input_file: Path, output_file: Path, max_dimension: int, quality: int, fast: bool = False) -> Path:
     output_file = output_file.with_suffix('.jpg')
     # We could do this with a Python library, but I only trust ImageMagick to pass through the metadata correctly.
+    operation = '-resize' if fast else '-resize'
     args = [
         'magick', str(input_file),
-        '-resize', f'{max_dimension}x{max_dimension}',
+        operation, f'{max_dimension}x{max_dimension}',
         '-quality', str(quality),
         str(output_file)
     ]

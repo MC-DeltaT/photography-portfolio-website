@@ -57,14 +57,15 @@ def get_photo_image_id(photo_id: PhotoID) -> ImageID:
 class ImageSrcSetSpec:
     max_dimension: int
     quality: int
+    fast: bool
     priority: int   # Lower is higher priority.
 
 
 IMAGE_SRCSET_SPEC = (
-    ImageSrcSetSpec(2000, 85, 1),
-    ImageSrcSetSpec(1250, 85, 0),
-    ImageSrcSetSpec(750, 75, 3),
-    ImageSrcSetSpec(300, 70, 4),
+    ImageSrcSetSpec(2000, 85, False, 1),
+    ImageSrcSetSpec(1250, 85, False, 0),
+    ImageSrcSetSpec(750, 75, True, 3),
+    ImageSrcSetSpec(300, 70, True, 4),
 )
 
 
@@ -119,7 +120,7 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
                     reencoding_src_path = reencoding_base_image
                 logger.debug(f'Reencoding image: "{reencoding_src_path}" -> "{dest_path}"')
                 if not build_dir.dry_run:
-                    reencode_image(reencoding_src_path, dest_path, spec.max_dimension, spec.quality)
+                    reencode_image(reencoding_src_path, dest_path, spec.max_dimension, spec.quality, spec.fast)
                 srcset_entries.append((spec.priority, ImageSrcSet.Entry(url, srcset_descriptor)))
                 prev_dest_path = dest_path
 
