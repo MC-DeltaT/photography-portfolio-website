@@ -10,6 +10,6 @@ logger = logging.getLogger(__name__)
 
 def build_all_assets(context: BuildContext) -> None:
     logger.info('Building assets')
-    build_all_image_assets(context)
     build_all_css_assets(context)
     build_all_js_assets(context)
+    build_all_image_assets(context)
