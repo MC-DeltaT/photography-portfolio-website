@@ -6,6 +6,7 @@ import logging
 from typing import Any
 
 import jinja2
+import minify_html
 
 from buildtool.build.common import BuildContext, BuildState
 from buildtool.photo_collection import PhotoCollection
@@ -55,7 +56,11 @@ def build_html_page(template_name: str, url: URLPath, context: HTMLBuildContext,
     render_context = create_html_render_context(context, render_context)
     logger.debug(f'Render context: {render_context}')
     rendered_html = template.render(render_context)
-    context.build_dir.build_content(rendered_html, url)
+    minified_html = minify_html.minify(
+        rendered_html,
+        minify_js=True, minify_css=True,
+        keep_closing_tags=True, keep_html_and_head_opening_tags=True, keep_input_type_text_attr=True)
+    context.build_dir.build_content(minified_html, url)
 
 
 RenderContext = dict[str, Any]

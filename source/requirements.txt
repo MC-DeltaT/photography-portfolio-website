@@ -1,5 +1,8 @@
 annotated-types~=0.7
 Jinja2~=3.1
+minify-html~=0.16
 pillow~=10.4
 pydantic~=2.10
 python-dateutil~=2.9
+rcssmin~=1.2
+rjsmin~=1.2
