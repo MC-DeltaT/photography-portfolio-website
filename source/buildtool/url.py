@@ -15,7 +15,7 @@ GALLERY_PAGE_URL = GALLERY_URL.with_suffix('.html')
 GALLERY_PHOTO_URL = GALLERY_URL / 'photo'
 
 
-def get_single_photo_page_url(photo_id: PhotoID) -> URLPath:
+def get_photo_page_url(photo_id: PhotoID) -> URLPath:
     name_part, _ = photo_id.split('.')
     return GALLERY_PHOTO_URL / f'{name_part}.html'
 

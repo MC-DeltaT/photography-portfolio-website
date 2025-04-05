@@ -12,7 +12,7 @@ from buildtool.photo_collection import PhotoCollection
 from buildtool.photo_info import PhotoInfo
 from buildtool.resource.html import get_html_resources_path
 from buildtool.types import ImageSrcSet, URLPath
-from buildtool.url import ABOUT_PAGE_URL, ASSETS_CSS_URL, ASSETS_JS_URL, GALLERY_PAGE_URL, INDEX_PAGE_URL, get_single_photo_page_url
+from buildtool.url import ABOUT_PAGE_URL, ASSETS_CSS_URL, ASSETS_JS_URL, GALLERY_PAGE_URL, INDEX_PAGE_URL, get_photo_page_url
 
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ def build_all_html(context: BuildContext) -> None:
     jinja2_env = create_jinja2_environment(html_resources_path)
     context = HTMLBuildContext.new(context, jinja2_env)
     build_basic_pages(context)
-    build_single_photo_pages(context)
+    build_photo_pages(context)
 
 
 @dataclass(frozen=True)
@@ -161,18 +161,18 @@ def build_basic_pages(context: HTMLBuildContext) -> None:
         build_html_page(page.template, page.url, context, render_context)
 
 
-def build_single_photo_pages(context: HTMLBuildContext) -> None:
+def build_photo_pages(context: HTMLBuildContext) -> None:
     for photo in context.photos:
-        build_single_photo_page(photo, context)
+        build_photo_page(photo, context)
 
 
-def build_single_photo_page(photo: PhotoInfo, context: HTMLBuildContext) -> None:
-    url = get_single_photo_page_url(photo.id)
+def build_photo_page(photo: PhotoInfo, context: HTMLBuildContext) -> None:
+    url = get_photo_page_url(photo.id)
     render_context = create_html_render_context(context, {
         'photo_page_title': photo.title or photo.id.split('.')[0],
         'photo': create_photo_render_context(photo, context.state)
     })
-    build_html_page('pages/single_photo.html', url, context, render_context)
+    build_html_page('pages/photo.html', url, context, render_context)
 
 
 def create_image_render_context(srcset: ImageSrcSet) -> RenderContext:
@@ -199,7 +199,7 @@ def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> Re
         'description': photo.description,
         'settings': create_photo_settings_list(photo),
         'genre': [genre.value for genre in sorted(photo.genre)],
-        'page_url': get_single_photo_page_url(photo.id),
+        'page_url': get_photo_page_url(photo.id),
         'chronological_sort_key': '-'.join(photo.chronological_sort_key)
     }
 
