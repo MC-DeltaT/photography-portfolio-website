@@ -10,7 +10,7 @@ set -e
 
 # Add externals to PATH.
 export PATH="$PATH:$(pwd)/externals/exiftool/build"
-export PATH="$PATH:$(pwd)/externals/imagemagick"
+export PATH="$PATH:$(pwd)/externals/build"
 
 # Build the website.
 (
