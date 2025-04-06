@@ -1,8 +1,9 @@
 from collections.abc import Mapping
 from dataclasses import dataclass, fields
 import datetime as dt
-from pathlib import Path
 import logging
+from pathlib import Path
+import re
 from typing import Any
 
 import jinja2
@@ -206,6 +207,17 @@ def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> Re
     }
 
 
+def fix_up_canon_lens_model(lens_model: str) -> str:
+    # Some Canon lens names from the camera don't have a space between the "EF" and the rest of the name, e.g.:
+    # EF50mm f/1.8 STM
+
+    if m := re.search(r'(^|\s)EF(\d)', lens_model):
+        idx = m.start(2)
+        lens_model = lens_model[:idx] + ' ' + lens_model[idx:]
+
+    return lens_model
+
+
 F_NUMBER_SYMBOL = 'ƒ'
 
 
@@ -218,7 +230,9 @@ def create_photo_settings_list(photo: PhotoInfo) -> list[str]:
     if photo.camera_model:
         result.append(photo.camera_model)
     if photo.lens_model:
-        result.append(replace_f_number_with_symbol(photo.lens_model))
+        lens_model = fix_up_canon_lens_model(photo.lens_model)
+        lens_model = replace_f_number_with_symbol(lens_model)
+        result.append(lens_model)
     if photo.focal_length:
         if photo.focal_length < 10:
             focal_length_str = str(round(photo.focal_length, 1))
