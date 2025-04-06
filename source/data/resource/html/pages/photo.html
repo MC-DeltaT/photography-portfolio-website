@@ -32,9 +32,11 @@
                 {# TODO: add set info #}
     
                 {% if photo.description %}
-                    <div class="photo-description">
-                        {{ photo.description }}
-                    </div>
+                    <p class="photo-description">
+                        {% for line in photo.description.splitlines() %}
+                            {{ line }}<br>
+                        {% endfor %}
+                    </p>
                 {% endif %}
     
                 <div class="photo-meta">
