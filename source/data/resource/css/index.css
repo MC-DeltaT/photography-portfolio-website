@@ -21,6 +21,7 @@ main {
     justify-content: center;
     overflow: hidden;
     min-height: calc(100vh - var(--approx-header-height));
+    max-height: 100vh;
 }
 
 .hero-image {
