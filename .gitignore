@@ -1,6 +1,6 @@
 __pycache__
 
-/ingest
+/ingest*
 
 /source/.venv
 .venv

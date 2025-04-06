@@ -1,5 +1,6 @@
-from pathlib import Path
 import logging
+import os
+from pathlib import Path
 import tempfile
 
 from buildtool.image import reencode_image, strip_image_exif_gps
@@ -48,6 +49,8 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
             # Reduce the image size and quality because the originals will take up way too much space eventually.
             logger.debug('Reencoding image')
             reencode_image(photo.image_file_path, tmp_image_file, IMAGE_MAX_DIMENSION, IMAGE_QUALITY)
+            if not tmp_image_file.exists():
+                raise RuntimeError(f'Failed to reencode image: "{photo.image_file_path}"')
 
             # Some modifications to the image to make it appropriate for web publishing.
             logger.debug('Stripping image of EXIF GPS tags')
@@ -70,3 +73,10 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
         if not dry_run:
             # Remove the original image
             photo.image_file_path.unlink()
+
+    if not dry_run:
+        # Remove empty subdirectories in the ingest folder.
+        for root, dirs, files in os.walk(ingest_path, topdown=False):
+            if not files and not dirs and root != str(ingest_path):
+                logger.debug(f'Removing empty directory: "{root}"')
+                os.rmdir(root)
