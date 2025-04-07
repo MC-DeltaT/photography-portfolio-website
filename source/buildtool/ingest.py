@@ -4,7 +4,6 @@ from pathlib import Path
 import tempfile
 
 from buildtool.image import reencode_image, strip_image_exif_gps
-from buildtool.resource.common import get_resources_path
 from buildtool.resource.photo import PhotoMetadataFile, find_photos, get_photo_resources_path
 
 
@@ -15,10 +14,13 @@ IMAGE_MAX_DIMENSION = 3000
 IMAGE_QUALITY = 85
 
 
-def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
+def run_ingest(ingest_path: Path, resources_path: Path, *, dry_run: bool) -> None:
     logger.info(f'Running data ingest')
     logger.info(f'Ingest directory: "{ingest_path}"')
-    logger.info(f'Data directory: "{data_path}"')
+    logger.info(f'Resources directory: "{resources_path}"')
+
+    if not ingest_path.exists():
+        logger.info("Ingest directory doesn't exist, nothing to do")
 
     # The file structure is the same as when stored in the resources directory,
     # so we can reuse this code.
@@ -29,7 +31,6 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
     for photo in photos:
         _ = PhotoMetadataFile.from_file(photo.metadata_file_path)
 
-    resources_path = get_resources_path(data_path)
     photo_resources_path = get_photo_resources_path(resources_path)
 
     logger.info('Ingesting photos into resources')

@@ -16,7 +16,7 @@ def main() -> None:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     arg_parser.add_argument('-i', '--ingest-path', type=Path, default=Path('../ingest'), help='Directory to ingest new photos from')
-    arg_parser.add_argument('-d', '--data-path', type=Path, default=Path('./data'), help='Directory containing source data')
+    arg_parser.add_argument('-d', '--resource-path', type=Path, default=Path('./resource'), help='Directory containing source data')
     arg_parser.add_argument('-o', '--output-path', type=Path, default=Path('../site'), help='Directory to build site into')
     arg_parser.add_argument('-v', '--verbose', action='store_true', help='Log more')
     build_mode_group = arg_parser.add_mutually_exclusive_group()
@@ -41,11 +41,11 @@ def main() -> None:
         ingest = bool(args.ingest)
         build = bool(args.build)
 
-    if ingest and args.ingest_path.exists():
-        run_ingest(args.ingest_path, args.data_path, dry_run=args.dry_run)
+    if ingest:
+        run_ingest(args.ingest_path, args.resource_path, dry_run=args.dry_run)
 
     if build:
-        run_build(args.output_path, args.data_path, fast=args.fast, dry_run=args.dry_run)
+        run_build(args.output_path, args.resource_path, fast=args.fast, dry_run=args.dry_run)
 
 
 if __name__ == '__main__':

@@ -8,7 +8,6 @@ from buildtool.build.common import BuildContext, BuildDirectory, BuildState
 from buildtool.build.html import build_all_html
 from buildtool.photo_collection import PhotoCollection
 from buildtool.photo_info import PhotoInfo, read_photo_info
-from buildtool.resource.common import get_resources_path
 from buildtool.resource.photo import find_photos, get_photo_resources_path
 
 
@@ -23,15 +22,13 @@ def verify_photo_ids(photo_infos: Sequence[PhotoInfo]) -> None:
         raise RuntimeError(f'Duplicate photo unique IDs: {duplicated}')
 
 
-def run_build(build_path: Path, data_path: Path, *, fast: bool, dry_run: bool) -> None:
+def run_build(build_path: Path, resources_path: Path, *, fast: bool, dry_run: bool) -> None:
     logger.info(f'Running website build')
     logger.info(f'Build directory: "{build_path}"')
-    logger.info(f'Data directory: "{data_path}"')
+    logger.info(f'Resources directory: "{resources_path}"')
 
     build_dir = BuildDirectory(build_path, fast=fast, dry_run=dry_run)
     build_dir.clean()
-
-    resources_path = get_resources_path(data_path)
 
     photo_resource_records = find_photos(get_photo_resources_path(resources_path))
 
@@ -43,7 +40,7 @@ def run_build(build_path: Path, data_path: Path, *, fast: bool, dry_run: bool) -
     photo_collection = PhotoCollection(photo_infos)
 
     build_context = BuildContext(
-        build_dir=build_dir, data_path=data_path, resources_path=resources_path,
+        build_dir=build_dir, resources_path=resources_path,
         fast=fast, dry_run=dry_run,
         photos=photo_collection,
         state=BuildState())
