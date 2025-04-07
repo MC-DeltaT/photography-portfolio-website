@@ -16,6 +16,7 @@ N = TypeVar('N')
 class PhotoGenre(StrEnum):
     ABSTRACT = 'abstract'
     ANIMAL = 'animal'
+    ARCHITECTURE = 'architecture'
     ASTROPHOTOGRAPHY = 'astrophotography'
     COSTUME = 'costume'
     EVENT = 'event'
