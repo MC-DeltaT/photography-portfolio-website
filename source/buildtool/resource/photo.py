@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
+from functools import partial
 from pathlib import Path
 import logging
 import os
@@ -95,7 +96,7 @@ class PhotoMetadataFile(pydantic.BaseModel, frozen=True):
 
     # TODO: specify timezone somehow
 
-    date: Annotated[PartialDate, pydantic.BeforeValidator(PartialDate.from_str)] | None = None
+    date: Annotated[PartialDate, pydantic.BeforeValidator(partial(PartialDate.from_str, separator='-'))] | None = None
     """Local time when the photo was taken. If None, infer from the image file."""
 
     title: NonEmptyStr | None = None

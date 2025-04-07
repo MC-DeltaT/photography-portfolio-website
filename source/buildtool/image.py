@@ -22,20 +22,20 @@ class EXIFMetadata(pydantic.BaseModel, frozen=True):
     # # "The date and time of image creation. In Exif standard, it is the date and time the file was changed."
     # date_time: str | None
     # "The date and time when the original image data was generated."
-    date_time_original: Annotated[dt.datetime, pydantic.BeforeValidator(parse_datetime)]
+    date_time_original: Annotated[dt.datetime, pydantic.BeforeValidator(parse_datetime)] | None
     # # "The date and time when the image was stored as digital data."
     # date_time_digitised: str | None
     # offset_time: str | None
     # offset_time_original: str | None
     # offset_time_digitised: str | None
-    camera_model: str
-    lens_model: str
+    camera_model: str | None
+    lens_model: str | None
     # Note EXIF data uses a custom type for some numbers,
     # which needs to be coerced to a built-in type to work with Pydantic.
-    focal_length: CoerceNumber[FocalLength]  # mm
-    aperture: CoerceNumber[Aperture]
-    exposure_time: CoerceNumber[ExposureTime]  # seconds
-    iso: CoerceNumber[ISO]
+    focal_length: CoerceNumber[FocalLength] | None
+    aperture: CoerceNumber[Aperture] | None
+    exposure_time: CoerceNumber[ExposureTime] | None
+    iso: CoerceNumber[ISO] | None
 
 
 def read_image_exif_metadata(image: Image) -> EXIFMetadata:

@@ -48,7 +48,7 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
             
             # Reduce the image size and quality because the originals will take up way too much space eventually.
             logger.debug('Reencoding image')
-            reencode_image(photo.image_file_path, tmp_image_file, IMAGE_MAX_DIMENSION, IMAGE_QUALITY)
+            tmp_image_file = reencode_image(photo.image_file_path, tmp_image_file, IMAGE_MAX_DIMENSION, IMAGE_QUALITY)
             if not tmp_image_file.exists():
                 raise RuntimeError(f'Failed to reencode image: "{photo.image_file_path}"')
 
@@ -60,12 +60,12 @@ def run_ingest(ingest_path: Path, data_path: Path, *, dry_run: bool) -> None:
             logger.debug(f'Creating directory: "{dest_dir}"')
             if not dry_run:
                 dest_dir.mkdir(parents=True, exist_ok=True)
-            dest_image_file = dest_dir / photo.image_file_path.name
+            dest_image_file = dest_dir / tmp_image_file.name
             logger.debug(f'Moving image file: "{tmp_image_file}" -> "{dest_image_file}"')
             if not dry_run:
                 tmp_image_file.rename(dest_image_file)
         # Move the metadata file to the resources directory alongside the image file.
-        dest_metadata_file = dest_dir / photo.metadata_file_path.name
+        dest_metadata_file = dest_dir / f'{tmp_image_file.name}.json'
         logger.debug(f'Moving metadata file: "{photo.metadata_file_path}" -> "{dest_metadata_file}"')
         if not dry_run:
             photo.metadata_file_path.rename(dest_metadata_file)

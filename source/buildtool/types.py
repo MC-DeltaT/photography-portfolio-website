@@ -26,6 +26,7 @@ class PhotoGenre(StrEnum):
     NATURE = 'nature'
     PEOPLE = 'people'
     PLANT = 'plant'
+    SET_DESIGN = 'set-design'
     STILL_LIFE = 'still-life'
     URBAN = 'urban'
 
@@ -67,8 +68,9 @@ class PartialDate:
             _ = dt.date(self.year, self.month, self.day)
 
     @classmethod
-    def from_str(cls, s: str):
-        # YYYYMMDD
+    def from_str(cls, s: str, separator: str = ''):
+        # Lazy conversion to fixed YYYYMMDD format
+        s = s.replace(separator, '')
         if len(s) not in (0, 4, 6, 8):
             raise ValueError(f'Invalid {cls.__name__} format')
         year = int(s[:4]) if len(s) > 0 else None
@@ -118,11 +120,12 @@ PhotoID = NewType('PhotoID', str)
     Separate from ImageID."""
 
 FocalLength = Annotated[NewType('FocalLength', int), Gt(0)]
-"""In millimetres"""
+"""In millimetres."""
 
 Aperture = Annotated[NewType('Aperture', Decimal), Gt(0)]
 
 ExposureTime = Annotated[NewType('ExposureTime', Decimal), Gt(0)]
+"""In seconds."""
 
 ISO = Annotated[NewType('ISO', int), Gt(0)]
 

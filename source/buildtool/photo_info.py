@@ -44,13 +44,8 @@ def create_photo_id(name: str, date: PartialDate, file_extension: str) -> PhotoI
         raise ValueError('Photo name must not be empty')
     if not (name.isalnum() and name.isascii()):
         raise ValueError('Photo name must be alphanumeric')
-    date_str = date.to_str(separator='')
-    if date_str:
-        s = f'{date_str}-{name}'
-    else:
-        # Totally unknown date.
-        # TODO: should we use some placeholder for the date?
-        s = name
+    date_str = date.to_str(separator='', unknown_placeholder='x')
+    s = f'{date_str}-{name}'
     assert file_extension.startswith('.')
     s += file_extension
     return PhotoID(s)
@@ -60,10 +55,12 @@ def get_photo_name(source_path: Path) -> str:
     return source_path.name.split('.')[0].lower()
 
 
-def resolve_photo_date(image_date: dt.date, user_date: PartialDate | None) -> PartialDate:
+def resolve_photo_date(image_date: dt.date | None, user_date: PartialDate | None) -> PartialDate:
     # TODO: take into account timezone
     if user_date:
         return user_date
+    elif image_date is None:
+        raise RuntimeError('Photo has no date in image metadata, you must specify it!')
     else:
         return PartialDate.from_date(image_date)
 
