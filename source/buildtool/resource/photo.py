@@ -130,6 +130,8 @@ class PhotoMetadataFile(pydantic.BaseModel, frozen=True):
     genre: tuple[PhotoGenre, ...] = pydantic.Field(min_length=1)
     """Genres applicable to this photo."""
 
+    model_config = pydantic.ConfigDict(extra='forbid')
+
     @classmethod
     def from_file(cls, path: Path):
         logger.debug(f'Reading photo metadata file: "{path}"')
