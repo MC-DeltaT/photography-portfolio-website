@@ -107,9 +107,6 @@ class PhotoMetadataFile(pydantic.BaseModel, frozen=True):
     location: NonEmptyStr | None = None
     """Place the photo was taken. Optional."""
 
-    set: NonEmptyStr | None = None
-    """Event, occasion, or other collection the photo is part of. Optional."""
-
     camera_model: NonEmptyStr | None = None
     """Camera model name. If None, infer from the image file."""
 

@@ -21,7 +21,6 @@ class PhotoInfo:
     title: str | None
     description: str | None
     location: str | None
-    set: str | None
     camera_model: str | None
     lens_model: str | None
     focal_length: FocalLength | None
@@ -102,7 +101,6 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
         title=user_metadata.title,
         description=user_metadata.description,
         location=user_metadata.location,
-        set=user_metadata.set,
         camera_model=camera_model,
         lens_model=lens_model,
         focal_length=focal_length,
