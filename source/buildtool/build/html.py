@@ -210,7 +210,8 @@ def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> Re
 def fix_up_canon_lens_model(lens_model: str) -> str:
     # Some Canon lens names from the camera don't have a space between the "EF" and the rest of the name, e.g.:
     # EF50mm f/1.8 STM
-    if m := re.search(r'(?:^|\s)EF(\d)', lens_model):
+    # EF-S18-135mm f/3.5-5.6 IS USM
+    if m := re.search(r'(?:^|\s)EF(?:-[A-Z])?(\d)', lens_model):
         idx = m.start(1)
         lens_model = lens_model[:idx] + ' ' + lens_model[idx:]
 
