@@ -21,7 +21,7 @@
     padding: var(--spacing-small);
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-medium);
+    gap: var(--spacing) var(--spacing-medium);
 }
 
 .filter-group {
