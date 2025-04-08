@@ -94,7 +94,7 @@ a:hover {
 
 .button {
     display: inline-block;
-    margin: var(--spacing) 0;
+    margin: var(--spacing) var(--spacing-small);
     padding: var(--spacing-small) var(--spacing-medium);
     background-color: var(--colour-background-inverted);
     color: var(--colour-text-inverted);
