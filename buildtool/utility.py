@@ -1,7 +1,9 @@
 from collections.abc import Collection, Iterator
 import datetime as dt
+from functools import cache
 from pathlib import Path
 import os
+import subprocess
 
 import dateutil.parser
 
@@ -35,3 +37,12 @@ def parse_datetime(s: str) -> dt.datetime:
     if datetime == datetime2:
         return datetime
     raise ValueError(f'Could not parse datetime: {s}')
+
+
+@cache
+def get_latest_commit_date() -> dt.datetime:
+    return dt.datetime.fromtimestamp(
+        int(subprocess.run(
+            ['git', 'log', '-1', '--format=%at'],
+            check=True, stdout=subprocess.PIPE, encoding='utf-8').stdout.strip()),
+        dt.timezone.utc)

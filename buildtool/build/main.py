@@ -34,7 +34,7 @@ def run_build(build_path: Path, resources_path: Path, *, fast: bool, dry_run: bo
 
     photo_infos = [read_photo_info(r) for r in photo_resource_records]
     # Sort by ID for stability and debuggability.
-    photo_infos = sorted(photo_infos, key=lambda p: p.id)
+    photo_infos = tuple(sorted(photo_infos, key=lambda p: p.id))
     verify_photo_ids(photo_infos)
 
     photo_collection = PhotoCollection(photo_infos)

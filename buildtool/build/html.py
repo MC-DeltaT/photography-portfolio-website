@@ -1,6 +1,5 @@
 from collections.abc import Mapping
 from dataclasses import dataclass, fields
-import datetime as dt
 import logging
 from pathlib import Path
 import re
@@ -15,6 +14,7 @@ from buildtool.photo_info import PhotoInfo
 from buildtool.resource.html import get_html_resources_path
 from buildtool.types import ImageSrcSet, URLPath
 from buildtool.url import ABOUT_PAGE_URL, ASSETS_CSS_URL, ASSETS_JS_URL, GALLERY_PAGE_URL, INDEX_PAGE_URL, get_photo_page_url
+from buildtool.utility import get_latest_commit_date
 
 
 logger = logging.getLogger(__name__)
@@ -24,20 +24,24 @@ def build_all_html(context: BuildContext) -> None:
     logger.info('Building HTML')
     html_resources_path = get_html_resources_path(context.resources_path)
     jinja2_env = create_jinja2_environment(html_resources_path)
-    context = HTMLBuildContext.new(context, jinja2_env)
+    context = HTMLBuildContext.new(context, jinja2_env, get_common_html_render_context(context))
     build_basic_pages(context)
     build_photo_pages(context)
+
+
+RenderContext = Mapping[str, Any]
 
 
 @dataclass(frozen=True)
 class HTMLBuildContext(BuildContext):
     jinja2_env: jinja2.Environment
+    common_html_render_context: RenderContext   # Compute this once at the start because it's kinda slow.
 
     @classmethod
-    def new(cls, build_context: BuildContext, jinja2_env: jinja2.Environment):
+    def new(cls, build_context: BuildContext, jinja2_env: jinja2.Environment, common_html_render_context: RenderContext):
         return cls(
             **{f.name: getattr(build_context, f.name) for f in fields(build_context)},
-            jinja2_env=jinja2_env)
+            jinja2_env=jinja2_env, common_html_render_context=common_html_render_context)
 
 
 def create_jinja2_environment(html_resources_path: Path) -> jinja2.Environment:
@@ -64,10 +68,7 @@ def build_html_page(template_name: str, url: URLPath, context: HTMLBuildContext,
     context.build_dir.build_content(minified_html, url)
 
 
-RenderContext = dict[str, Any]
-
-
-def get_common_html_render_context(context: HTMLBuildContext) -> RenderContext:
+def get_common_html_render_context(context: BuildContext) -> RenderContext:
     return {
         'css': {
             'main': ASSETS_CSS_URL / 'main.css',
@@ -83,8 +84,7 @@ def get_common_html_render_context(context: HTMLBuildContext) -> RenderContext:
             'about': ABOUT_PAGE_URL,
             'gallery': GALLERY_PAGE_URL
         },
-        'copyright_date': get_copyright_date_tag(),
-        'gallery_age': get_gallery_age(context.photos),
+        'copyright_date': get_copyright_date_tag(context.photos),
         'images': {
             image_id: create_image_render_context(srcset)
             for image_id, srcset in context.state.image_srcsets.items()
@@ -92,28 +92,29 @@ def get_common_html_render_context(context: HTMLBuildContext) -> RenderContext:
     }
 
 
-def create_html_render_context(context: HTMLBuildContext, extra: Mapping[str, Any]) -> RenderContext:
-    render_context = get_common_html_render_context(context)
+def create_html_render_context(context: HTMLBuildContext, extra: RenderContext) -> RenderContext:
+    render_context = dict(context.common_html_render_context)
     render_context.update(extra)
     return render_context
 
 
-def get_copyright_date_tag() -> str:
-    begin = 2025
-    end = dt.date.today().year
+def get_copyright_date_tag(photos: PhotoCollection) -> str:
+    oldest_photo = min(p.date.year for p in photos if p.date.year)
+    newest_photo = max(p.date.year for p in photos if p.date.year)
+
+    website_creation = 2025
+
+    latest_commit = get_latest_commit_date().year
+
+    years = (oldest_photo, newest_photo, website_creation, latest_commit)
+    begin = min(years)
+    end = max(years)
+
     if begin == end:
         return str(begin)
     else:
         return f'{begin}-{end}'
 
-
-def get_gallery_age(photos: PhotoCollection) -> int:
-    oldest_photo = min((p for p in photos if p.date), key=lambda p: p.date)
-    assert oldest_photo.date.year
-    age = round(dt.date.today().year - oldest_photo.date.year)
-    assert age >= 0
-    age = max(1, age)
-    return age
 
 @dataclass(frozen=True)
 class BasicPage:
@@ -151,11 +152,11 @@ class GalleryPage(BasicPage):
         }
 
 
-BASIC_PAGES = [
+BASIC_PAGES = (
     BasicPage('pages/index.html', INDEX_PAGE_URL),
     BasicPage('pages/about.html', ABOUT_PAGE_URL),
     GalleryPage()
-]
+)
 
 
 def build_basic_pages(context: HTMLBuildContext) -> None:
