@@ -23,9 +23,8 @@ magick --version
 # Build the website.
 (
     python3.11 -m venv .deployvenv ;
-    source .deployvenv/bin/activate ;
+    . .deployvenv/bin/activate ;
     pip install --upgrade pip ;
-    cd ./source ;
     pip install -r requirements.txt ;
     python -m buildtool --verbose
 )

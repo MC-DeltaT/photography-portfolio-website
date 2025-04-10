@@ -15,9 +15,9 @@ def main() -> None:
     arg_parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    arg_parser.add_argument('-i', '--ingest-path', type=Path, default=Path('../ingest'), help='Directory to ingest new photos from')
+    arg_parser.add_argument('-i', '--ingest-path', type=Path, default=Path('./ingest'), help='Directory to ingest new photos from')
     arg_parser.add_argument('-d', '--resource-path', type=Path, default=Path('./resource'), help='Directory containing source data')
-    arg_parser.add_argument('-o', '--output-path', type=Path, default=Path('../site'), help='Directory to build site into')
+    arg_parser.add_argument('-o', '--output-path', type=Path, default=Path('./site'), help='Directory to build site into')
     arg_parser.add_argument('-v', '--verbose', action='store_true', help='Log more')
     build_mode_group = arg_parser.add_mutually_exclusive_group()
     build_mode_group.add_argument('--dry-run', action='store_true', help='Simulate actions without writing anything')

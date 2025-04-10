@@ -17,17 +17,16 @@ After adding the files here, do not commit them! Run the site build as described
 
 ## Building the Site
 
-1. Navigate to `source` directory.
-2. Create a Python virtual environment
-3. Install requirements in `requirements.txt`
-4. Run `python -m buildtool`
-5. Output will be in `../site`
+1. Create a Python virtual environment
+2. Install requirements in `requirements.txt`
+3. Run `python -m buildtool`
+4. Output will be in `./site`
 
 For use in CI, the convenience script [`deploy.sh`](./deploy.sh) can be used.
 
 ## Requirements
 
 - Python 3.11
-- See [requirements.txt](source/requirements.txt)
+- See [requirements.txt](requirements.txt)
 - ExifTool
 - ImageMagick
