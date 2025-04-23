@@ -66,8 +66,8 @@
                         <div class="photo-image">
                             <img src="{{ photo.image.default_url }}"
                                 srcset="{{ photo.image.srcset_urls }}"
-                                {# Determined based on the maximum image width and the section width #}
-                                sizes="(max-width: 480px) 45vw, (max-width: 768px) 35vw, (max-width: 1024px) 30vw, 40vw"
+                                {# Determined based on the approximate maximum image width #}
+                                sizes="(max-width: 480px) 150px, (max-width: 768px) 180px, (max-width: 1024px) 225px, 400px"
                                 alt="{{ photo.title or 'Photograph' }}"
                                 loading="lazy"/>
                         </div>

@@ -62,10 +62,11 @@ class ImageSrcSetSpec:
 
 
 IMAGE_SRCSET_SPEC = (
-    ImageSrcSetSpec(2000, 85, False, 1),
-    ImageSrcSetSpec(1250, 85, False, 0),
-    ImageSrcSetSpec(750, 75, True, 3),
-    ImageSrcSetSpec(300, 70, True, 4),
+    ImageSrcSetSpec(2000, 85, False, 3),
+    ImageSrcSetSpec(1100, 80, False, 0),
+    ImageSrcSetSpec(800, 80, False, 1),
+    ImageSrcSetSpec(500, 70, True, 2),
+    ImageSrcSetSpec(200, 60, True, 4),
 )
 
 

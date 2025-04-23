@@ -13,7 +13,8 @@
         <img class="hero-image"
             src="{{ images['general/homepage_hero.jpg'].default_url }}"
             srcset="{{ images['general/homepage_hero.jpg'].srcset_urls }}"
-            sizes="100vw"
+            {# The image is scaled to fill the viewport vertically, so need to calculate the corresponding width #}
+            sizes="calc(95vh * 6240 / 3831)"
             alt="Photography portfolio hero image"/>
         <div class="hero-content">
             <h1>Reece Jones</h1>
