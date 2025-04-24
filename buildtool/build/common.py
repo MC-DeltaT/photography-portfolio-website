@@ -70,6 +70,9 @@ class BuildDirectory:
         if not self.dry_run:
             dest_path.write_text(content, encoding='utf8')
 
+    def resolve_url_path(self, url: URLPath) -> Path:
+        return self.root / url.fs_path
+
 
 @dataclass
 class BuildState:

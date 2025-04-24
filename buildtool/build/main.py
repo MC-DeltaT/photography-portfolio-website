@@ -6,6 +6,7 @@ from pathlib import Path
 from buildtool.build.asset import build_all_assets
 from buildtool.build.common import BuildContext, BuildDirectory, BuildState
 from buildtool.build.html import build_all_html
+from buildtool.build.statistics import print_build_statistics
 from buildtool.photo_collection import PhotoCollection
 from buildtool.photo_info import PhotoInfo, read_photo_info
 from buildtool.resource.photo import find_photos, get_photo_resources_path
@@ -48,3 +49,5 @@ def run_build(build_path: Path, resources_path: Path, *, fast: bool, dry_run: bo
     # Note: must build photo assets first because they generate the srcset state which is read later when building pages.
     build_all_assets(build_context)
     build_all_html(build_context)
+
+    print_build_statistics(build_context)

@@ -163,4 +163,4 @@ class ImageSrcSet:
         return iter(self.entries)
 
     def __len__(self) -> int:
-        return len(self)
+        return len(self.entries)
