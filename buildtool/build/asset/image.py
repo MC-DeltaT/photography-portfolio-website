@@ -87,7 +87,7 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
         srcset_descriptor = f'{image_size[0]}w'
         url = get_image_srcset_url(base_url, srcset_descriptor)
         build_dir.build_file(image_path, url)
-        srcset_entries = [(0, ImageSrcSet.Entry(url, srcset_descriptor))]
+        srcset_entries = [(0, ImageSrcSet.Entry(url, image_size, srcset_descriptor))]
     else:
         # Strategy to improve performance is to initially reencode the image to the largest srcset size, then use that
         # as the base image for subsequent reencodings.
@@ -103,12 +103,12 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
             # Only need to do anything if the new size is smaller than the original image.
             # Upsampling is pointless, only wastes space.
             if spec.max_dimension <= max(image_size):
-                new_width = calculate_new_image_width(image_size, spec.max_dimension)
-                srcset_descriptor = f'{new_width}w'
+                new_size = calculate_new_image_size(image_size, spec.max_dimension)
+                srcset_descriptor = f'{new_size[0]}w'
                 url = get_image_srcset_url(base_url, srcset_descriptor)
                 logger.info(f'Build image srcset asset URL: {url}')
                 dest_path = build_dir.prepare_file(url.fs_path)
-                logger.debug(f'Image srcset size: max_dim={spec.max_dimension} width={new_width} quality={spec.quality}')
+                logger.debug(f'Image srcset size: max_dim={spec.max_dimension} size={new_size} quality={spec.quality}')
                 if reencoding_base_image is None:
                     # For largest size: reencode from the original image.
                     reencoding_src_path = image_path
@@ -122,7 +122,7 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
                 logger.debug(f'Reencoding image: "{reencoding_src_path}" -> "{dest_path}"')
                 if not build_dir.dry_run:
                     reencode_image(reencoding_src_path, dest_path, spec.max_dimension, spec.quality, spec.fast)
-                srcset_entries.append((spec.priority, ImageSrcSet.Entry(url, srcset_descriptor)))
+                srcset_entries.append((spec.priority, ImageSrcSet.Entry(url, new_size, srcset_descriptor)))
                 prev_dest_path = dest_path
 
     if not srcset_entries:
@@ -134,15 +134,18 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
         # Probably a bug if we're overwriting.
         raise RuntimeError(f'Duplicate image srcset: {image_id}')
     sorted_entries = sorted(srcset_entries, key=lambda e: e[0])
-    state.image_srcsets[image_id] = ImageSrcSet(tuple(entry for _, entry in sorted_entries), default_index=0)
+    state.image_srcsets[image_id] = ImageSrcSet(tuple(entry for _, entry in sorted_entries), 0, image_size)
 
 
-def calculate_new_image_width(image_size: Size, max_dimension: int) -> int:
-    if image_size[0] > image_size[1]:
+def calculate_new_image_size(image_size: Size, max_dimension: int) -> Size:
+    width, height = image_size
+    aspect_ratio = width / height
+    if width >= height:
         # Width is the constraining dimension.
-        return max_dimension
-    else:
-        # Height is the constraining dimension. Need to calculate the new width after shrinking.
+        new_width = max_dimension
         # This might be off by 1, but that's probably fine for the browser.
-        aspect_ratio = image_size[0] / image_size[1]
-        return round(aspect_ratio * max_dimension)
+        new_height = round(image_size[0] / aspect_ratio)
+    else:
+        new_width = round(aspect_ratio * max_dimension)
+        new_height = max_dimension
+    return Size((new_width, new_height))

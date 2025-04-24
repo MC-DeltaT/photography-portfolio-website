@@ -183,6 +183,8 @@ def create_image_render_context(srcset: ImageSrcSet) -> RenderContext:
     render_context: RenderContext = {
         'default_url': srcset.default.url,
         'srcset_urls': ', '.join(f'{s.url} {s.descriptor}' for s in srcset),
+        'original_width': srcset.original_size_px[0],
+        'original_height': srcset.original_size_px[1]
     }
     return render_context
 

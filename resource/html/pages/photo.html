@@ -18,7 +18,10 @@
                     If the image is portrait then the width may be much smaller,
                     but I don't think there's a way to account for that because the browser doesn't know. #}
                 sizes="(max-width: 480px) 90vw, (max-width: 768px) 80vw, (max-width: 1024px) 70vw, 60vw"
-                alt="{{ photo.title or 'Photograph' }}"/>
+                alt="{{ photo.title or 'Photograph' }}"
+                {# Specify the aspect ratio to allow browser to compute layout instantly without loading image.
+                    Prevents the rest of the page jumping around. #}
+                style="aspect-ratio: {{ photo.image.original_width }} / {{ photo.image.original_height }};"/>
             <figcaption class="photo-info">
                 <div class="photo-header">
                     {% if photo.title %}

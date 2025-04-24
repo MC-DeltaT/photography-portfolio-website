@@ -144,10 +144,12 @@ class ImageSrcSet:
     @dataclass(frozen=True)
     class Entry:
         url: URLPath
+        size_px: Size
         descriptor: str
 
     entries: tuple[Entry, ...]
     default_index: int
+    original_size_px: Size
 
     def __post_init__(self) -> None:
         if self.default_index >= len(self.entries):
