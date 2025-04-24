@@ -49,9 +49,8 @@ def run_ingest(ingest_path: Path, resources_path: Path, *, dry_run: bool) -> Non
             
             # Reduce the image size and quality because the originals will take up way too much space eventually.
             logger.debug('Reencoding image')
-            tmp_image_file = reencode_image(photo.image_file_path, tmp_image_file, IMAGE_MAX_DIMENSION, IMAGE_QUALITY)
-            if not tmp_image_file.exists():
-                raise RuntimeError(f'Failed to reencode image: "{photo.image_file_path}"')
+            tmp_image_file = tmp_image_file.with_suffix('.jpg')
+            reencode_image(photo.image_file_path, tmp_image_file, IMAGE_MAX_DIMENSION, IMAGE_QUALITY)
 
             # Some modifications to the image to make it appropriate for web publishing.
             logger.debug('Stripping image of EXIF GPS tags')

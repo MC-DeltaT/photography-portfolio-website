@@ -60,8 +60,10 @@ def read_image_exif_metadata(image: Image) -> EXIFMetadata:
     return metadata
 
 
-def reencode_image(input_file: Path, output_file: Path, max_dimension: int, quality: int, fast: bool = False) -> Path:
-    output_file = output_file.with_suffix('.jpg')
+def reencode_image(input_file: Path, output_file: Path, max_dimension: int, quality: int, fast: bool = False) -> None:
+    if output_file.suffix != '.jpg':
+        # We only deal with JPGs, so probably wrong to try to output anything else.
+        raise ValueError('Only JPG output is supported')
     # We could do this with a Python library, but I only trust ImageMagick to pass through the metadata correctly.
     operation = '-scale' if fast else '-resize'
     args = [
@@ -72,7 +74,8 @@ def reencode_image(input_file: Path, output_file: Path, max_dimension: int, qual
     ]
     logger.debug(f'> {args}')
     subprocess.run(args, check=True)
-    return output_file
+    if not output_file.is_file():
+        raise RuntimeError('Reencoding failed')
 
 
 def strip_image_exif_gps(file: Path) -> None:
