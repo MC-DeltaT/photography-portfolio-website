@@ -60,15 +60,24 @@ def read_image_exif_metadata(image: Image) -> EXIFMetadata:
     return metadata
 
 
-def reencode_image(input_file: Path, output_file: Path, max_dimension: int, quality: int, fast: bool = False) -> None:
+def reencode_image(input_file: Path, output_file: Path, max_width: int | None, max_height: int | None, quality: int,
+        fast: bool = False) -> None:
     if output_file.suffix != '.jpg':
         # We only deal with JPGs, so probably wrong to try to output anything else.
         raise ValueError('Only JPG output is supported')
     # We could do this with a Python library, but I only trust ImageMagick to pass through the metadata correctly.
     operation = '-scale' if fast else '-resize'
+    if max_width and max_height:
+        size_str = f'{max_width}x{max_height}'
+    elif max_width:
+        size_str = f'{max_width}x'
+    elif max_height:
+        size_str = f'x{max_height}'
+    else:
+        raise ValueError('Either max_width or max_height must be specified')
     args = [
         'magick', str(input_file),
-        operation, f'{max_dimension}x{max_dimension}',
+        operation, size_str,
         '-quality', str(quality),
         str(output_file)
     ]
