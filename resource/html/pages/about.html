@@ -19,12 +19,15 @@
         </p>
 
         <div class="photographer-section">
+            {% set image = images['general/the_photographer.jpg'] %}
             <img
                 class="photographer-image"
-                src="{{ images['general/the_photographer.jpg'].default_url }}"
-                srcset="{{ images['general/the_photographer.jpg'].srcset_urls }}"
+                src="{{ image.default_url }}"
+                srcset="{{ image.srcset_urls }}"
                 {# Determined based on the section width and image width #}
                 sizes="(max-width: 480px) 90vw, 30vw"
+                width="{{ image.original_width }}"
+                height="{{ image.original_height }}"
                 alt="Reece Jones">
             <q>My photography began from zero as a hobby, and it's evolved from there.
                 It was never about being the best photographer ever, more like being a better photographer than myself a week ago.
