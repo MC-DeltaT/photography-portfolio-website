@@ -68,7 +68,7 @@ IMAGE_SRCSET_SPEC = (
     ImageSrcSetSpec(650, 70, True, 2),
     ImageSrcSetSpec(500, 65, True, 4),
     ImageSrcSetSpec(300, 60, True, 5),
-    ImageSrcSetSpec(200, 60, True, 6),
+    # ImageSrcSetSpec(200, 60, True, 6),
 )
 
 
