@@ -26,5 +26,5 @@ magick --version
     . .deployvenv/bin/activate ;
     pip install --upgrade pip ;
     pip install -r requirements.txt ;
-    python -m buildtool --verbose
+    python -m buildtool
 )
