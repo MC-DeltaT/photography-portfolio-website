@@ -21,7 +21,8 @@
                 alt="{{ photo.title or 'Photograph' }}"
                 {# Specify the aspect ratio to allow browser to compute layout instantly without loading image.
                     Prevents the rest of the page jumping around. #}
-                style="aspect-ratio: {{ photo.image.original_width }} / {{ photo.image.original_height }};"/>
+                width="{{ photo.image.original_width }}"
+                height="{{ photo.image.original_height }}"/>
             <figcaption class="photo-info">
                 <div class="photo-header">
                     {% if photo.title %}
