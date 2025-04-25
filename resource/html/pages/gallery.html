@@ -66,8 +66,15 @@
                         <div class="photo-image">
                             <img src="{{ photo.image.default_url }}"
                                 srcset="{{ photo.image.srcset_urls }}"
-                                {# Determined based on the approximate maximum image width #}
-                                sizes="(max-width: 480px) 150px, (max-width: 768px) 180px, (max-width: 1024px) 225px, 400px"
+                                {# Sizes determined based on the approximate maximum image width.
+                                    Also, on high density mobile displays, reduce the resolution to improve performance.
+                                    I don't think we need to load an 800px thumbnail just because the DPR is high. #}
+                                sizes="
+                                    (max-width: 480px) and (-webkit-min-device-pixel-ratio: 2) calc(150px * 0.75)
+                                    (max-width: 480px) 150px,
+                                    (max-width: 768px) 180px,
+                                    (max-width: 1024px) 225px,
+                                    400px"
                                 alt="{{ photo.title or 'Photograph' }}"
                                 loading="lazy"/>
                         </div>
