@@ -97,6 +97,8 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
         # that quality barely matters.
         # This improves performance significantly because the original image may be very large.
 
+        # TODO: use multiple operations with on image magick call?
+
         # List of (priority, entry) tuples.
         srcset_entries: list[tuple[int, ImageSrcSet.Entry]] = []
         reencoding_base_image: Path | None = None
