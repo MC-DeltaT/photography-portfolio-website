@@ -11,7 +11,7 @@ Add image files to the `ingest` directory. They may have any file and directory 
 Each image file must:
 
 - Be a supported image file type, with the corresponding file extension (currently JPG and PNG).
-- Have a sidecar metadatafile, with the same name but with `.json` appended. See the `PhotoMetadataFile` class for required format.
+- Have a sidecar metadata file, with the same name but with `.json` appended. See the `PhotoMetadataFile` class for the required format.
 
 After adding the files here, do not commit them! Run the site build as described in the next section, which will ingest the files into the right structure within the repo.
 
