@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+from dataclasses import dataclass
 import datetime as dt
 import logging
 from pathlib import Path
@@ -60,30 +62,82 @@ def read_image_exif_metadata(image: Image) -> EXIFMetadata:
     return metadata
 
 
-def reencode_image(input_file: Path, output_file: Path, max_width: int | None, max_height: int | None, quality: int,
-        fast: bool = False) -> None:
-    if output_file.suffix != '.jpg':
+@dataclass(frozen=True)
+class ImageReencodingArgs:
+    output_file: Path
+    max_width: int | None
+    max_height: int | None
+    quality: int
+    fast: bool = False
+    input_label: str | None = None
+    output_label: str | None = None
+
+
+def reencode_image(input_file: Path, args: ImageReencodingArgs | Sequence[ImageReencodingArgs]) -> None:
+    def get_operation(args: ImageReencodingArgs) -> str:
+        if args.fast:
+            return '-scale'
+        else:
+            return '-resize'
+    
+    def get_size_spec(args: ImageReencodingArgs) -> str:
+        if args.max_width and args.max_height:
+            return f'{args.max_width}x{args.max_height}'
+        elif args.max_width:
+            return f'{args.max_width}x'
+        elif args.max_height:
+            return f'x{args.max_height}'
+        else:
+            raise ValueError('Either max_width or max_height must be specified')
+
+    INPUT_MPR = 'input'
+
+    def get_magick_args(args: ImageReencodingArgs, first: bool, last: bool) -> list[str]:
+        magick_args: list[str] = []
+        if first:
+            if args.input_label:
+                raise ValueError('First reencoding cannot have input_label')
+        else:
+            magick_args.append(f'mpr:{args.input_label or INPUT_MPR}')
+        magick_args += [
+            get_operation(args), get_size_spec(args),
+            '-quality', str(args.quality)
+        ]
+        if not last:
+            magick_args.append('-write')
+        magick_args.append(str(args.output_file))
+        if not last:
+            if args.output_label:
+                magick_args += ['-write', f'mpr:{args.output_label}']
+            magick_args.append('+delete')
+        return magick_args
+
+    if isinstance(args, ImageReencodingArgs):
+        args_list = (args,)
+    else:
+        if len(args) == 0:
+            raise ValueError('args must not be an empty sequence')
+        args_list = args
+
+    if not all(args.output_file.suffix == '.jpg' for args in args_list):
         # We only deal with JPGs, so probably wrong to try to output anything else.
         raise ValueError('Only JPG output is supported')
+    if len({args.output_file for args in args_list}) != len(args_list):
+        raise ValueError('Output files must be unique')
+
     # We could do this with a Python library, but I only trust ImageMagick to pass through the metadata correctly.
-    operation = '-scale' if fast else '-resize'
-    if max_width and max_height:
-        size_str = f'{max_width}x{max_height}'
-    elif max_width:
-        size_str = f'{max_width}x'
-    elif max_height:
-        size_str = f'x{max_height}'
-    else:
-        raise ValueError('Either max_width or max_height must be specified')
-    args = [
+
+    proc_args = [
         'magick', str(input_file),
-        operation, size_str,
-        '-quality', str(quality),
-        str(output_file)
     ]
-    logger.debug(f'> {args}')
-    subprocess.run(args, check=True)
-    if not output_file.is_file():
+    if len(args_list) > 1:
+        proc_args += ['-write', f'mpr:{INPUT_MPR}']
+    for i, args in enumerate(args_list):
+        proc_args += get_magick_args(args, i == 0, i == len(args_list) - 1)
+    logger.debug(f'> {proc_args}')
+    subprocess.run(proc_args, check=True, text=True)
+
+    if not all(args.output_file.is_file() for args in args_list):
         raise RuntimeError('Reencoding failed')
 
 

@@ -7,7 +7,7 @@ from pathlib import Path, PurePosixPath
 from typing import Callable
 
 from buildtool.build.common import BuildContext, BuildDirectory, BuildState
-from buildtool.image import open_image_file, reencode_image
+from buildtool.image import ImageReencodingArgs, open_image_file, reencode_image
 from buildtool.resource.image import get_image_resources
 from buildtool.types import ImageID, ImageSrcSet, PhotoID, Size, URLPath
 from buildtool.url import PHOTO_IMAGE_DIR, get_image_base_url, get_image_srcset_url
@@ -97,12 +97,9 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
         # that quality barely matters.
         # This improves performance significantly because the original image may be very large.
 
-        # TODO: use multiple operations with on image magick call?
-
+        reencoding_args: list[ImageReencodingArgs] = []
         # List of (priority, entry) tuples.
         srcset_entries: list[tuple[int, ImageSrcSet.Entry]] = []
-        reencoding_base_image: Path | None = None
-        prev_dest_path: Path | None = None
         for spec_idx, spec in enumerate(sorted(IMAGE_SRCSET_SPEC, key=lambda s: s.max_width, reverse=True)):
             # Only need to do anything if the new size is smaller than the original image.
             # Upsampling is pointless, only wastes space.
@@ -113,21 +110,30 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
                 logger.info(f'Build image srcset asset URL: {url}')
                 dest_path = build_dir.prepare_file(url.fs_path)
                 logger.debug(f'Image srcset size: max_width={spec.max_width} size={new_size} quality={spec.quality}')
-                if reencoding_base_image is None:
-                    # For largest size: reencode from the original image.
-                    reencoding_src_path = image_path
-                    reencoding_base_image = dest_path
-                elif spec_idx == len(IMAGE_SRCSET_SPEC) - 1 and prev_dest_path is not None:
-                    # For smallest size: reencode from the 2nd smallest image.
-                    reencoding_src_path = prev_dest_path
+                logger.debug(f'Reencoding image: "{image_path}" -> "{dest_path}"')
+                if spec_idx == 0:
+                    # Save the first image to use for subsequent images.
+                    output_label = 'first'
+                elif spec_idx == len(IMAGE_SRCSET_SPEC) - 2:
+                    # Save the second last image to use for the last image.
+                    output_label = 'second_last'
                 else:
-                    # For all other sizes: reencode from the largest reencoded image.
-                    reencoding_src_path = reencoding_base_image
-                logger.debug(f'Reencoding image: "{reencoding_src_path}" -> "{dest_path}"')
-                if not build_dir.dry_run:
-                    reencode_image(reencoding_src_path, dest_path, spec.max_width, None, spec.quality, spec.fast)
+                    output_label = None
+                if spec_idx == 0:
+                    input_label = None
+                elif spec_idx == len(IMAGE_SRCSET_SPEC) - 1:
+                    # Last image is reencoded from the second last image.
+                    input_label = 'second_last'
+                else:
+                    # Other images are reencoded from the first image.
+                    input_label = 'first'
+                reencoding_args.append(ImageReencodingArgs(
+                    dest_path, spec.max_width, None, spec.quality, spec.fast, input_label, output_label))
                 srcset_entries.append((spec.priority, ImageSrcSet.Entry(url, new_size, srcset_descriptor)))
-                prev_dest_path = dest_path
+            else:
+                break
+        if not build_dir.dry_run:
+            reencode_image(image_path, reencoding_args)
 
     if not srcset_entries:
         raise RuntimeError('Empty image srcset')

@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import tempfile
 
-from buildtool.image import reencode_image, strip_image_exif_gps
+from buildtool.image import ImageReencodingArgs, reencode_image, strip_image_exif_gps
 from buildtool.resource.photo import PhotoMetadataFile, find_photos, get_photo_resources_path
 
 
@@ -51,7 +51,8 @@ def run_ingest(ingest_path: Path, resources_path: Path, *, dry_run: bool) -> Non
             logger.debug('Reencoding image')
             tmp_image_file = tmp_image_file.with_suffix('.jpg')
             reencode_image(
-                photo.image_file_path, tmp_image_file, IMAGE_MAX_DIMENSION, IMAGE_MAX_DIMENSION, IMAGE_QUALITY)
+                photo.image_file_path,
+                ImageReencodingArgs(tmp_image_file, IMAGE_MAX_DIMENSION, IMAGE_MAX_DIMENSION, IMAGE_QUALITY))
 
             # Some modifications to the image to make it appropriate for web publishing.
             logger.debug('Stripping image of EXIF GPS tags')
