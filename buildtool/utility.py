@@ -2,7 +2,6 @@ from collections.abc import Collection, Iterator
 import datetime as dt
 from functools import cache
 from pathlib import Path
-import os
 import subprocess
 
 import dateutil.parser
@@ -13,12 +12,18 @@ def remove_dashes(s: str) -> str:
 
 
 def find_files(root: Path, extensions: Collection[str]) -> Iterator[Path]:
-    for dir_path, _subdirs, files in os.walk(root):
-        dir_path = Path(dir_path)
-        file_paths = [dir_path / f for f in files]
+    def visit_dir(dir: Path) -> Iterator[Path]:
+        assert dir.is_dir()
+        entries = sorted(dir.iterdir())
+        files = [e for e in entries if not e.is_dir()]
         if extensions:
-            file_paths = [f for f in file_paths if f.suffix in extensions]
-        yield from file_paths
+            files = [f for f in files if f.suffix in extensions]
+        yield from files
+        subdirs = [e for e in entries if e.is_dir()]
+        for subdir in subdirs:
+            yield from visit_dir(subdir)
+
+    yield from visit_dir(root)
 
 
 def parse_datetime(s: str) -> dt.datetime:
