@@ -74,12 +74,14 @@ class ImageReencodingArgs:
 
 
 def reencode_image(input_file: Path, args: ImageReencodingArgs | Sequence[ImageReencodingArgs]) -> None:
+    # We could do this with a Python library, but I only trust ImageMagick to pass through the metadata correctly.
+
     def get_operation(args: ImageReencodingArgs) -> str:
         if args.fast:
             return '-scale'
         else:
             return '-resize'
-    
+
     def get_size_spec(args: ImageReencodingArgs) -> str:
         if args.max_width and args.max_height:
             return f'{args.max_width}x{args.max_height}'

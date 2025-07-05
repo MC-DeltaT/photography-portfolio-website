@@ -62,7 +62,7 @@ class ImageSrcSetSpec:
 
 
 IMAGE_SRCSET_SPEC = (
-    ImageSrcSetSpec(2000, 85, False, 3),
+    ImageSrcSetSpec(2200, 85, False, 3),
     ImageSrcSetSpec(1100, 80, False, 0),
     ImageSrcSetSpec(800, 75, False, 1),
     ImageSrcSetSpec(650, 70, True, 2),
@@ -91,16 +91,20 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
         build_dir.build_file(image_path, url)
         srcset_entries = [(0, ImageSrcSet.Entry(url, image_size, srcset_descriptor))]
     else:
-        # Strategy to improve performance is to initially reencode the image to the largest srcset size, then use that
-        # as the base image for subsequent reencodings.
-        # Also, for the smallest size, use the next smallest image for reencoding, because it's probably small enough
-        # that quality barely matters.
-        # This improves performance significantly because the original image may be very large.
+        # Strategy to improve performance is to base each reencoding off another reencoded image that's smaller than the
+        # original, where possible. This is because the original may be very large.
+        # To choose a base image, pick either:
+        #   - the smallest whose dimensions are significantly larger than the target dimensions, or;
+        #   - the first reencoded image.
 
-        reencoding_args: list[ImageReencodingArgs] = []
+        BASE_IMG_MIN_DIMENSION_MUL = 2
+
         # List of (priority, entry) tuples.
         srcset_entries: list[tuple[int, ImageSrcSet.Entry]] = []
-        for spec_idx, spec in enumerate(sorted(IMAGE_SRCSET_SPEC, key=lambda s: s.max_width, reverse=True)):
+        reencoding_args: list[ImageReencodingArgs] = []
+        # List of (label, width) tuples.
+        labels: list[tuple[str, int]] = []
+        for spec in sorted(IMAGE_SRCSET_SPEC, key=lambda s: s.max_width, reverse=True):
             # Only need to do anything if the new size is smaller than the original image.
             # Upsampling is pointless, only wastes space.
             if spec.max_width <= image_size[0]:
@@ -109,29 +113,16 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
                 url = get_image_srcset_url(base_url, srcset_descriptor)
                 logger.info(f'Build image srcset asset URL: {url}')
                 dest_path = build_dir.prepare_file(url.fs_path)
-                logger.debug(f'Image srcset size: max_width={spec.max_width} size={new_size} quality={spec.quality}')
-                logger.debug(f'Reencoding image: "{image_path}" -> "{dest_path}"')
-                if spec_idx == 0:
-                    # Save the first image to use for subsequent images.
-                    output_label = 'first'
-                elif spec_idx == len(IMAGE_SRCSET_SPEC) - 2:
-                    # Save the second last image to use for the last image.
-                    output_label = 'second_last'
-                else:
-                    output_label = None
-                if spec_idx == 0:
-                    input_label = None
-                elif spec_idx == len(IMAGE_SRCSET_SPEC) - 1:
-                    # Last image is reencoded from the second last image.
-                    input_label = 'second_last'
-                else:
-                    # Other images are reencoded from the first image.
-                    input_label = 'first'
+                logger.debug(f'Image srcset spec: max_width={spec.max_width} size={new_size} quality={spec.quality}')
+                input_label = next(
+                    (label for label, width in reversed(labels) if width >= spec.max_width * BASE_IMG_MIN_DIMENSION_MUL),
+                    labels[0][0] if labels else None)
+                output_label = srcset_descriptor
+                logger.debug(f'Reencoding image: "{image_path}" ({input_label}) -> "{dest_path}"')
                 reencoding_args.append(ImageReencodingArgs(
                     dest_path, spec.max_width, None, spec.quality, spec.fast, input_label, output_label))
                 srcset_entries.append((spec.priority, ImageSrcSet.Entry(url, new_size, srcset_descriptor)))
-            else:
-                break
+                labels.append((output_label, spec.max_width))
         if not build_dir.dry_run:
             reencode_image(image_path, reencoding_args)
 
