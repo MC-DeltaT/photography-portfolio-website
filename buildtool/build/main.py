@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def verify_photo_ids(photo_infos: Sequence[PhotoInfo]) -> None:
-    id_counts = Counter(p for p in photo_infos)
+    id_counts = Counter(p.id for p in photo_infos)
     duplicated = [i for i, count in id_counts.items() if count > 1]
     if duplicated:
         # Unlikely to occur so it's fine to force the user to fix it manually.
