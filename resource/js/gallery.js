@@ -1,5 +1,7 @@
 // TODO: check the performance of this design once we have many photos
 
+// TODO: some bug where if you select a genre, navigate, then navigate back, genre is selected but photos reset
+
 document.addEventListener('DOMContentLoaded', () => {
     const photoGrid = document.querySelector('.photo-grid');
     const genreFilter = document.getElementById('genre-filter');
