@@ -50,4 +50,5 @@ def run_build(build_path: Path, resources_path: Path, *, fast: bool, dry_run: bo
     build_all_assets(build_context)
     build_all_html(build_context)
 
-    print_build_statistics(build_context)
+    if not dry_run:
+        print_build_statistics(build_context)
