@@ -127,6 +127,9 @@ class PhotoMetadataFile(pydantic.BaseModel, frozen=True):
     iso: ISO | None = None
     """ISO. If None, infer from the image file."""
 
+    extra_config: tuple[str, ...] | None = None
+    """Additional camera settings, equipment, etc."""
+
     genre: tuple[PhotoGenre, ...] = pydantic.Field(min_length=1)
     """Genres applicable to this photo."""
 

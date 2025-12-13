@@ -27,6 +27,7 @@ class PhotoInfo:
     aperture: Aperture | None
     exposure_time: ExposureTime | None
     iso: ISO | None
+    extra_config: tuple[str, ...] | None
     genre: tuple[PhotoGenre, ...]
     size_px: Size
 
@@ -104,6 +105,7 @@ def read_photo_info(resource: PhotoResourceRecord) -> PhotoInfo:
         aperture=aperture,
         exposure_time=exposure_time,
         iso=iso,
+        extra_config=user_metadata.extra_config,
         genre=user_metadata.genre,
         size_px=size_px
     )

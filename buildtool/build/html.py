@@ -259,4 +259,6 @@ def create_photo_settings_list(photo: PhotoInfo) -> list[str]:
         result.append(f'{exposure_time_str}s')
     if photo.iso:
         result.append(f'ISO {photo.iso}')
+    if photo.extra_config:
+        result.extend(photo.extra_config)
     return result
