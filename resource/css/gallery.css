@@ -64,9 +64,18 @@
                 box-shadow var(--transition-duration) var(--transition-timing);
 }
 
-.photo-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--box-shadow-hover);
+/* Only apply hover effect on devices that support hover (desktop). On touch devices,
+   hover state can "stick" after tapping a link and pressing back, since the page
+   is restored from bfcache with the previously-tapped element still in :hover. */
+@media (hover: hover) {
+    .photo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--box-shadow-hover);
+    }
+
+    .photo-card:hover .photo-image img {
+        transform: scale(1.05);
+    }
 }
 
 .photo-image {
@@ -83,10 +92,6 @@
     height: 100%;
     object-fit: cover;
     transition: transform var(--transition-duration) var(--transition-timing);
-}
-
-.photo-card:hover .photo-image img {
-    transform: scale(1.05);
 }
 
 /* Desktop / large */
