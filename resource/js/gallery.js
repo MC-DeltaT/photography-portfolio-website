@@ -1,7 +1,5 @@
 // TODO: check the performance of this design once we have many photos
 
-// TODO: some bug where if you select a genre, navigate, then navigate back, genre is selected but photos reset
-
 document.addEventListener('DOMContentLoaded', () => {
     const photoGrid = document.querySelector('.photo-grid');
     const genreFilter = document.getElementById('genre-filter');
@@ -108,4 +106,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize month options
     updateMonthOptions();
     filterPhotos();
+
+    // Re-apply filters when the page is shown (e.g. after back/forward navigation).
+    // On mobile, the page may be restored from bfcache without DOMContentLoaded firing again,
+    // or on a fresh load the form state may be restored after our initial run. In either case,
+    // the filter dropdowns can show a selection that doesn't match the visible grid.
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            filterPhotos();
+        }
+    });
 }); 
