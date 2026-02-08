@@ -1,6 +1,7 @@
 {
     "title": "Summit",
     "location": "Mount Kosciuszko, Australia",
-    "description": "What's next?",
+    "description": "Where to next?",
+    "extra_config": ["red filter"],
     "genre": ["landscape", "nature", "monochrome"]
 }
