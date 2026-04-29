@@ -78,6 +78,10 @@ def build_image_srcset_assets(build_dir: BuildDirectory, image_path: Path, image
     
     if build_original:
         build_dir.build_file(image_path, base_url)
+        if image_id in state.image_original_urls:
+            # Probably a bug if we're overwriting.
+            raise RuntimeError(f'Duplicate image ID: {image_id}')
+        state.image_original_urls[image_id] = base_url
     
     if image_size is None:
         image = open_image_file(image_path)

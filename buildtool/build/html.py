@@ -86,7 +86,7 @@ def get_common_html_render_context(context: BuildContext) -> RenderContext:
         },
         'copyright_date': get_copyright_date_tag(context.photos),
         'images': {
-            image_id: create_image_render_context(srcset)
+            image_id: create_image_render_context(srcset, context.state.image_original_urls.get(image_id))
             for image_id, srcset in context.state.image_srcsets.items()
         }
     }
@@ -179,13 +179,15 @@ def build_photo_page(photo: PhotoInfo, context: HTMLBuildContext) -> None:
     build_html_page('pages/photo.html', url, context, render_context)
 
 
-def create_image_render_context(srcset: ImageSrcSet) -> RenderContext:
+def create_image_render_context(srcset: ImageSrcSet, original_url: URLPath | None) -> RenderContext:
     render_context: RenderContext = {
         'default_url': srcset.default.url,
         'srcset_urls': ', '.join(f'{s.url} {s.descriptor}' for s in srcset),
         'original_width': srcset.original_size_px[0],
         'original_height': srcset.original_size_px[1]
     }
+    if original_url is not None:
+        render_context['original_url'] = original_url
     return render_context
 
 
@@ -196,9 +198,10 @@ def create_photo_render_context(photo: PhotoInfo, build_state: BuildState) -> Re
     assert photo.date.month is not None
     # Page design assumes genres are always present.
     assert photo.genre
+    image_id = build_state.photo_id_to_image_id[photo.id]
     return {
         'image': create_image_render_context(
-            build_state.image_srcsets[build_state.photo_id_to_image_id[photo.id]]),
+            build_state.image_srcsets[image_id], build_state.image_original_urls.get(image_id)),
         'title': photo.title,
         'date': photo.date,
         'location': photo.location,

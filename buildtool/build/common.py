@@ -76,8 +76,11 @@ class BuildDirectory:
 
 @dataclass
 class BuildState:
-    photo_id_to_image_id: dict[PhotoID, ImageID] = field(default_factory=dict)
-    image_srcsets: dict[ImageID, ImageSrcSet] = field(default_factory=dict)
+    photo_id_to_image_id: dict[PhotoID, ImageID] = field(default_factory=dict[PhotoID, ImageID])
+    # For every image.
+    image_srcsets: dict[ImageID, ImageSrcSet] = field(default_factory=dict[ImageID, ImageSrcSet])
+    # Only for photos currently.
+    image_original_urls: dict[ImageID, URLPath] = field(default_factory=dict[ImageID, URLPath])
 
 
 @dataclass(frozen=True)
