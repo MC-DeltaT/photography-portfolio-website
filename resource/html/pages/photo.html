@@ -51,9 +51,15 @@
                     {% endif %}
                 </div>
     
-                {# TODO: add link to original image #}
                 {# TODO: add copy link to this page #}
             </figcaption>
+
+            {% if photo.image.original_url %}
+                <div class="photo-link">
+                    <a href="{{ photo.image.original_url }}">⛶</a>
+                </div>
+            {% endif %}
+
         </figure>
     </section>
 {% endblock %}

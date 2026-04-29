@@ -16,7 +16,8 @@
 }
 
 .photo-info {
-    padding: var(--spacing);
+    /* No bottom padding because the element underneat is right-aligned so that acts as padding. */
+    padding: var(--spacing) var(--spacing) 0 var(--spacing);
 }
 
 .photo-header {
@@ -33,4 +34,8 @@
 
 .photo-description {
     margin-bottom: var(--spacing);
+}
+
+.photo-link {
+    text-align: right;
 }
