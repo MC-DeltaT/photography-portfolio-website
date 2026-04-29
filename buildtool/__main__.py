@@ -27,25 +27,34 @@ def main() -> None:
     actions_group.add_argument('--build', action=argparse.BooleanOptionalAction, default=None, help='Build the site')
 
     args = arg_parser.parse_args()
+    ingest_path: Path = args.ingest_path
+    resource_path: Path = args.resource_path
+    output_path: Path = args.output_path
+    verbose: bool = args.verbose == True
+    dry_run: bool = args.dry_run == True
+    fast: bool = args.fast == True
 
-    if args.verbose:
+    if verbose:
         logging.getLogger().setLevel(logging.DEBUG)
         # PIL spams debug logs we don't need
         logging.getLogger('PIL').setLevel(logging.INFO)
         logger.info('DRY RUN - won\'t write output')
 
+    if fast:
+        logging.info('Fast mode enabled')
+
     if args.ingest is None and args.build is None:
         ingest = True
         build = True
     else:
-        ingest = bool(args.ingest)
-        build = bool(args.build)
+        ingest = args.ingest == True
+        build = args.build == True
 
     if ingest:
-        run_ingest(args.ingest_path, args.resource_path, dry_run=args.dry_run)
+        run_ingest(ingest_path, resource_path, dry_run=dry_run)
 
     if build:
-        run_build(args.output_path, args.resource_path, fast=args.fast, dry_run=args.dry_run)
+        run_build(output_path, resource_path, fast=fast, dry_run=dry_run)
 
 
 if __name__ == '__main__':
